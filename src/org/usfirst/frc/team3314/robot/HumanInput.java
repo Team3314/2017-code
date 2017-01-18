@@ -1,0 +1,34 @@
+package org.usfirst.frc.team3314.robot;
+
+import edu.wpi.first.wpilibj.Joystick;
+
+public class HumanInput {
+
+	Joystick leftStick;
+	Joystick rightStick;
+
+	public HumanInput() {
+		
+		leftStick = new Joystick(0);
+		rightStick = new Joystick(1);
+	}
+	
+	public boolean getLightsOff() {
+		boolean result = false;
+		result = leftStick.getRawButton(2);
+		return result;
+	}
+	
+	public boolean getFirstLight() {
+		boolean result = false;
+		result = leftStick.getRawButton(3);
+		return result;
+	}
+	
+	public boolean getSecondLight() {
+		boolean result = false;
+		result = leftStick.getRawButton(5);
+		return result;
+	}
+	
+}
