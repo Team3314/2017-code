@@ -1,4 +1,4 @@
-/*package org.usfirst.frc.team3314.robot; //from old code
+package org.usfirst.frc.team3314.robot; //from old code
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogGyro;
@@ -48,4 +48,4 @@ public class CustomGyro {
 	}
 	
 	
-}*/
+}

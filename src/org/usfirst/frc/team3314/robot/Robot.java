@@ -1,12 +1,9 @@
 package org.usfirst.frc.team3314.robot;
 
-//import edu.wpi.first.wpilibj.CANSpeedController.ControlMode;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-//import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import com.ctre.CANTalon;
-//import com.ctre.CANTalon.*;
-//import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 
 /**
@@ -23,6 +20,7 @@ public class Robot extends IterativeRobot {
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
 	TankDriveTrain tdt;
+	UsbCamera camera;
 
 	AutoTest auto0;
 	
@@ -43,8 +41,12 @@ public class Robot extends IterativeRobot {
 		hal = new HardwareAbstractionLayer(this);
 		hi = new HumanInput();
 		tdt = new TankDriveTrain(this);
+		//camera = new UsbCamera("logitech", 0);
 
 		auto0 = new AutoTest(this);
+		
+		camera = CameraServer.getInstance().startAutomaticCapture(); //remember to add cameraserver stream viewer widget
+		camera.setResolution(640, 480);
 		
 	}
 
@@ -61,7 +63,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		
+
 		auto0.reset();
 		
 		//time = 0;
@@ -82,7 +84,9 @@ public class Robot extends IterativeRobot {
 		
 		auto0.update();
 		
+		SmartDashboard.putNumber("ticks", tdt.rDriveTalon1.getPosition());
 		//SmartDashboard.putNumber("ticks", talon.getPosition());
+
 		//talon.enable();
 		//talon.set(8192);
 		
@@ -106,6 +110,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		
 		//time = 0;
+		tdt.setDriveMode(driveMode.TANK);
 		
 	}
 
@@ -115,9 +120,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		
-		SmartDashboard.putNumber("left stick speed", -(hi.leftStick.getY()));
-		SmartDashboard.putNumber("right stick speed", -(hi.rightStick.getY()));
-    	tdt.setStickInputs(-(hi.leftStick.getY()), -(hi.rightStick.getY())); 
+		SmartDashboard.putNumber("left stick speed", tdt.rawLeftSpeed);
+		SmartDashboard.putNumber("right stick speed", tdt.rawRightSpeed);
+    	
+		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
+		tdt.update();
     	
     	updateButtonStatus();
     	
@@ -129,6 +136,8 @@ public class Robot extends IterativeRobot {
     	
     	if (light2Request) {
     		hal.solenoid.set(Value.kForward);}
+    	
+    	SmartDashboard.putString("Drive State", tdt.currentMode.toString());
     
 	}
 

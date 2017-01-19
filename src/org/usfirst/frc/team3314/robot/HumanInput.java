@@ -21,13 +21,13 @@ public class HumanInput {
 	
 	public boolean getFirstLight() {
 		boolean result = false;
-		result = leftStick.getRawButton(3);
+		result = leftStick.getRawButton(1);
 		return result;
 	}
 	
 	public boolean getSecondLight() {
 		boolean result = false;
-		result = leftStick.getRawButton(5);
+		result = rightStick.getRawButton(1);
 		return result;
 	}
 	

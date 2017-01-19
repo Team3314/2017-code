@@ -6,10 +6,10 @@ import com.ctre.CANTalon.*;
 
 //get y for both sticks
 
-/*enum driveMode {
+enum driveMode {
 	IDLE,
 	TANK
-}*/
+}
 
 public class TankDriveTrain {
 
@@ -21,8 +21,10 @@ public class TankDriveTrain {
 	
 	double leftStickInput;
 	double rightStickInput;
-	//double leftRawSpeed = leftStickInput;
-	//double rightRawSpeed = rightStickInput;
+	double rawLeftSpeed;
+	double rawRightSpeed;
+	
+	driveMode currentMode = driveMode.IDLE;
 
 	public TankDriveTrain(Robot myRobot) {
 	
@@ -38,6 +40,23 @@ public class TankDriveTrain {
 		rDriveTalon2.set(rDriveTalon1.getDeviceID());
 		lDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
 		rDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
+	}
+	
+	public void update(){
+		
+		lDriveTalon1.set(rawLeftSpeed);
+		rDriveTalon1.set(rawRightSpeed);
+		
+		switch(currentMode){
+		case IDLE:
+			rawLeftSpeed = 0;
+			rawRightSpeed = 0;
+			break;
+		case TANK:
+			rawLeftSpeed = -(leftStickInput);
+			rawRightSpeed = -(rightStickInput);
+			break;
+		}
 		
 	}
 	
@@ -45,8 +64,11 @@ public class TankDriveTrain {
 		
 		leftStickInput = leftInput;
 		rightStickInput = rightInput;
-		lDriveTalon1.set(leftInput);
-		rDriveTalon1.set(rightInput);
 	
 	}
+	
+	public void setDriveMode(driveMode mode){
+		currentMode = mode;
+	}
+	
 }

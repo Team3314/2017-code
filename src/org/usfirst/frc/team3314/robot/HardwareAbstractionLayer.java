@@ -4,6 +4,8 @@ import com.ctre.CANTalon;
 //import com.ctre.CANTalon.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.DoubleSolenoid.*;
+//import edu.wpi.first.wpilibj.AnalogGyro;
+//import edu.wpi.first.wpilibj.AnalogInput;
 
 public class HardwareAbstractionLayer {
 
@@ -13,6 +15,7 @@ public class HardwareAbstractionLayer {
 	DoubleSolenoid extra2;
 	DoubleSolenoid extra3;
 	CANTalon intakeTalon;
+	CustomGyro gyro;
 
 	public HardwareAbstractionLayer(Robot r){
 		
@@ -22,6 +25,9 @@ public class HardwareAbstractionLayer {
 		extra2 = new DoubleSolenoid(4, 5);
 		extra3 = new DoubleSolenoid(6, 7);
 		intakeTalon = new CANTalon(4);
+		
+		gyro = new CustomGyro(0, 1, 0.007);
+		gyro.calibrate();
 		
 	}
 }

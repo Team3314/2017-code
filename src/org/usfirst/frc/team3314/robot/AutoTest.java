@@ -2,7 +2,6 @@ package org.usfirst.frc.team3314.robot;
 
 //import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
-//import com.ctre.CANTalon;
 
 enum autoStates {
 	
@@ -66,6 +65,14 @@ public class AutoTest {
 	
 	public void doTransition() {
 		if (currentState == autoStates.START && nextState == autoStates.SOLENOID) {	
+			/*robot.tdt.lDriveTalon1.changeControlMode(TalonControlMode.Position); //default is PercentVbus
+			robot.tdt.lDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+			robot.tdt.lDriveTalon1.setPID(0.5, 0.001, 0, 0, 0, 0, 0);
+			robot.tdt.lDriveTalon1.setPosition(0);
+			robot.tdt.rDriveTalon1.changeControlMode(TalonControlMode.Position); //default is PercentVbus
+			robot.tdt.rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+			robot.tdt.rDriveTalon1.setPID(0.5, 0.001, 0, 0, 0, 0, 0);
+			robot.tdt.rDriveTalon1.setPosition(0); trying out the pid + encoder ticks*/
 			robot.tdt.lDriveTalon1.set(0);
 			robot.tdt.rDriveTalon1.set(0);
 			robot.hal.solenoid.set(Value.kReverse);
