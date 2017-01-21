@@ -1,16 +1,14 @@
 package org.usfirst.frc.team3314.robot;
 
-//import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 
 enum autoStates {
-	
+	//starts, turns reverse light on, turns motor foward, turns motor backwards, finishes
 	START,
 	SOLENOID,
 	MOTORFORWARD,
 	MOTORBACK,
 	DONE
-	
 }
 
 public class AutoTest {
@@ -26,10 +24,13 @@ public class AutoTest {
 	}
 	
 	public void reset() {
+		//sets auto back to beginning
 		currentState = autoStates.START;
 	}
 	
 	public void update() {
+		//sees whether requirements to go to next state are fulfilled and switches states if necessary,
+		//executes code assigned to each state, counts down time every 20ms
 		calcNext();
 		doTransition();
 		currentState = nextState;
@@ -39,6 +40,7 @@ public class AutoTest {
 	public void calcNext() {
 		nextState = currentState;
 		
+		//all either go to next state immediately or after timer finishes
 		switch (currentState) {
 		case START:
 			nextState = autoStates.SOLENOID;
@@ -65,6 +67,7 @@ public class AutoTest {
 	
 	public void doTransition() {
 		if (currentState == autoStates.START && nextState == autoStates.SOLENOID) {	
+			//pid + encoder tick test
 			/*robot.tdt.lDriveTalon1.changeControlMode(TalonControlMode.Position); //default is PercentVbus
 			robot.tdt.lDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 			robot.tdt.lDriveTalon1.setPID(0.5, 0.001, 0, 0, 0, 0, 0);
@@ -72,8 +75,9 @@ public class AutoTest {
 			robot.tdt.rDriveTalon1.changeControlMode(TalonControlMode.Position); //default is PercentVbus
 			robot.tdt.rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 			robot.tdt.rDriveTalon1.setPID(0.5, 0.001, 0, 0, 0, 0, 0);
-			robot.tdt.rDriveTalon1.setPosition(0); trying out the pid + encoder ticks*/
+			robot.tdt.rDriveTalon1.setPosition(0); */
 			
+			//sets to gyrolock, ensures motors are stopped, turns reverse light on, 1 sec
 			robot.tdt.setDriveMode(driveMode.GYROLOCK);
 			robot.tdt.setDriveTrainSpeed(0);
 			robot.hal.solenoid.set(Value.kReverse);
@@ -81,16 +85,19 @@ public class AutoTest {
 		}
 			
 		if (currentState == autoStates.SOLENOID && nextState == autoStates.MOTORFORWARD) {
+			//motors go forward 50% speed, 2 sec
 			robot.tdt.setDriveTrainSpeed(0.5);
 			time = 100;
 		}
 		
 		if (currentState == autoStates.MOTORFORWARD && nextState == autoStates.MOTORBACK) {
+			//motors go backwards 50% speed, 2 sec
 			robot.tdt.setDriveTrainSpeed(-0.5);
 			time = 100;
 		}
 		
 		if (currentState == autoStates.MOTORBACK && nextState == autoStates.DONE) {
+			//turns motors and reverse light off, 1/2 sec
 			robot.tdt.setDriveTrainSpeed(0);
 			robot.hal.solenoid.set(Value.kOff);
 			time = 25;

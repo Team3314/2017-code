@@ -14,18 +14,21 @@ public class HumanInput {
 	}
 	
 	public boolean getLightsOff() {
+		//returns whether operator wants to turn solenoid lights off
 		boolean result = false;
 		result = leftStick.getRawButton(2);
 		return result;
 	}
 	
 	public boolean getFirstLight() {
+		//returns whether operator wants to turn reverse light on
 		boolean result = false;
 		result = leftStick.getRawButton(1);
 		return result;
 	}
 	
 	public boolean getSecondLight() {
+		//returns whether operator wants to turn forward light on
 		boolean result = false;
 		result = rightStick.getRawButton(1);
 		return result;

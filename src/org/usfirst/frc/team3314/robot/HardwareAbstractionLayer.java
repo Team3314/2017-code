@@ -11,6 +11,7 @@ public class HardwareAbstractionLayer {
 
 	Robot robot;
 	DoubleSolenoid solenoid;
+	//following aren't connected yet
 	DoubleSolenoid extra1;
 	DoubleSolenoid extra2;
 	DoubleSolenoid extra3;
@@ -21,6 +22,7 @@ public class HardwareAbstractionLayer {
 		
 		robot = r;
 		solenoid = new DoubleSolenoid(0, 1);
+		//following aren't connected yet
 		extra1 = new DoubleSolenoid(2, 3);
 		extra2 = new DoubleSolenoid(4, 5);
 		extra3 = new DoubleSolenoid(6, 7);
