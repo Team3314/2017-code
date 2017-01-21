@@ -8,7 +8,8 @@ import com.ctre.CANTalon.*;
 
 enum driveMode {
 	IDLE,
-	TANK
+	TANK,
+	GYROLOCK
 }
 
 public class TankDriveTrain {
@@ -23,6 +24,9 @@ public class TankDriveTrain {
 	double rightStickInput;
 	double rawLeftSpeed;
 	double rawRightSpeed;
+	double desiredSpeed;
+	double desiredAngle;
+	double gyroPconstant = 0.05;
 	
 	driveMode currentMode = driveMode.IDLE;
 
@@ -42,7 +46,7 @@ public class TankDriveTrain {
 		rDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
 	}
 	
-	public void update(){
+	public void update() {
 		
 		lDriveTalon1.set(rawLeftSpeed);
 		rDriveTalon1.set(rawRightSpeed);
@@ -56,19 +60,49 @@ public class TankDriveTrain {
 			rawLeftSpeed = -(leftStickInput);
 			rawRightSpeed = -(rightStickInput);
 			break;
+		case GYROLOCK:
+			double currentAngle = robot.hal.gyro.angle();
+			double errorAngle = desiredAngle - currentAngle;
+			double correction;
+			
+			errorAngle = errorAngle % 360;
+			
+			while (errorAngle > 180){
+				errorAngle -= 360;
+			}
+			
+			while (errorAngle < -180){
+				errorAngle += 360;
+			}
+			
+			correction = errorAngle * gyroPconstant;
+			
+			/*SmartDashboard.putNumber("Error angle", errorAngle);
+			SmartDashboard.putNumber("correction", correction);
+			SmartDashboard.putNumber("desired angle", desiredAngle);
+			SmartDashboard.putNumber("desired speed", desiredSpeed);*/
+			
+			rawLeftSpeed = desiredSpeed - (correction);
+			rawRightSpeed = desiredSpeed + (correction);
+			break;
 		}
-		
 	}
 	
 	public void setStickInputs(double leftInput, double rightInput) {
-		
 		leftStickInput = leftInput;
 		rightStickInput = rightInput;
-	
 	}
 	
+	public void setDriveTrainSpeed(double speed){	
+		desiredSpeed = speed;
+	}
+		
 	public void setDriveMode(driveMode mode){
 		currentMode = mode;
+	}
+	
+	public void setDriveAngle(double angle) {
+		desiredAngle = angle;
 	}
 	
 }

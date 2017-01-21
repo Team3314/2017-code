@@ -1,10 +1,12 @@
 package org.usfirst.frc.team3314.robot;
 
+//import com.ctre.CANTalon.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -16,15 +18,15 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 
 public class Robot extends IterativeRobot {
 	
-	//CANTalon talon;
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
 	TankDriveTrain tdt;
-	UsbCamera camera;
-
 	AutoTest auto0;
-	
-	int time;
+
+	PIDController control;
+	UsbCamera camera;	
+
+	//int time;
 	
 	boolean lightOffRequest;
 	boolean light1Request;
@@ -37,14 +39,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
-		//talon = new CANTalon(0);
 		hal = new HardwareAbstractionLayer(this);
 		hi = new HumanInput();
 		tdt = new TankDriveTrain(this);
-		//camera = new UsbCamera("logitech", 0);
-
 		auto0 = new AutoTest(this);
 		
+		control = new PIDController(0.1, 0.001, 0, 0, tdt.rDriveTalon1, tdt.rDriveTalon1);
+		//camera = new UsbCamera("Logitech", 0);
 		camera = CameraServer.getInstance().startAutomaticCapture(); //remember to add cameraserver stream viewer widget
 		camera.setResolution(640, 480);
 		
@@ -63,16 +64,21 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-
+		
+		/* autonomous code */
 		auto0.reset();
 		
-		//time = 0;
+		/* how to setup pid
+		talon.changeControlMode(TalonControlMode.Position); //default is PercentVbus
+		talon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		talon.setPID(0.5, 0.001, 0, 0, 0, 0, 0);
+		talon.setPosition(0); */
 		
-		//talon.changeControlMode(TalonControlMode.Position); //default is PercentVbus
-		//talon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		//talon.configEncoderCodesPerRev(2048);
-		//talon.setPID(0.5, 0.001, 0, 0, 0, 0, 0);
-		//talon.setPosition(0);
+		/* pidcontroller code
+		control.enable();
+		tdt.rDriveTalon1.changeControlMode(TalonControlMode.Position);
+		tdt.rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		tdt.rDriveTalon1.setPosition(0); */
 		
 	}
 
@@ -82,20 +88,28 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		
-		auto0.update();
+		tdt.update();
+		SmartDashboard.putNumber("Ticks", tdt.rDriveTalon1.getPosition());
+    	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
 		
-		SmartDashboard.putNumber("ticks", tdt.rDriveTalon1.getPosition());
-		//SmartDashboard.putNumber("ticks", talon.getPosition());
+		/* autonomous code */
+		auto0.update();
 
+		//how to do pid
 		//talon.enable();
 		//talon.set(8192);
 		
+		/* pidcontroller code
+		tdt.rDriveTalon1.set(2048); */
+	
+		//set to encoder tick pos
 		//2048 encoder ticks = 1 revolution
 		/*if (talon.getEncPosition() < 2000) {
 			talon.set(0.3);
 		} else {
 			talon.set(0);}*/
 		
+		//timer
 		//50 loops = 1 second
 		/*if(time < 250){
 			talon.set(1);
@@ -108,8 +122,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void teleopInit() {
-		
-		//time = 0;
+	
 		tdt.setDriveMode(driveMode.TANK);
 		
 	}
@@ -120,8 +133,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		
-		SmartDashboard.putNumber("left stick speed", tdt.rawLeftSpeed);
-		SmartDashboard.putNumber("right stick speed", tdt.rawRightSpeed);
+		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
+		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);
     	
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
 		tdt.update();
@@ -137,7 +150,7 @@ public class Robot extends IterativeRobot {
     	if (light2Request) {
     		hal.solenoid.set(Value.kForward);}
     	
-    	SmartDashboard.putString("Drive State", tdt.currentMode.toString());
+    	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
     
 	}
 

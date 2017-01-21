@@ -73,27 +73,25 @@ public class AutoTest {
 			robot.tdt.rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 			robot.tdt.rDriveTalon1.setPID(0.5, 0.001, 0, 0, 0, 0, 0);
 			robot.tdt.rDriveTalon1.setPosition(0); trying out the pid + encoder ticks*/
-			robot.tdt.lDriveTalon1.set(0);
-			robot.tdt.rDriveTalon1.set(0);
+			
+			robot.tdt.setDriveMode(driveMode.GYROLOCK);
+			robot.tdt.setDriveTrainSpeed(0);
 			robot.hal.solenoid.set(Value.kReverse);
 			time = 50;
 		}
 			
 		if (currentState == autoStates.SOLENOID && nextState == autoStates.MOTORFORWARD) {
-			robot.tdt.lDriveTalon1.set(0.5);
-			robot.tdt.rDriveTalon1.set(0.5);
+			robot.tdt.setDriveTrainSpeed(0.5);
 			time = 100;
 		}
 		
 		if (currentState == autoStates.MOTORFORWARD && nextState == autoStates.MOTORBACK) {
-			robot.tdt.lDriveTalon1.set(-0.5);
-			robot.tdt.rDriveTalon1.set(-0.5);
+			robot.tdt.setDriveTrainSpeed(-0.5);
 			time = 100;
 		}
 		
 		if (currentState == autoStates.MOTORBACK && nextState == autoStates.DONE) {
-			robot.tdt.lDriveTalon1.set(0);
-			robot.tdt.rDriveTalon1.set(0);
+			robot.tdt.setDriveTrainSpeed(0);
 			robot.hal.solenoid.set(Value.kOff);
 			time = 25;
 		}
