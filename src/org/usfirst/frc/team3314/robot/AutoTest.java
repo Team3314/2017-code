@@ -12,7 +12,6 @@ enum autoStates {
 }
 
 public class AutoTest {
-	
 	autoStates currentState;
 	autoStates nextState;
 	Robot robot;

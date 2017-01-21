@@ -18,7 +18,6 @@ public class CustomGyro {
 		gyro = new AnalogGyro(gyroPort);
 		gyroTemp = new AnalogInput(tempPort);
 		gyro.setSensitivity(sensitivity);
-		
 	}
 	
 	public void reset(){
@@ -46,6 +45,4 @@ public class CustomGyro {
 	public void calibrate(){
 		gyro.initGyro();
 	}
-	
-	
 }

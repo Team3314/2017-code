@@ -28,7 +28,6 @@ public class TankDriveTrain {
 	driveMode currentMode = driveMode.IDLE;
 
 	public TankDriveTrain(Robot myRobot) {
-	
 		robot = myRobot;
 		rDriveTalon1 = new CANTalon(0);
 		rDriveTalon2 = new CANTalon(2);
@@ -45,7 +44,6 @@ public class TankDriveTrain {
 	}
 	
 	public void update() {
-		
 		lDriveTalon1.set(rawLeftSpeed);
 		rDriveTalon1.set(rawRightSpeed);
 		
@@ -70,7 +68,8 @@ public class TankDriveTrain {
 			errorAngle = errorAngle % 360;
 			while (errorAngle > 180){
 				errorAngle -= 360;
-			}while (errorAngle < -180){
+			}
+			while (errorAngle < -180){
 				errorAngle += 360;
 			}
 			
@@ -104,6 +103,5 @@ public class TankDriveTrain {
 	
 	public void setDriveAngle(double angle) {
 		desiredAngle = angle;
-	}
-	
+	}	
 }
