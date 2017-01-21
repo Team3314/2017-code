@@ -120,14 +120,14 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during operator control
 	 */
-	@Override
+	@Override		
 	public void teleopPeriodic() {
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
     	
 		//joystick input
-		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
+		tdt.setStickInputs(hi.operator.getRawAxis(1), hi.operator.getRawAxis(5)); 
 		tdt.update();
     	
 		//what each button does
