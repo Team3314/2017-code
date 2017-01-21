@@ -2,9 +2,6 @@ package org.usfirst.frc.team3314.robot;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.*;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-//get y for both sticks
 
 enum driveMode {
 	IDLE,
@@ -38,6 +35,7 @@ public class TankDriveTrain {
 		lDriveTalon1 = new CANTalon(1);
 		lDriveTalon2 = new CANTalon(3);
 		
+		//sets forward talons to default mode and rear talons as following them
 		lDriveTalon2.changeControlMode(TalonControlMode.Follower);
 		lDriveTalon2.set(lDriveTalon1.getDeviceID());
 		rDriveTalon2.changeControlMode(TalonControlMode.Follower);
@@ -53,25 +51,26 @@ public class TankDriveTrain {
 		
 		switch(currentMode){
 		case IDLE:
+			//motor stopped
 			rawLeftSpeed = 0;
 			rawRightSpeed = 0;
 			break;
 		case TANK:
+			//motor speed determined by joystick input (set to negative to have motor turn correct direction)
 			rawLeftSpeed = -(leftStickInput);
 			rawRightSpeed = -(rightStickInput);
 			break;
 		case GYROLOCK:
+ 			//motor speed determined by angle of robot relative to desired angle
 			double currentAngle = robot.hal.gyro.angle();
 			double errorAngle = desiredAngle - currentAngle;
 			double correction;
 			
+			//keeps error between -180 and 180
 			errorAngle = errorAngle % 360;
-			
 			while (errorAngle > 180){
 				errorAngle -= 360;
-			}
-			
-			while (errorAngle < -180){
+			}while (errorAngle < -180){
 				errorAngle += 360;
 			}
 			
@@ -89,15 +88,17 @@ public class TankDriveTrain {
 	}
 	
 	public void setStickInputs(double leftInput, double rightInput) {
+		//sets what joystick input to get
 		leftStickInput = leftInput;
 		rightStickInput = rightInput;
 	}
 	
-	public void setDriveTrainSpeed(double speed){	
+	public void setDriveTrainSpeed(double speed) {	
+		//mainly used for autonomous
 		desiredSpeed = speed;
 	}
 		
-	public void setDriveMode(driveMode mode){
+	public void setDriveMode(driveMode mode) {
 		currentMode = mode;
 	}
 	

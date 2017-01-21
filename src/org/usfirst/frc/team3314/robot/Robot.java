@@ -1,6 +1,5 @@
 package org.usfirst.frc.team3314.robot;
 
-//import com.ctre.CANTalon.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
@@ -22,12 +21,11 @@ public class Robot extends IterativeRobot {
 	HumanInput hi;
 	TankDriveTrain tdt;
 	AutoTest auto0;
-
+	
 	PIDController control;
 	UsbCamera camera;	
-
-	//int time;
 	
+	//button input
 	boolean lightOffRequest;
 	boolean light1Request;
 	boolean light2Request;
@@ -65,7 +63,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		
-		/* autonomous code */
+		/* autonomous reset */
 		auto0.reset();
 		
 		/* how to setup pid
@@ -92,7 +90,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Ticks", tdt.rDriveTalon1.getPosition());
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
 		
-		/* autonomous code */
+		/* goes thru auto states */
 		auto0.update();
 
 		//how to do pid
@@ -102,7 +100,7 @@ public class Robot extends IterativeRobot {
 		/* pidcontroller code
 		tdt.rDriveTalon1.set(2048); */
 	
-		//set to encoder tick pos
+		//motor set to encoder tick pos
 		//2048 encoder ticks = 1 revolution
 		/*if (talon.getEncPosition() < 2000) {
 			talon.set(0.3);
@@ -134,11 +132,14 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
-		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);
+		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
+    	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
     	
+		//joystick input
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
 		tdt.update();
     	
+		//what each button does
     	updateButtonStatus();
     	
     	if (lightOffRequest) {
@@ -149,8 +150,6 @@ public class Robot extends IterativeRobot {
     	
     	if (light2Request) {
     		hal.solenoid.set(Value.kForward);}
-    	
-    	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
     
 	}
 
@@ -159,11 +158,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		
 	}
 	
 	public void updateButtonStatus() {
 		
+		//checks if button is pressed
 		lightOffRequest = hi.getLightsOff();
 		light1Request = hi.getFirstLight();
 		light2Request = hi.getSecondLight();
