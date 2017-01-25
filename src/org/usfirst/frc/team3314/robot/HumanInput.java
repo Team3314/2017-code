@@ -8,9 +8,9 @@ public class HumanInput {
 	Joystick operator;
 
 	public HumanInput() {
-		leftStick = new Joystick(1);
-		rightStick = new Joystick(2);
-		operator = new Joystick(0);
+		leftStick = new Joystick(1); //left attack3 stick
+		rightStick = new Joystick(2); //right attack3 stick
+		operator = new Joystick(0); //xbox controller
 	}
 	
 	public boolean getLightsOff() {
