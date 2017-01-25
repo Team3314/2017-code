@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import com.ctre.CANTalon.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -16,11 +17,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class Robot extends IterativeRobot {
+	//some classes
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
 	TankDriveTrain tdt;
-	AutoTest auto0;
 	
+	//auto classes
+	//AutoTest auto0;
+	AutoNothing auto0;
+	AutoCrossBaseline auto1;
+	
+	//misc
 	PIDController control;
 	UsbCamera camera;	
 	
@@ -35,12 +42,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		//all classes
 		hal = new HardwareAbstractionLayer(this);
 		hi = new HumanInput();
 		tdt = new TankDriveTrain(this);
-		auto0 = new AutoTest(this);
+		auto0 = new AutoNothing(this);
+		auto1 = new AutoCrossBaseline(this);
 		
-		control = new PIDController(0.1, 0.001, 0, 0, tdt.rDriveTalon1, tdt.rDriveTalon1);
+		//misc
+		//control = new PIDController(0.0001, 0, 0, 0, tdt.rDriveTalon1, tdt.rDriveTalon1);
 		//camera = new UsbCamera("Logitech", 0);
 		
 		camera = CameraServer.getInstance().startAutomaticCapture(); //remember to add cameraserver stream viewer widget
@@ -61,19 +71,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		/* autonomous reset */
-		auto0.reset();
+		auto1.reset();
 		
-		/* how to setup pid
-		talon.changeControlMode(TalonControlMode.Position); //default is PercentVbus
-		talon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		talon.setPID(0.5, 0.001, 0, 0, 0, 0, 0);
-		talon.setPosition(0); */
-		
-		/* pidcontroller code
-		control.enable();
-		tdt.rDriveTalon1.changeControlMode(TalonControlMode.Position);
-		tdt.rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		tdt.rDriveTalon1.setPosition(0); */
+		/*pidcontroller code*/
+		//control.enable();
+		//tdt.rDriveTalon1.changeControlMode(TalonControlMode.Position);
+		//tdt.rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		//tdt.rDriveTalon1.setPosition(0);
 	}
 
 	/**
@@ -85,15 +89,12 @@ public class Robot extends IterativeRobot {
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
     	
 		/* goes thru auto states */
-		auto0.update();
+		auto1.update();
 		tdt.update();
 		
-		//how to do pid
-		//talon.enable();
-		//talon.set(8192);
-		
-		/* pidcontroller code
-		tdt.rDriveTalon1.set(2048); */
+				
+		/* pidcontroller code*/
+		//tdt.rDriveTalon1.set(2048);
 	
 		//motor set to encoder tick pos
 		//2048 encoder ticks = 1 revolution
