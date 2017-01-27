@@ -1,11 +1,12 @@
 package org.usfirst.frc.team3314.robot;
 
+//import com.ctre.CANTalon.*;
+
 //import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 enum autoCrossBaselineStates {
 	START,
-	RESET,
 	DRIVE,
 	STOP,
 	DONE
@@ -39,7 +40,6 @@ public class AutoCrossBaseline {
 		currentState = nextState;
 		time --;
 		SmartDashboard.putString("Auto state", currentState.toString());
-		SmartDashboard.putNumber("Motor speed", robot.tdt.rDriveTalon1.getSpeed());
 		SmartDashboard.putNumber("Time", time);
 	}
 	
@@ -50,16 +50,10 @@ public class AutoCrossBaseline {
 		switch (currentState) {
 		case START:
 			robot.hal.gyro.reset();
-			nextState = autoCrossBaselineStates.RESET;
-			break;
-		case RESET:
-			if (time <= 0/*&& robot.hal.catapultReset.get().toString() == "kForward" && !robot.hal.latchSensor.get()
-			  && robot.hal.catapultAdjuster.get().toString() == "kReverse"*/) {
-				nextState = autoCrossBaselineStates.DRIVE;
-			}
+			nextState = autoCrossBaselineStates.DRIVE;
 			break;
 		case DRIVE:
-			if (time <= 0 || robot.tdt.rDriveTalon1.getEncPosition() > 25000 && robot.tdt.rDriveTalon1.getEncPosition() > 25000){
+			if (time <= 0 || /*robot.tdt.lDriveTalon1.getEncPosition() > 25000 &&*/ robot.tdt.rDriveTalon1.getEncPosition() > 25000){
 			//desiredDistance - distance <= tolerance) {
 				nextState = autoCrossBaselineStates.STOP;
 			}
@@ -75,19 +69,9 @@ public class AutoCrossBaseline {
 	}
 	
 	public void doTransition() {
-		if (currentState == autoCrossBaselineStates.START && nextState == autoCrossBaselineStates.RESET) {
-			//sets encoder pos to 0 and ensures robot is stopped, 1/2 sec
-			//robot.hal.intake.set(Value.kForward);
-			robot.tdt.lDriveTalon1.setPosition(0);
-			robot.tdt.rDriveTalon1.setPosition(0);
-			robot.tdt.setDriveTrainSpeed(0);
-			time = 25;
-		}
-		
-		if (currentState == autoCrossBaselineStates.RESET && nextState == autoCrossBaselineStates.DRIVE) {
-			//robot drives straight forward at max speed in gyrolock, 10 sec
-			robot.tdt.setDriveMode(driveMode.GYROLOCK);
-			robot.tdt.setDriveAngle(0);
+		if (currentState == autoCrossBaselineStates.START && nextState == autoCrossBaselineStates.DRIVE) {
+			//robot drives straight forward at max speed, 10 sec
+			robot.tdt.setDriveAngle(robot.hal.gyro.angle());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 500;
 		}

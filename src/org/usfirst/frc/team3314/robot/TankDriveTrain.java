@@ -2,6 +2,9 @@ package org.usfirst.frc.team3314.robot;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.*;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDOutput;
 
 enum driveMode {
 	IDLE,
@@ -10,11 +13,15 @@ enum driveMode {
 }
 
 public class TankDriveTrain {
-
 	CANTalon rDriveTalon1;
 	CANTalon rDriveTalon2;
 	CANTalon lDriveTalon1;
 	CANTalon lDriveTalon2;
+	
+	PIDController PID;
+	PIDSource PIDSource;
+	PIDOutput PIDOutput;
+	
 	Robot robot;
 	
 	double leftStickInput;
@@ -24,6 +31,10 @@ public class TankDriveTrain {
 	double desiredSpeed;
 	double desiredAngle;
 	double gyroPconstant = 0.05;
+	
+	GyroPIDSource gyroPIDSource;
+    GyroPIDOutput gyroPIDOutput;
+    PIDController gyroControl;
 	
 	driveMode currentMode = driveMode.IDLE;
 
@@ -41,6 +52,10 @@ public class TankDriveTrain {
 		rDriveTalon2.set(rDriveTalon1.getDeviceID());
 		lDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
 		rDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
+		
+		//gyroPIDSource = new GyroPIDSource(robot, robot.hi.rightStick.getY(), 0);
+		//gyroPIDOutput = new GyroPIDOutput();
+		//gyroControl = new PIDController(0.5, 0.000025, 0, 0, gyroPIDSource, gyroPIDOutput);
 	}
 	
 	public void update() {
@@ -54,12 +69,12 @@ public class TankDriveTrain {
 			rawRightSpeed = 0;
 			break;
 		case TANK:
-			//motor speed determined by joystick input (set to negative to have motor turn correct direction)
-			rawLeftSpeed = -(leftStickInput);
-			rawRightSpeed = -(rightStickInput);
+			//motor speed determined by joystick input
+			rawLeftSpeed = leftStickInput;
+			rawRightSpeed = rightStickInput;
 			break;
 		case GYROLOCK:
- 			//motor speed determined by angle of robot relative to desired angle
+ 			//motor speed determined by angle of robot relative to desired angle, uses pid loop
 			double currentAngle = robot.hal.gyro.angle();
 			double errorAngle = desiredAngle - currentAngle;
 			double correction;
@@ -75,13 +90,14 @@ public class TankDriveTrain {
 			
 			correction = errorAngle * gyroPconstant;
 			
-			/*SmartDashboard.putNumber("Error angle", errorAngle);
-			SmartDashboard.putNumber("correction", correction);
-			SmartDashboard.putNumber("desired angle", desiredAngle);
-			SmartDashboard.putNumber("desired speed", desiredSpeed);*/
+			//SmartDashboard.putNumber("Error angle", errorAngle);
+			//SmartDashboard.putNumber("Correction", correction);
+			//SmartDashboard.putNumber("Desired angle", desiredAngle);
+			//SmartDashboard.putNumber("Desired speed", desiredSpeed);
 			
 			rawLeftSpeed = desiredSpeed - (correction);
 			rawRightSpeed = desiredSpeed + (correction);
+
 			break;
 		}
 	}

@@ -78,21 +78,20 @@ public class AutoTest {
 			robot.tdt.rDriveTalon1.setPID(0.5, 0.001, 0, 0, 0, 0, 0);
 			robot.tdt.rDriveTalon1.setPosition(0); */
 			
-			//sets to gyrolock, ensures motors are stopped, turns reverse light on, 1 sec
-			robot.tdt.setDriveMode(driveMode.GYROLOCK);
-			robot.tdt.setDriveTrainSpeed(0);
+			//turns reverse light on, 1/2 sec
 			robot.hal.solenoid.set(Value.kReverse);
-			time = 50;
+			time = 25;
 		}
 			
 		if (currentState == autoTestStates.SOLENOID && nextState == autoTestStates.MOTORFORWARD) {
-			//motors go forward 50% speed, 2 sec
+			//motors go forward at half speed in gyrolock, 2 sec
+			robot.tdt.setDriveAngle(robot.hal.gyro.angle());
 			robot.tdt.setDriveTrainSpeed(0.5);
 			time = 100;
 		}
 		
 		if (currentState == autoTestStates.MOTORFORWARD && nextState == autoTestStates.MOTORBACK) {
-			//motors go backwards 50% speed, 2 sec
+			//motors go backwards at half speed, 2 sec
 			robot.tdt.setDriveTrainSpeed(-0.5);
 			time = 100;
 		}

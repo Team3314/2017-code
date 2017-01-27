@@ -8,9 +8,7 @@ import edu.wpi.first.wpilibj.Relay;
 
 public class HardwareAbstractionLayer {
 	Robot robot;
-	DoubleSolenoid solenoid;
 	
-	//following aren't connected yet
 	//speed controllers
 	CANTalon intakeTalon;
 	CANTalon turretTalon;
@@ -22,8 +20,9 @@ public class HardwareAbstractionLayer {
 	
 	//pneumatics
 	Compressor pcm1;
+	DoubleSolenoid solenoid;
 	DoubleSolenoid intake;
-	DoubleSolenoid extra1;
+	DoubleSolenoid driveShifter;
 	DoubleSolenoid extra2;
 	
 	//analog + relay
@@ -32,9 +31,7 @@ public class HardwareAbstractionLayer {
 
 	public HardwareAbstractionLayer(Robot r){
 		robot = r;
-		solenoid = new DoubleSolenoid(0, 1);
 		
-		//following aren't connected yet
 		//speed controllers
 		intakeTalon = new CANTalon(4);
 		turretTalon = new CANTalon(5);
@@ -46,8 +43,9 @@ public class HardwareAbstractionLayer {
 		
 		//pneumatics
 		pcm1 = new Compressor(0);
+		solenoid = new DoubleSolenoid(0, 1);
 		intake = new DoubleSolenoid(2, 3);
-		extra1 = new DoubleSolenoid(4, 5);
+		driveShifter = new DoubleSolenoid(4, 5);
 		extra2 = new DoubleSolenoid(6, 7);
 		
 		pcm1.setClosedLoopControl(true);
