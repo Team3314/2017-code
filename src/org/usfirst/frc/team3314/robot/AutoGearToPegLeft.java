@@ -60,7 +60,7 @@ public class AutoGearToPegLeft {
 			}
 			break;
 		case DRIVE2:
-			if (/*robot.tdt.lDriveTalon1.getEncPosition() > &&*/ robot.tdt.rDriveTalon1.getEncPosition() > (48*robot.encoderConversionFactor)){
+			if (/*robot.tdt.lDriveTalon1.getEncPosition() > &&*/ robot.tdt.rDriveTalon1.getEncPosition() > (20*robot.encoderConversionFactor)){
 			//enc pos is placeholder
 				nextState = autoGTPLeftStates.STOP2;
 			}
@@ -96,7 +96,7 @@ public class AutoGearToPegLeft {
 		
 		if (currentState == autoGTPLeftStates.STOP1 && nextState == autoGTPLeftStates.DRIVE2) {
 			//robot drives forward again at max speed but at angle of peg, 1.5 sec
-			robot.tdt.setDriveAngle(60); //or 66.36
+			robot.tdt.setDriveAngle(23.64); //or 66.36
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 75;
 		}

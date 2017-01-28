@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -42,6 +43,8 @@ public class Robot extends IterativeRobot {
 	boolean highGearRequest;
 	boolean lowGearRequest;
 	boolean shootRequest;
+	boolean relayOn1Request;
+	boolean relayOn2Request;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -127,7 +130,9 @@ public class Robot extends IterativeRobot {
 	
 		//motor set to encoder tick pos
 		//2048 encoder ticks = 1 revolution
-		/*if (talon.getEncPosition() < 2000) {
+	
+		/*else {
+		if (talon.getEncPosition() < 2000) {
 			talon.set(0.3);
 		} else {
 			talon.set(0);}*/
@@ -138,11 +143,10 @@ public class Robot extends IterativeRobot {
 			talon.set(1);
 			time++;
 		}
-		else {
 			talon.set(0);
-		}*/
-	}
-	
+	}*/
+		}
+		
 	public void teleopInit() {
 		tdt.setDriveMode(driveMode.TANK);
 		hal.gyro.reset();
@@ -189,8 +193,20 @@ public class Robot extends IterativeRobot {
     	
     	if (shootRequest) {
     	}
-	}
-
+    	
+    	if(relayOn1Request) {
+    		hal.flashlight.set(Relay.Value.kForward);
+    	}
+    	else
+    		if (relayOn2Request) {
+    		hal.flashlight.set(Relay.Value.kReverse);
+    	}
+    		else
+    			if( !relayOn1Request && !relayOn2Request) {
+    				hal.flashlight.set(Relay.Value.kOff);
+    			}
+    }
+		
 	/**
 	 * This function is called periodically during test mode
 	 */
