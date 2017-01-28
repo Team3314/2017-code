@@ -16,27 +16,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class Robot extends IterativeRobot {
+	//1 inch = 81.92 enc ticks
 	//some classes
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
 	TankDriveTrain tdt;
 	
 	//auto classes
-	//AutoTest auto0;
 	AutoNothing auto0;
 	AutoCrossBaseline auto1;
+	AutoGearToPegLeft auto2;
 	
 	//misc
 	//PIDController control;
 	GyroPIDSource gyroPIDSource;
     GyroPIDOutput gyroPIDOutput;
     PIDController gyroControl;
-	UsbCamera camera;	
+	UsbCamera camera;
+	double encoderConversionFactor = 81.92;
 	
 	//button input
-	boolean lightOffRequest;
-	boolean reverseLightRequest;
-	boolean forwardLightRequest;
+	boolean extendGearIntakeRequest;
+	boolean retractGearIntakeRequest;
 	boolean gyroLockRequest;
 	boolean highGearRequest;
 	boolean lowGearRequest;
@@ -54,19 +55,21 @@ public class Robot extends IterativeRobot {
 		tdt = new TankDriveTrain(this);
 		auto0 = new AutoNothing(this);
 		auto1 = new AutoCrossBaseline(this);
-		//gyroPIDSource = new GyroPIDSource(this, hi.rightStick.getY(), 0);
-		//gyroPIDOutput = new GyroPIDOutput();
-		//gyroControl = new PIDController(0.5, 0.000025, 0, 0, gyroPIDSource, gyroPIDOutput);
-		
+		auto2 = new AutoGearToPegLeft(this);
 		
 		//misc
 		//control = new PIDController(0.5, 0.000025, 0, 0, tdt.rDriveTalon1, tdt.rDriveTalon1);
 		//camera = new UsbCamera("Logitech", 0);
+		//gyroPIDSource = new GyroPIDSource(this, hi.rightStick.getY(), 0);
+		//gyroPIDOutput = new GyroPIDOutput();
+		//gyroControl = new PIDController(0.5, 0.000025, 0, 0, gyroPIDSource, gyroPIDOutput);
 		
 		camera = CameraServer.getInstance().startAutomaticCapture(); //remember to add cameraserver stream viewer widget
 		camera.setResolution(640, 480);
 		
 		hal.gyro.calibrate();
+		hal.gearIntake.set(Value.kForward);
+
 	}
 
 	/**
@@ -162,15 +165,13 @@ public class Robot extends IterativeRobot {
     	
 		//what each button does
     	updateButtonStatus();
+    	if(extendGearIntakeRequest) {
+    		hal.gearIntake.set(Value.kForward);
+    	}
     	
-    	if (lightOffRequest) {
-    		hal.solenoid.set(Value.kOff);}
-    	
-    	if (reverseLightRequest) {
-    		hal.solenoid.set(Value.kReverse);}
-    	
-    	if (forwardLightRequest) {
-    		hal.solenoid.set(Value.kForward);}
+    	if(retractGearIntakeRequest) {
+     		hal.gearIntake.set(Value.kReverse);
+    	}
     	
     	if (gyroLockRequest) {
     		tdt.setDriveAngle(hal.gyro.angle()); //makes sure robot will move straight
@@ -194,14 +195,14 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during test mode
 	 */
 	@Override
+	
 	public void testPeriodic() {
 	}
 	
 	public void updateButtonStatus() {
 		//checks if button is pressed
-		lightOffRequest = hi.getLightsOff();
-		reverseLightRequest = hi.getReverseLight();
-		forwardLightRequest = hi.getForwardLight();
+		extendGearIntakeRequest = hi.getExtendGearIntake();
+		retractGearIntakeRequest = hi.getRetractGearIntake();
 		gyroLockRequest = hi.getGyroLock();
 		highGearRequest = hi.getHighGear();
 		lowGearRequest = hi.getLowGear();

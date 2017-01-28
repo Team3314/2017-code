@@ -12,27 +12,6 @@ public class HumanInput {
 		rightStick = new Joystick(1); //right attack3 stick
 		operator = new Joystick(2); //xbox controller
 	}
-	
-	public boolean getLightsOff() {
-		//returns whether operator wants to turn solenoid lights off
-		boolean result = false;
-		result = operator.getRawButton(2);
-		return result;
-	}
-	
-	public boolean getReverseLight() {
-		//returns whether operator wants to turn reverse light on
-		boolean result = false;
-		result = operator.getRawButton(5);
-		return result;
-	}
-	
-	public boolean getForwardLight() {
-		//returns whether operator wants to turn forward light on
-		boolean result = false;
-		result = operator.getRawButton(6);
-		return result;
-	}
 		
 	public boolean getGyroLock() {
 		//returns whether driver wants to turn gyrolock on
@@ -44,21 +23,35 @@ public class HumanInput {
 	public boolean getHighGear() {
 		//returns whether driver wants to be on high gear
 		boolean result = false;
-		result = leftStick.getRawButton();
+		result = leftStick.getRawButton(3);
 		return result;
 	}
 	
+	public boolean getExtendGearIntake() {
+		//returns whether driver wants to extend gear intake
+		boolean result = false;
+		result = operator.getRawButton(1);
+		return result;
+	}
+	
+	public boolean getRetractGearIntake() {
+		//returns whether driver wants to retract gear intake
+		boolean result = false;
+		result = operator.getRawButton(2);
+		return result;
+	}
+		
 	public boolean getLowGear() {
 		//returns whether driver wants to be on low gear
 		boolean result = false;
-		result = leftStick.getRawButton();
+		result = leftStick.getRawButton(2);
 		return result;
 	}
 	
 	public boolean getShoot() {
 		//returns whether operator wants to shoot
 		boolean result = false;
-		result = operator.getRawButton();
+		result = operator.getRawButton(6);
 		return result;
 	}
 }
