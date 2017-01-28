@@ -20,10 +20,10 @@ public class HardwareAbstractionLayer {
 	
 	//pneumatics
 	Compressor pcm1;
-	DoubleSolenoid solenoid;
+	DoubleSolenoid gearIntake;
 	DoubleSolenoid intake;
 	DoubleSolenoid driveShifter;
-	DoubleSolenoid extra2;
+	DoubleSolenoid extra;
 	
 	//analog + relay
 	CustomGyro gyro;
@@ -43,10 +43,10 @@ public class HardwareAbstractionLayer {
 		
 		//pneumatics
 		pcm1 = new Compressor(0);
-		solenoid = new DoubleSolenoid(0, 1);
+		gearIntake = new DoubleSolenoid(0, 1);
 		intake = new DoubleSolenoid(2, 3);
 		driveShifter = new DoubleSolenoid(4, 5);
-		extra2 = new DoubleSolenoid(6, 7);
+		extra = new DoubleSolenoid(6, 7);
 		
 		pcm1.setClosedLoopControl(true);
 		

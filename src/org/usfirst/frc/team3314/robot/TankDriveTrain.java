@@ -97,7 +97,6 @@ public class TankDriveTrain {
 			
 			rawLeftSpeed = desiredSpeed - (correction);
 			rawRightSpeed = desiredSpeed + (correction);
-
 			break;
 		}
 	}
