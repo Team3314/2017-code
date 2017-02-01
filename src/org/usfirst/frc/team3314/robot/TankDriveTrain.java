@@ -124,6 +124,7 @@ public class TankDriveTrain {
 				rawLeftSpeed *= 75; //placeholder rpm for low gear
 				rawRightSpeed *= 75;
 			}
+			break;
 		}
 	}
 	
