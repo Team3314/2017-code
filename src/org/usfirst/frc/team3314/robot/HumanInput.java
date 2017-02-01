@@ -27,6 +27,13 @@ public class HumanInput {
 		return result;
 	}
 	
+	public boolean getLowGear() {
+		//returns whether driver wants to be on low gear
+		boolean result = false;
+		result = leftStick.getRawButton(2);
+		return result;
+	}
+	
 	public boolean getExtendGearIntake() {
 		//returns whether driver wants to extend gear intake
 		boolean result = false;
@@ -40,11 +47,11 @@ public class HumanInput {
 		result = operator.getRawButton(2);
 		return result;
 	}
-		
-	public boolean getLowGear() {
-		//returns whether driver wants to be on low gear
+	
+	public boolean getFuelIntake() {
+		//returns whether driver wants balls to be taken in
 		boolean result = false;
-		result = leftStick.getRawButton(2);
+		result = rightStick.getRawButton(5);
 		return result;
 	}
 	
@@ -52,6 +59,13 @@ public class HumanInput {
 		//returns whether operator wants to shoot
 		boolean result = false;
 		result = operator.getRawButton(6);
+		return result;
+	}
+	
+	public boolean getFlashlight() {
+		//returns whether operator wants flashlight on
+		boolean result = false;
+		result = operator.getRawButton(3);
 		return result;
 	}
 }

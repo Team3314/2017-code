@@ -1,9 +1,8 @@
 package org.usfirst.frc.team3314.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-enum autoDTHBlueStates {
+enum autoDTHLeftStates {
 	START,
 	DRIVE1,
 	STOP1,
@@ -14,19 +13,19 @@ enum autoDTHBlueStates {
 }
 
 public class AutoDriveToHopperLeft {
-	autoDTHBlueStates currentState;
-	autoDTHBlueStates nextState;
+	autoDTHLeftStates currentState;
+	autoDTHLeftStates nextState;
 	Robot robot;
 	double time = 0; //times are placeholder for now
 	
 	public AutoDriveToHopperLeft(Robot myRobot) {
 		robot = myRobot;
-		currentState = autoDTHBlueStates.START;
+		currentState = autoDTHLeftStates.START;
 	}
 	
 	public void reset() {
 		//sets auto back to beginning
-		currentState = autoDTHBlueStates.START;
+		currentState = autoDTHLeftStates.START;
 	}
 	
 	public void update() {
@@ -46,33 +45,31 @@ public class AutoDriveToHopperLeft {
 		switch (currentState) {
 		case START:
 			robot.hal.gyro.reset();
-			nextState = autoDTHBlueStates.DRIVE1;
+			nextState = autoDTHLeftStates.DRIVE1;
 			break;
 		case DRIVE1:
 			if (/*robot.tdt.lDriveTalon1.getEncPosition() > &&*/ robot.tdt.rDriveTalon1.getEncPosition() > (108*robot.encoderConversionFactor)){
-			//enc pos is approx
-				nextState = autoDTHBlueStates.STOP1;
+				nextState = autoDTHLeftStates.STOP1;
 			}
 			break;
 		case STOP1:
 			if (time <= 0 ){
-				nextState = autoDTHBlueStates.DRIVE2;
+				nextState = autoDTHLeftStates.DRIVE2;
 			}
 			break;
 		case DRIVE2:
 			if (/*robot.tdt.lDriveTalon1.getEncPosition() > &&*/ robot.tdt.rDriveTalon1.getEncPosition() > (36*robot.encoderConversionFactor)){
-			//enc pos is placeholder
-				nextState = autoDTHBlueStates.STOP2;
+				nextState = autoDTHLeftStates.STOP2;
 			}
 			break;
 		case STOP2:
 			if (time <=0){
-				nextState = autoDTHBlueStates.SHOOT;
+				nextState = autoDTHLeftStates.SHOOT;
 			}
 			break;
 		case SHOOT:
 			if (time <=0){
-				nextState = autoDTHBlueStates.DONE;
+				nextState = autoDTHLeftStates.DONE;
 			}
 			break;
 		case DONE:
@@ -81,34 +78,34 @@ public class AutoDriveToHopperLeft {
 	}
 	
 	public void doTransition() {
-		if (currentState == autoDTHBlueStates.START && nextState == autoDTHBlueStates.DRIVE1) {
+		if (currentState == autoDTHLeftStates.START && nextState == autoDTHLeftStates.DRIVE1) {
 			//robot drives straight forward at max speed, 3 sec
 			robot.tdt.setDriveAngle(robot.hal.gyro.angle());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 150;
 		}
 		
-		if (currentState == autoDTHBlueStates.DRIVE1 && nextState == autoDTHBlueStates.STOP1) {
+		if (currentState == autoDTHLeftStates.DRIVE1 && nextState == autoDTHLeftStates.STOP1) {
 			//stops robot, 1/2 sec
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 25;
 		}
 		
-		if (currentState == autoDTHBlueStates.STOP1 && nextState == autoDTHBlueStates.DRIVE2) {
+		if (currentState == autoDTHLeftStates.STOP1 && nextState == autoDTHLeftStates.DRIVE2) {
 			//robot drives forward again at max speed but at angle of hopper, 1.5 sec
 			robot.tdt.setDriveAngle(-90);
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 75;
 		}
 		
-		if (currentState == autoDTHBlueStates.DRIVE2 && nextState == autoDTHBlueStates.STOP2) {
+		if (currentState == autoDTHLeftStates.DRIVE2 && nextState == autoDTHLeftStates.STOP2) {
 			//stops robot again, 1 sec
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 50;
 		}
 		
-		if (currentState == autoDTHBlueStates.STOP2 && nextState == autoDTHBlueStates.SHOOT){
-			//will shoot balls into the hopper
+		if (currentState == autoDTHLeftStates.STOP2 && nextState == autoDTHLeftStates.SHOOT){
+			//placeholder, will shoot balls into the hopper
 			time = 50;
 		}
 	}

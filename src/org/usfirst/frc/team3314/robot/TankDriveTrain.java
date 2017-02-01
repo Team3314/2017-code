@@ -9,21 +9,19 @@ import edu.wpi.first.wpilibj.PIDOutput;
 enum driveMode {
 	IDLE,
 	TANK,
-	GYROLOCK
+	GYROLOCK,
+	SPEEDCONTROL
 }
 
 public class TankDriveTrain {
+	Robot robot;
+	
 	CANTalon rDriveTalon1;
 	CANTalon rDriveTalon2;
 	CANTalon lDriveTalon1;
 	CANTalon lDriveTalon2;
 	
-	PIDController PID;
-	PIDSource PIDSource;
-	PIDOutput PIDOutput;
-	
-	Robot robot;
-	
+	double count;
 	double leftStickInput;
 	double rightStickInput;
 	double rawLeftSpeed;
@@ -32,6 +30,9 @@ public class TankDriveTrain {
 	double desiredAngle;
 	double gyroPconstant = 0.05;
 	
+	PIDController PID;
+	PIDSource PIDSource;
+	PIDOutput PIDOutput;
 	GyroPIDSource gyroPIDSource;
     GyroPIDOutput gyroPIDOutput;
     PIDController gyroControl;
@@ -53,14 +54,22 @@ public class TankDriveTrain {
 		lDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
 		rDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
 		
-		//gyroPIDSource = new GyroPIDSource(robot, robot.hi.rightStick.getY(), 0);
-		//gyroPIDOutput = new GyroPIDOutput();
-		//gyroControl = new PIDController(0.5, 0.000025, 0, 0, gyroPIDSource, gyroPIDOutput);
+		/*gyroPIDSource = new GyroPIDSource(robot, robot.hi.rightStick.getY(), 0);
+		gyroPIDOutput = new GyroPIDOutput();
+		gyroControl = new PIDController(0.5, 0.000025, 0, 0, gyroPIDSource, gyroPIDOutput);*/
 	}
 	
 	public void update() {
 		lDriveTalon1.set(rawLeftSpeed);
 		rDriveTalon1.set(rawRightSpeed);
+		
+		if (currentMode == driveMode.SPEEDCONTROL){
+			lDriveTalon1.changeControlMode(TalonControlMode.Speed);
+			rDriveTalon1.changeControlMode(TalonControlMode.Speed);
+		} else {
+			lDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
+			rDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
+		}
 		
 		switch(currentMode){
 		case IDLE:
@@ -74,7 +83,7 @@ public class TankDriveTrain {
 			rawRightSpeed = rightStickInput;
 			break;
 		case GYROLOCK:
- 			//motor speed determined by angle of robot relative to desired angle, uses pid loop
+ 			/*//motor speed determined by angle of robot relative to desired angle, uses pid loop
 			double currentAngle = robot.hal.gyro.angle();
 			double errorAngle = desiredAngle - currentAngle;
 			double correction;
@@ -96,8 +105,25 @@ public class TankDriveTrain {
 			//SmartDashboard.putNumber("Desired speed", desiredSpeed);
 			
 			rawLeftSpeed = desiredSpeed - (correction);
-			rawRightSpeed = desiredSpeed + (correction);
+			rawRightSpeed = desiredSpeed + (correction);*/
+			
+			//robot.gyroControl.setSetpoint(robot.hi.rightStick.getY());	
 			break;
+		case SPEEDCONTROL:
+			//motor speed is equivalent to desired rpm
+			
+			rawLeftSpeed = leftStickInput;
+			rawRightSpeed = rightStickInput;
+			
+			if (robot.hal.driveShifter.get().toString() == "kForward"){
+				rawLeftSpeed *= 200; //placeholder rpm for high gear
+				rawRightSpeed *= 200;
+				}
+				
+			if (robot.hal.driveShifter.get().toString() == "kReverse"){
+				rawLeftSpeed *= 75; //placeholder rpm for low gear
+				rawRightSpeed *= 75;
+			}
 		}
 	}
 	

@@ -50,7 +50,6 @@ public class AutoGearToPegRight {
 			break;
 		case DRIVE1:
 			if (/*robot.tdt.lDriveTalon1.getEncPosition() > &&*/ robot.tdt.rDriveTalon1.getEncPosition() > (75.25*robot.encoderConversionFactor)){
-			//enc pos is approx
 				nextState = autoGTPRightStates.STOP1;
 			}
 			break;
@@ -61,7 +60,6 @@ public class AutoGearToPegRight {
 			break;
 		case DRIVE2:
 			if (/*robot.tdt.lDriveTalon1.getEncPosition() > &&*/ robot.tdt.rDriveTalon1.getEncPosition() > (20*robot.encoderConversionFactor)){
-			//enc pos is placeholder
 				nextState = autoGTPRightStates.STOP2;
 			}
 			break;

@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -26,7 +25,13 @@ public class Robot extends IterativeRobot {
 	//auto classes
 	AutoNothing auto0;
 	AutoCrossBaseline auto1;
-	AutoGearToPegLeft auto2;
+	AutoGearToPeg auto2;
+	AutoGearToPegLeft auto3;
+	AutoGearToPegRight auto4;
+	AutoDriveToHopperLeft auto5;
+	AutoDriveToHopperRight auto6;
+	AutoGearHopperLeft auto7;
+	AutoGearHopperRight auto8;
 	
 	//misc
 	//PIDController control;
@@ -39,12 +44,12 @@ public class Robot extends IterativeRobot {
 	//button input
 	boolean extendGearIntakeRequest;
 	boolean retractGearIntakeRequest;
+	boolean fuelIntakeRequest;
 	boolean gyroLockRequest;
 	boolean highGearRequest;
 	boolean lowGearRequest;
 	boolean shootRequest;
-	boolean relayOn1Request;
-	boolean relayOn2Request;
+	boolean flashlightRequest;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -58,21 +63,26 @@ public class Robot extends IterativeRobot {
 		tdt = new TankDriveTrain(this);
 		auto0 = new AutoNothing(this);
 		auto1 = new AutoCrossBaseline(this);
-		auto2 = new AutoGearToPegLeft(this);
+		auto2 = new AutoGearToPeg(this);
+		auto3 = new AutoGearToPegLeft(this);
+		auto4 = new AutoGearToPegRight(this);
+		auto5 = new AutoDriveToHopperLeft(this);
+		auto6 = new AutoDriveToHopperRight(this);
+		auto7 = new AutoGearHopperLeft(this);
+		auto8 = new AutoGearHopperRight(this);
 		
 		//misc
 		//control = new PIDController(0.5, 0.000025, 0, 0, tdt.rDriveTalon1, tdt.rDriveTalon1);
-		//camera = new UsbCamera("Logitech", 0);
-		//gyroPIDSource = new GyroPIDSource(this, hi.rightStick.getY(), 0);
-		//gyroPIDOutput = new GyroPIDOutput();
-		//gyroControl = new PIDController(0.5, 0.000025, 0, 0, gyroPIDSource, gyroPIDOutput);
+		gyroPIDSource = new GyroPIDSource(this,0 ,hi.rightStick.getY());
+		gyroPIDOutput = new GyroPIDOutput();
+		gyroControl = new PIDController(1, 0.5, 0, .1, gyroPIDSource, gyroPIDOutput);
 		
+		//camera = new UsbCamera("Logitech", 0);
 		camera = CameraServer.getInstance().startAutomaticCapture(); //remember to add cameraserver stream viewer widget
 		camera.setResolution(640, 480);
 		
 		hal.gyro.calibrate();
 		hal.gearIntake.set(Value.kForward);
-
 	}
 
 	/**
@@ -91,7 +101,6 @@ public class Robot extends IterativeRobot {
 		/*autonomous reset*/
 		tdt.setDriveMode(driveMode.GYROLOCK);
 		hal.gyro.reset();
-		//gyroControl.enable();
 		
 		tdt.lDriveTalon1.setPosition(0);
 		tdt.rDriveTalon1.setPosition(0);
@@ -111,19 +120,16 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		SmartDashboard.putNumber("Ticks", tdt.rDriveTalon1.getPosition());
-    	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
     	SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    
-		//SmartDashboard.putNumber("PID setpoint", gyroControl.getSetpoint());
-		//SmartDashboard.putNumber("PID output", gyroPIDSource.pidGet());
+    	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
+		SmartDashboard.putNumber("Ticks", tdt.rDriveTalon1.getPosition());
     	
     	hal.gyro.update();
     	
 		/* goes thru auto states */
 		//auto1.update();
 		tdt.update();
-		//gyroControl.setSetpoint(hi.rightStick.getY());
 		
 		/* pid code*/
 		//tdt.rDriveTalon1.set(2048);
@@ -150,6 +156,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		tdt.setDriveMode(driveMode.TANK);
 		hal.gyro.reset();
+		gyroControl.enable();
 	}
 
 	/**
@@ -160,11 +167,21 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
+		SmartDashboard.putNumber("PID setpoint", gyroControl.getSetpoint());
+		SmartDashboard.putNumber("PID output", gyroPIDSource.pidGet());
+    	
+    	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
+    	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
+    	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
+    	//SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
+    	
     	
     	hal.gyro.update();
+    	gyroPIDSource.setPIDInput(0, hi.rightStick.getY());
+    	//gyroControl.setSetpoint(hi.rightStick.getY());
     	
 		//joystick input
-		tdt.setStickInputs(hi.operator.getRawAxis(1), hi.operator.getRawAxis(5)); 
+		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
 		tdt.update();
     	
 		//what each button does
@@ -177,34 +194,42 @@ public class Robot extends IterativeRobot {
      		hal.gearIntake.set(Value.kReverse);
     	}
     	
+    	if(fuelIntakeRequest) {
+    		hal.intakeSpark.set(1);
+    	} else {
+    		if (!fuelIntakeRequest) {
+    		hal.intakeSpark.set(0);
+    		}
+    	}
+    	
     	if (gyroLockRequest) {
-    		tdt.setDriveAngle(hal.gyro.angle()); //makes sure robot will move straight
     		tdt.setDriveMode(driveMode.GYROLOCK);
+    		tdt.setDriveAngle(hal.gyro.angle()); //makes sure robot will move straight
     		tdt.setDriveTrainSpeed(hi.rightStick.getY()); //moving speed dependent on right stick
+    	} else {
+    		if (!gyroLockRequest) {
+    			tdt.setDriveMode(driveMode.TANK);
+    		}
     	}
     	
     	if (highGearRequest) {
-    		hal.driveShifter.set(Value.kReverse);
+    		hal.driveShifter.set(Value.kForward);
     	}
     	
     	if (lowGearRequest) {
-    		hal.driveShifter.set(Value.kForward);
+    		hal.driveShifter.set(Value.kReverse);
     	}
     	
     	if (shootRequest) {
     	}
     	
-    	if(relayOn1Request) {
-    		hal.flashlight.set(Relay.Value.kForward);
+    	if(flashlightRequest) {
+    		hal.flashlight.set(true);
+    	} else {
+    		if(!flashlightRequest) {
+    		hal.flashlight.set(false);
+    		}
     	}
-    	else
-    		if (relayOn2Request) {
-    		hal.flashlight.set(Relay.Value.kReverse);
-    	}
-    		else
-    			if( !relayOn1Request && !relayOn2Request) {
-    				hal.flashlight.set(Relay.Value.kOff);
-    			}
     }
 		
 	/**
@@ -219,9 +244,11 @@ public class Robot extends IterativeRobot {
 		//checks if button is pressed
 		extendGearIntakeRequest = hi.getExtendGearIntake();
 		retractGearIntakeRequest = hi.getRetractGearIntake();
+		fuelIntakeRequest = hi.getFuelIntake();
 		gyroLockRequest = hi.getGyroLock();
 		highGearRequest = hi.getHighGear();
 		lowGearRequest = hi.getLowGear();
 		shootRequest = hi.getShoot();
+		flashlightRequest = hi.getFlashlight();
 	}
 }
