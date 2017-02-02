@@ -51,12 +51,19 @@ public class TankDriveTrain {
 		lDriveTalon2.set(lDriveTalon1.getDeviceID());
 		rDriveTalon2.changeControlMode(TalonControlMode.Follower);
 		rDriveTalon2.set(rDriveTalon1.getDeviceID());
+		
 		lDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
 		rDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
+		lDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		
 		/*gyroPIDSource = new GyroPIDSource(robot, robot.hi.rightStick.getY(), 0);
 		gyroPIDOutput = new GyroPIDOutput();
 		gyroControl = new PIDController(0.5, 0.000025, 0, 0, gyroPIDSource, gyroPIDOutput);*/
+		
+		//to make speedcontrol work goodly
+		lDriveTalon1.configEncoderCodesPerRev(497);
+		rDriveTalon1.configEncoderCodesPerRev(497);
 	}
 	
 	public void update() {
@@ -83,7 +90,7 @@ public class TankDriveTrain {
 			rawRightSpeed = rightStickInput;
 			break;
 		case GYROLOCK:
- 			/*//motor speed determined by angle of robot relative to desired angle, uses pid loop
+ 			/*//motor speed determined by angle of robot relative to desired angle, pid broken atm
 			double currentAngle = robot.hal.gyro.angle();
 			double errorAngle = desiredAngle - currentAngle;
 			double correction;
@@ -111,6 +118,8 @@ public class TankDriveTrain {
 			break;
 		case SPEEDCONTROL:
 			//motor speed is equivalent to desired rpm
+			lDriveTalon1.setPID(1,0.01,0,3,0,0,0);
+			rDriveTalon1.setPID(1,0.01,0,3,0,0,0);
 			
 			rawLeftSpeed = leftStickInput;
 			rawRightSpeed = rightStickInput;

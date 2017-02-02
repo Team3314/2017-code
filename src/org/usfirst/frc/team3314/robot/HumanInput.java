@@ -19,6 +19,13 @@ public class HumanInput {
 		result = rightStick.getRawButton(1);
 		return result;
 	}
+	
+	public boolean getSpeedControl() {
+		//returns whether driver wants to turn speedcontrol on
+		boolean result = false;
+		result = leftStick.getRawButton(1);
+		return result;
+	}
 		
 	public boolean getHighGear() {
 		//returns whether driver wants to be on high gear

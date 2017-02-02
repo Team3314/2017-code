@@ -46,6 +46,7 @@ public class Robot extends IterativeRobot {
 	boolean retractGearIntakeRequest;
 	boolean fuelIntakeRequest;
 	boolean gyroLockRequest;
+	boolean speedControlRequest;
 	boolean highGearRequest;
 	boolean lowGearRequest;
 	boolean shootRequest;
@@ -120,7 +121,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-    	SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
+		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
 		SmartDashboard.putNumber("Ticks", tdt.rDriveTalon1.getPosition());
@@ -157,6 +158,7 @@ public class Robot extends IterativeRobot {
 		tdt.setDriveMode(driveMode.TANK);
 		hal.gyro.reset();
 		gyroControl.enable();
+		hal.driveShifter.set(Value.kReverse);
 	}
 
 	/**
@@ -169,6 +171,7 @@ public class Robot extends IterativeRobot {
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
 		SmartDashboard.putNumber("PID setpoint", gyroControl.getSetpoint());
 		SmartDashboard.putNumber("PID output", gyroPIDSource.pidGet());
+		SmartDashboard.putNumber("RPM", tdt.lDriveTalon1.getSpeed());
     	
     	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
     	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
@@ -212,6 +215,14 @@ public class Robot extends IterativeRobot {
     		}
     	}
     	
+    	if (speedControlRequest) {
+    		tdt.setDriveMode(driveMode.SPEEDCONTROL);
+    	} else {
+    		if (!speedControlRequest) {
+    			tdt.setDriveMode(driveMode.TANK);
+    		}
+    	}
+    	
     	if (highGearRequest) {
     		hal.driveShifter.set(Value.kForward);
     	}
@@ -246,6 +257,7 @@ public class Robot extends IterativeRobot {
 		retractGearIntakeRequest = hi.getRetractGearIntake();
 		fuelIntakeRequest = hi.getFuelIntake();
 		gyroLockRequest = hi.getGyroLock();
+		speedControlRequest = hi.getSpeedControl();
 		highGearRequest = hi.getHighGear();
 		lowGearRequest = hi.getLowGear();
 		shootRequest = hi.getShoot();
