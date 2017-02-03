@@ -9,6 +9,10 @@ public class Constants {
 	public static double kHighGear; //rpm for high gear
 	public static double kLowGear; //rpm for low gear
 	
+	//Solenoid states
+	public static String kShiftHighGear;
+	public static String kShiftLowGear;
+	
 	//gyrolock pidcontroller
 	public static double kGyroLock_kP;
 	public static double kGyroLock_kI;
@@ -38,6 +42,10 @@ public class Constants {
 		kEncConvFactor = 81.92;
 		kHighGear = 200;
 		kLowGear = 75;
+		
+		//Solenoid States
+		kShiftHighGear = "kForward";
+		kShiftLowGear = "kReverse";
 		
 		//speedcontrol pid
 		kSpeedControl_kP = 1;
