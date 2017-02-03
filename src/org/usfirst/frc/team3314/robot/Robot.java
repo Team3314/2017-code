@@ -185,11 +185,11 @@ public class Robot extends IterativeRobot {
     	}
     	
     	if (highGearRequest) {
-    		hal.driveShifter.set(Value.kForward);
+    		hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
     	}
     	
     	if (lowGearRequest) {
-    		hal.driveShifter.set(Value.kReverse);
+    		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
     	}
     	
     	if (shootRequest) {
