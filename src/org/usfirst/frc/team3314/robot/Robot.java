@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3314.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -19,6 +21,7 @@ public class Robot extends IterativeRobot {
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
 	TankDriveTrain tdt;
+	AHRS ahrs;
 	
 	//auto classes
 	AutoNothing auto0;
@@ -32,9 +35,6 @@ public class Robot extends IterativeRobot {
 	AutoGearHopperRight auto8;
 	
 	//misc
-	GyroPIDSource gyroPIDSource;
-    GyroPIDOutput gyroPIDOutput;
-    PIDController gyroControl;
 	UsbCamera camera;
 	
 	//button input
@@ -70,18 +70,7 @@ public class Robot extends IterativeRobot {
 		auto7 = new AutoGearHopperLeft(this);
 		auto8 = new AutoGearHopperRight(this);
 		
-		//misc
-		/*some placeholder pid values = 0.5, 0.000025, 0, 0
-		gyroPIDSource = new GyroPIDSource(this,0 ,hi.rightStick.getY());
-		gyroPIDOutput = new GyroPIDOutput();
-		gyroControl = new PIDController(1, 0.5, 0, .1, gyroPIDSource, gyroPIDOutput);*/
 		
-		/*
-		camera = new UsbCamera("Logitech", 0);
-		camera = CameraServer.getInstance().startAutomaticCapture(); //remember to add cameraserver stream viewer widget
-		camera.setResolution(640, 480);*/
-		
-		hal.gyro.calibrate();
 		hal.gearIntake.set(Value.kForward);
 	}
 
@@ -95,7 +84,12 @@ public class Robot extends IterativeRobot {
 	 * You can add additional auto modes by adding additional comparisons to the
 	 * switch structure below with additional strings. If using the
 	 * SendableChooser make sure to add them to the chooser code above as well.
+	 * 
 	 */
+	public void disabledInit() {
+		ahrs.reset();
+	}
+	
 	@Override
 	public void autonomousInit() {
 		//sets to gyrolock + low gear
@@ -103,7 +97,7 @@ public class Robot extends IterativeRobot {
 		hal.driveShifter.set(Value.kReverse);
 		
 		//resets all values then auto
-		hal.gyro.reset();
+		ahrs.reset();
 		tdt.lDriveTalon1.setPosition(0);
 		tdt.rDriveTalon1.setPosition(0);
 		tdt.setDriveTrainSpeed(0);
@@ -115,8 +109,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-    	hal.gyro.update();
-    	
 		//goes thru auto states
 		//auto1.update();
 		tdt.update();
@@ -130,7 +122,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		//sets to tank, resets gyro, ensures robot is in low gear
 		tdt.setDriveMode(driveMode.TANK);
-		hal.gyro.reset();
+		ahrs.reset();
 		//gyroControl.enable();
 		hal.driveShifter.set(Value.kReverse);
 	}
@@ -140,10 +132,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override		
 	public void teleopPeriodic() {
-		hal.gyro.update();
-    	//gyroPIDSource.setPIDInput(0, hi.rightStick.getY());
-    	//gyroControl.setSetpoint(hi.rightStick.getY());
-    	
 		//joystick input
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
 		tdt.update();
@@ -168,7 +156,7 @@ public class Robot extends IterativeRobot {
     	
     	if (gyroLockRequest) {
     		tdt.setDriveMode(driveMode.GYROLOCK);
-    		tdt.setDriveAngle(hal.gyro.angle()); //makes sure robot will move straight
+    		tdt.setDriveAngle(ahrs.getYaw()); //makes sure robot will move straight
     		tdt.setDriveTrainSpeed(hi.rightStick.getY()); //moving speed dependent on right stick
     	} else {
     		if (!gyroLockRequest) {
@@ -204,8 +192,7 @@ public class Robot extends IterativeRobot {
     		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
     		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
         	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
-    		SmartDashboard.putNumber("PID setpoint", gyroControl.getSetpoint());
-    		SmartDashboard.putNumber("PID output", gyroPIDSource.pidGet());
+    		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
     		SmartDashboard.putNumber("RPM", tdt.lDriveTalon1.getSpeed());
         	
         	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());

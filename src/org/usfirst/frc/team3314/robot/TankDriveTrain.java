@@ -30,10 +30,6 @@ public class TankDriveTrain {
 	double desiredAngle;
 	
 	//for gyrolock
-	PIDController PID;
-	PIDSource PIDSource;
-	PIDOutput PIDOutput;
-	GyroPIDSource gyroPIDSource;
     GyroPIDOutput gyroPIDOutput;
     PIDController gyroControl;
 	
@@ -57,9 +53,8 @@ public class TankDriveTrain {
 		lDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		
-		/*gyroPIDSource = new GyroPIDSource(robot, robot.hi.rightStick.getY(), 0);
 		gyroPIDOutput = new GyroPIDOutput();
-		gyroControl = new PIDController(0.5, 0.000025, 0, 0, gyroPIDSource, gyroPIDOutput);*/
+		gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD, Constants.kGyroLock_kF, robot.ahrs, gyroPIDOutput);
 		
 		//to make speedcontrol work goodly
 		lDriveTalon1.configEncoderCodesPerRev(497);
@@ -90,33 +85,11 @@ public class TankDriveTrain {
 			rawRightSpeed = rightStickInput;
 			break;
 		case GYROLOCK:
- 			//motor speed determined by angle of robot relative to desired angle, pid broken atm
-			double currentAngle = robot.hal.gyro.angle();
-			double errorAngle = desiredAngle - currentAngle;
-			double correction;
-			
-			//keeps error between -180 and 180
-			errorAngle = errorAngle % 360;
-			while (errorAngle > 180){
-				errorAngle -= 360;
-			}
-			while (errorAngle < -180){
-				errorAngle += 360;
-			}
-			
-			correction = errorAngle * 0.05; //0.05 is old gyroPconstant
-			
-			rawLeftSpeed = desiredSpeed - (correction);
-			rawRightSpeed = desiredSpeed + (correction);
-			
-			//SmartDashboard.putNumber("Error angle", errorAngle);
-			//SmartDashboard.putNumber("Correction", correction);
-			//SmartDashboard.putNumber("Desired angle", desiredAngle);
-			//SmartDashboard.putNumber("Desired speed", desiredSpeed);
-			
-			
-			
-			//robot.gyroControl.setSetpoint(robot.hi.rightStick.getY());	
+ 			rawLeftSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
+ 			rawRightSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
+ 			
+ 			gyroControl.setSetpoint(desiredAngle);	
+ 		
 			break;
 		case SPEEDCONTROL:
 			//motor speed is equivalent to desired rpm
