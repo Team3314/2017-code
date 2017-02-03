@@ -131,12 +131,12 @@ public class TankDriveTrain {
 			rawLeftSpeed = leftStickInput;
 			rawRightSpeed = rightStickInput;
 			
-			if (robot.hal.driveShifter.get().toString() == "kForward"){
+			if (robot.hal.driveShifter.get().toString() ==  Constants.kShiftHighGear){
 				rawLeftSpeed *= Constants.kHighGear; //high gear
 				rawRightSpeed *= Constants.kHighGear;
 				}
 				
-			if (robot.hal.driveShifter.get().toString() == "kReverse"){
+			if (robot.hal.driveShifter.get().toString() == Constants.kShiftLowGear){
 				rawLeftSpeed *= Constants.kLowGear; //low gear
 				rawRightSpeed *= Constants.kLowGear;
 			}
