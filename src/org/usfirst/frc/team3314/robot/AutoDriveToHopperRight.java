@@ -48,7 +48,7 @@ public class AutoDriveToHopperRight {
 			nextState = autoDTHRightStates.DRIVE1;
 			break;
 		case DRIVE1:
-			if (/*robot.tdt.lDriveTalon1.getEncPosition() > &&*/ robot.tdt.rDriveTalon1.getEncPosition() > (108*robot.encoderConversionFactor)){
+			if (Constants.kAvgEncPos > (108*Constants.kEncConvFactor)){
 				nextState = autoDTHRightStates.STOP1;
 			}
 			break;
@@ -58,7 +58,7 @@ public class AutoDriveToHopperRight {
 			}
 			break;
 		case DRIVE2:
-			if (/*robot.tdt.lDriveTalon1.getEncPosition() > &&*/ robot.tdt.rDriveTalon1.getEncPosition() > (32*robot.encoderConversionFactor)){
+			if (Constants.kAvgEncPos > (32*Constants.kEncConvFactor)){
 				nextState = autoDTHRightStates.STOP2;
 			}
 			break;

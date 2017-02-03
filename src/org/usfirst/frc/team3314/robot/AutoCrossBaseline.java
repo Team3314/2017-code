@@ -13,9 +13,6 @@ public class AutoCrossBaseline {
 	autoCrossBaselineStates currentState;
 	autoCrossBaselineStates nextState;
 	Robot robot;
-	//double tolerance = 5;
-	//double distance;
-	//double desiredDistance;
 	double time = 0;
 
 	public AutoCrossBaseline(Robot myRobot) {
@@ -48,7 +45,7 @@ public class AutoCrossBaseline {
 			nextState = autoCrossBaselineStates.DRIVE;
 			break;
 		case DRIVE:
-			if (/*robot.tdt.lDriveTalon1.getEncPosition() > &&*/ robot.tdt.rDriveTalon1.getEncPosition() > (93.25*robot.encoderConversionFactor)){
+			if (Constants.kAvgEncPos > (93.25*Constants.kEncConvFactor)){
 				nextState = autoCrossBaselineStates.STOP;
 			}
 			break;

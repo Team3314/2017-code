@@ -3,7 +3,6 @@ package org.usfirst.frc.team3314.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 enum autoNothingStates {
-	//just starts and finishes (nothing)
 	START,
 	DONE
 }
@@ -37,7 +36,6 @@ public class AutoNothing {
 	public void calcNext() {
 		nextState = currentState;
 		
-		//all go to next state immediately
 		switch (currentState) {
 		case START:
 			nextState = autoNothingStates.DONE;
