@@ -15,7 +15,7 @@ public class Turret {
 	}
 	
 	public void update() {
-		//sets mode+feedback device to ensure pid will work, then talon turns motor to target
+		//sets mode + feedback device to ensure pid will work, then talon turns motor to target
 		robot.hal.turretTalon.changeControlMode(TalonControlMode.Position);
 		robot.hal.turretTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		robot.hal.turretTalon.set(desiredTarget);

@@ -1,7 +1,6 @@
 package org.usfirst.frc.team3314.robot;
 
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PIDController;
@@ -16,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class Robot extends IterativeRobot {
-	//1 inch = 81.92 enc ticks
 	//some classes
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
@@ -34,12 +32,10 @@ public class Robot extends IterativeRobot {
 	AutoGearHopperRight auto8;
 	
 	//misc
-	//PIDController control;
 	GyroPIDSource gyroPIDSource;
     GyroPIDOutput gyroPIDOutput;
     PIDController gyroControl;
 	UsbCamera camera;
-	double encoderConversionFactor = 81.92;
 	
 	//button input
 	boolean extendGearIntakeRequest;
@@ -58,10 +54,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		//all classes
+		//some classes
 		hal = new HardwareAbstractionLayer(this);
 		hi = new HumanInput();
 		tdt = new TankDriveTrain(this);
+		
+		//auto classes
 		auto0 = new AutoNothing(this);
 		auto1 = new AutoCrossBaseline(this);
 		auto2 = new AutoGearToPeg(this);
@@ -73,14 +71,15 @@ public class Robot extends IterativeRobot {
 		auto8 = new AutoGearHopperRight(this);
 		
 		//misc
-		//control = new PIDController(0.5, 0.000025, 0, 0, tdt.rDriveTalon1, tdt.rDriveTalon1);
+		/*some placeholder pid values = 0.5, 0.000025, 0, 0
 		gyroPIDSource = new GyroPIDSource(this,0 ,hi.rightStick.getY());
 		gyroPIDOutput = new GyroPIDOutput();
-		gyroControl = new PIDController(1, 0.5, 0, .1, gyroPIDSource, gyroPIDOutput);
+		gyroControl = new PIDController(1, 0.5, 0, .1, gyroPIDSource, gyroPIDOutput);*/
 		
-		//camera = new UsbCamera("Logitech", 0);
+		/*
+		camera = new UsbCamera("Logitech", 0);
 		camera = CameraServer.getInstance().startAutomaticCapture(); //remember to add cameraserver stream viewer widget
-		camera.setResolution(640, 480);
+		camera.setResolution(640, 480);*/
 		
 		hal.gyro.calibrate();
 		hal.gearIntake.set(Value.kForward);
@@ -99,21 +98,16 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		/*autonomous reset*/
+		//sets to gyrolock + low gear
 		tdt.setDriveMode(driveMode.GYROLOCK);
-		hal.gyro.reset();
+		hal.driveShifter.set(Value.kReverse);
 		
+		//resets all values then auto
+		hal.gyro.reset();
 		tdt.lDriveTalon1.setPosition(0);
 		tdt.rDriveTalon1.setPosition(0);
 		tdt.setDriveTrainSpeed(0);
-		
 		auto1.reset();
-		
-		/*pid code*/
-		//control.enable();
-		//tdt.rDriveTalon1.changeControlMode(TalonControlMode.Position);
-		//tdt.rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		//tdt.rDriveTalon1.setPID(0.5, 0.000025, 0, 0, 0, 0, 0);
 	}
 
 	/**
@@ -121,43 +115,23 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+    	hal.gyro.update();
+    	
+		//goes thru auto states
+		//auto1.update();
+		tdt.update();
+		
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
 		SmartDashboard.putNumber("Ticks", tdt.rDriveTalon1.getPosition());
-    	
-    	hal.gyro.update();
-    	
-		/* goes thru auto states */
-		//auto1.update();
-		tdt.update();
-		
-		/* pid code*/
-		//tdt.rDriveTalon1.set(2048);
-	
-		//motor set to encoder tick pos
-		//2048 encoder ticks = 1 revolution
-	
-		/*else {
-		if (talon.getEncPosition() < 2000) {
-			talon.set(0.3);
-		} else {
-			talon.set(0);}*/
-		
-		//timer
-		//50 loops = 1 second
-		/*if(time < 250){
-			talon.set(1);
-			time++;
-		}
-			talon.set(0);
-	}*/
 		}
 		
 	public void teleopInit() {
+		//sets to tank, resets gyro, ensures robot is in low gear
 		tdt.setDriveMode(driveMode.TANK);
 		hal.gyro.reset();
-		gyroControl.enable();
+		//gyroControl.enable();
 		hal.driveShifter.set(Value.kReverse);
 	}
 
@@ -166,21 +140,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override		
 	public void teleopPeriodic() {
-		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
-		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
-    	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
-		SmartDashboard.putNumber("PID setpoint", gyroControl.getSetpoint());
-		SmartDashboard.putNumber("PID output", gyroPIDSource.pidGet());
-		SmartDashboard.putNumber("RPM", tdt.lDriveTalon1.getSpeed());
-    	
-    	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
-    	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
-    	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
-    	//SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
-    	
-    	
-    	hal.gyro.update();
-    	gyroPIDSource.setPIDInput(0, hi.rightStick.getY());
+		hal.gyro.update();
+    	//gyroPIDSource.setPIDInput(0, hi.rightStick.getY());
     	//gyroControl.setSetpoint(hi.rightStick.getY());
     	
 		//joystick input
@@ -239,6 +200,18 @@ public class Robot extends IterativeRobot {
     	} else {
     		if(!flashlightRequest) {
     		hal.flashlight.set(false);
+    		
+    		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
+    		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
+        	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
+    		SmartDashboard.putNumber("PID setpoint", gyroControl.getSetpoint());
+    		SmartDashboard.putNumber("PID output", gyroPIDSource.pidGet());
+    		SmartDashboard.putNumber("RPM", tdt.lDriveTalon1.getSpeed());
+        	
+        	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
+        	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
+        	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
+        	//SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
     		}
     	}
     }

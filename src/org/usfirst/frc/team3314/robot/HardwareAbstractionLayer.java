@@ -20,7 +20,7 @@ public class HardwareAbstractionLayer {
 	Spark agitatorSpark2;
 	
 	//digital io
-	DigitalInput autoSelect;
+	DigitalInput autoSelect; //choose autos with physical binary switches
 	DigitalInput autoSelect2;
 	DigitalInput autoSelect3;
 	DigitalInput autoSelect4;
