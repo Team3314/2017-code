@@ -72,6 +72,8 @@ public class Robot extends IterativeRobot {
 		auto7 = new AutoGearHopperLeft(this);
 		auto8 = new AutoGearHopperRight(this);
 		
+		AHRS ahrs = new AHRS(SPI.Port.kMXP);
+		
 		//misc
 		//some placeholder pid values = 0.5, 0.000025, 0, 0
 		
