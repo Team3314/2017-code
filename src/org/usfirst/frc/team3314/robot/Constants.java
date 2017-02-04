@@ -3,7 +3,7 @@ package org.usfirst.frc.team3314.robot;
 public class Constants {
 	Robot robot;
 	
-	//misc tank drive train
+	//tankdrivetrain
 	public static double kAvgEncPos; //average of left + right drive talon encoder positions
 	public static double kEncConvFactor; //conversion from inches to encoder ticks
 	public static double kHighGearRPM; //rpm for high gear
@@ -29,6 +29,23 @@ public class Constants {
 	public static double kTurret_kI;
 	public static double kTurret_kD;
 	public static double kTurret_kF;
+	
+	//adjust pidcontroller
+	public static double kAdjust_kP;
+	public static double kAdjust_kI;
+	public static double kAdjust_kD;
+	public static double kAdjust_kF;
+	
+	//shooter (pid + other values)
+	public static double kShooter_kP;
+	public static double kShooter_kI;
+	public static double kShooter_kD;
+	public static double kShooter_kF;
+	public static int kShooter_IZone;
+	public static double kShooter_RampRate;
+	public static int kShooter_Profile;
+	public static double kShooter_TargetRPM;
+	public static double kShooter_IndexSensorThreshold;
 	
 	//speedcontrol pid
 	public static double kSpeedControl_kP;
@@ -68,6 +85,23 @@ public class Constants {
 		kTurret_kI = 0;
 		kTurret_kD = 0;
 		kTurret_kF = 0;
+		
+		//adjust pidcontroller, placeholders
+		kAdjust_kP = 0;
+		kAdjust_kI = 0;
+		kAdjust_kD = 0;
+		kAdjust_kF = 0;
+		
+		//shooter, placeholders
+		kShooter_kP = 1;
+		kShooter_kI = 0.01;
+		kShooter_kD = 0;
+		kShooter_kF = 3;
+		kShooter_IZone = 0;
+		kShooter_RampRate = 0;
+		kShooter_Profile = 0;
+		kShooter_TargetRPM = 5000;
+		kShooter_IndexSensorThreshold = 2;
 		
 		//speedcontrol pid
 		kSpeedControl_kP = 1;

@@ -1,8 +1,10 @@
 package org.usfirst.frc.team3314.robot;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -30,6 +32,9 @@ public class HardwareAbstractionLayer {
 	DoubleSolenoid gearIntake;
 	DoubleSolenoid driveShifter;
 	Solenoid flashlight;
+	
+	//misc
+	AnalogInput indexSensor;
 
 	public HardwareAbstractionLayer(Robot r){
 		robot = r;
@@ -42,6 +47,11 @@ public class HardwareAbstractionLayer {
 		indexSpark = new Spark(1);
 		agitatorSpark1 = new Spark(2);
 		agitatorSpark2 = new Spark(3);
+		
+		shooterTalon.configEncoderCodesPerRev(2048);
+		shooterTalon.changeControlMode(TalonControlMode.Speed);
+		shooterTalon.setPID(Constants.kShooter_kP, Constants.kShooter_kI, Constants.kShooter_kD,
+		Constants.kShooter_kF, Constants.kShooter_IZone, Constants.kShooter_RampRate, Constants.kShooter_Profile);
 		
 		//digital io
 		autoSelect = new DigitalInput(0);
@@ -56,5 +66,8 @@ public class HardwareAbstractionLayer {
 		flashlight = new Solenoid(4);
 		
 		pcm1.setClosedLoopControl(true);
+		
+		//misc
+		indexSensor = new AnalogInput(0);
 	}
 }

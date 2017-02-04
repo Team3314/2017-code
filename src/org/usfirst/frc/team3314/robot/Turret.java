@@ -9,16 +9,17 @@ public class Turret {
 	double desiredTarget;
 	
 	public Turret(Robot myRobot) {
-		//puts turret on pid loop w/ source being encoder on the turret talon and the output being the talon itself
+		//source = encoder on turret talon; output = talon itself
 		robot = myRobot;
 		turretController = new PIDController(Constants.kTurret_kP, Constants.kTurret_kI, Constants.kTurret_kD,
 		Constants.kTurret_kF, robot.hal.turretTalon, robot.hal.turretTalon);
+		
+		robot.hal.turretTalon.changeControlMode(TalonControlMode.Position);
+		robot.hal.turretTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 	}
 	
 	public void update() {
-		//sets mode + feedback device to ensure pid will work, then talon turns motor to target
-		robot.hal.turretTalon.changeControlMode(TalonControlMode.Position);
-		robot.hal.turretTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		//talon turns motor to target
 		robot.hal.turretTalon.set(desiredTarget);
 	}
 }

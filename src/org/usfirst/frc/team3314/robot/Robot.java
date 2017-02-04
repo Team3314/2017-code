@@ -19,7 +19,7 @@ public class Robot extends IterativeRobot {
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
 	TankDriveTrain tdt;
-	AHRS ahrs;
+	ShooterStateMachine shooter;
 	
 	//auto classes
 	AutoNothing auto0;
@@ -34,6 +34,7 @@ public class Robot extends IterativeRobot {
 	
 	//misc
 	UsbCamera camera;
+	AHRS ahrs;
 	
 	//button input
 	boolean extendGearIntakeRequest;
@@ -49,6 +50,7 @@ public class Robot extends IterativeRobot {
 	boolean lastGyroLock = false;
 	
 	double last_world_linear_accel_y;
+	double time = 0;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -60,6 +62,7 @@ public class Robot extends IterativeRobot {
 		hal = new HardwareAbstractionLayer(this);
 		hi = new HumanInput();
 		tdt = new TankDriveTrain(this);
+		shooter = new ShooterStateMachine(this);
 		
 		//auto classes
 		auto0 = new AutoNothing(this);
@@ -71,8 +74,6 @@ public class Robot extends IterativeRobot {
 		auto6 = new AutoDriveToHopperRight(this);
 		auto7 = new AutoGearHopperLeft(this);
 		auto8 = new AutoGearHopperRight(this);
-		
-		AHRS ahrs = new AHRS(SPI.Port.kMXP);
 		
 		//misc
 		//some placeholder pid values = 0.5, 0.000025, 0, 0
@@ -165,15 +166,15 @@ public class Robot extends IterativeRobot {
     	
     	if (gyroLockRequest) {
     		if (!lastGyroLock) {
-			tdt.gyroControl.enable();
+    			tdt.gyroControl.enable();
     			tdt.setDriveMode(driveMode.GYROLOCK);
     			tdt.setDriveAngle(ahrs.getYaw()); //makes sure robot will move straight
     		}
     		tdt.setDriveTrainSpeed(hi.rightStick.getY()); //moving speed dependent on right stick
-    	} 
-	else {
+    	}
+    	else {
     		tdt.setDriveMode(driveMode.TANK);
-		tdt.gyroControl.free();
+    		tdt.gyroControl.free();
     	}
     	
     	if (speedControlRequest) {
@@ -191,7 +192,13 @@ public class Robot extends IterativeRobot {
     	}
     	
     	if (shootRequest) {
+    		shooter.reset();
+    		shooter.update();
     	}
+    	else if (!shootRequest) {
+    		shooter.stopShoot();
+    		shooter.reset();
+    		}
     	
     	if(flashlightRequest) {
     		hal.flashlight.set(Constants.kFlashlightOn);
