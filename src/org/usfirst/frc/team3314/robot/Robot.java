@@ -163,12 +163,15 @@ public class Robot extends IterativeRobot {
     	
     	if (gyroLockRequest) {
     		if (!lastGyroLock) {
+			tdt.gyroControl.enable();
     			tdt.setDriveMode(driveMode.GYROLOCK);
     			tdt.setDriveAngle(ahrs.getYaw()); //makes sure robot will move straight
     		}
     		tdt.setDriveTrainSpeed(hi.rightStick.getY()); //moving speed dependent on right stick
-    	} else {
-    			tdt.setDriveMode(driveMode.TANK);
+    	} 
+	else {
+    		tdt.setDriveMode(driveMode.TANK);
+		tdt.gyroControl.free();
     	}
     	
     	if (speedControlRequest) {
