@@ -89,29 +89,6 @@ public class TankDriveTrain {
 			rawLeftSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
 			rawRightSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
 			gyroControl.setSetpoint(desiredAngle);	
-			
-			/*double currentAngle = robot.hal.gyro.angle();
-			double errorAngle = desiredAngle - currentAngle;
-			double correction;
-			
-			//keeps error between -180 and 180
-			errorAngle = errorAngle % 360;
-			while (errorAngle > 180){
-				errorAngle -= 360;
-			}
-			while (errorAngle < -180){
-				errorAngle += 360;
-			}
-			
-			correction = errorAngle * 0.05; //0.05 is old gyroPconstant
-			
-			rawLeftSpeed = desiredSpeed - (correction);
-			rawRightSpeed = desiredSpeed + (correction);
-			
-			//SmartDashboard.putNumber("Error angle", errorAngle);
-			//SmartDashboard.putNumber("Correction", correction);
-			//SmartDashboard.putNumber("Desired angle", desiredAngle);
-			//SmartDashboard.putNumber("Desired speed", desiredSpeed);*/
 			break;
 		case SPEEDCONTROL:
 			//motor speed is equivalent to desired rpm
