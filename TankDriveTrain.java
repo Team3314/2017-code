@@ -134,4 +134,11 @@ public class TankDriveTrain {
 	public void setDriveAngle(double angle) {
 		desiredAngle = angle;
 	}	
+	
+	public double detectCollision() {
+		double curr_world_linear_accel_y = robot.ahrs.getWorldLinearAccelY();
+	        double currentJerkY = curr_world_linear_accel_y - last_world_linear_accel_y;
+	        last_world_linear_accel_y = curr_world_linear_accel_y;
+	return currentJerkY;
+	}
 }
