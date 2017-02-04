@@ -4,6 +4,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -74,6 +75,8 @@ public class Robot extends IterativeRobot {
 		auto6 = new AutoDriveToHopperRight(this);
 		auto7 = new AutoGearHopperLeft(this);
 		auto8 = new AutoGearHopperRight(this);
+		
+		ahrs = new AHRS(SPI.Port.kMXP);
 		
 		//misc
 		//some placeholder pid values = 0.5, 0.000025, 0, 0

@@ -58,7 +58,7 @@ public class AutoDriveToHopperLeft {
 			}
 			break;
 		case DRIVE2:
-			if (robot.tdt.detectCollision() > Constants.kCollisionThreshold_DeltaG){
+			if (Math.abs(robot.tdt.detectCollision()) > Constants.kCollisionThreshold_DeltaG){
 				nextState = autoDTHLeftStates.STOP2;
 			}
 			break;

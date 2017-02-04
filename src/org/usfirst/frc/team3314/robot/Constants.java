@@ -24,17 +24,23 @@ public class Constants {
 	public static double kGyroLock_kD;
 	public static double kGyroLock_kF;
 	
-	//turret pidcontroller
+	//turret pid
 	public static double kTurret_kP;
 	public static double kTurret_kI;
 	public static double kTurret_kD;
 	public static double kTurret_kF;
+	public static int kTurret_IZone;
+	public static double kTurret_RampRate;
+	public static int kTurret_Profile;
 	
-	//adjust pidcontroller
+	//adjust pid
 	public static double kAdjust_kP;
 	public static double kAdjust_kI;
 	public static double kAdjust_kD;
 	public static double kAdjust_kF;
+	public static int kAdjust_IZone;
+	public static double kAdjust_RampRate;
+	public static int kAdjust_Profile;
 	
 	//shooter (pid + other values)
 	public static double kShooter_kP;
@@ -85,12 +91,18 @@ public class Constants {
 		kTurret_kI = 0;
 		kTurret_kD = 0;
 		kTurret_kF = 0;
+		kTurret_IZone = 0;
+		kTurret_RampRate = 0;
+		kTurret_Profile = 0;
 		
 		//adjust pidcontroller, placeholders
 		kAdjust_kP = 0;
 		kAdjust_kI = 0;
 		kAdjust_kD = 0;
 		kAdjust_kF = 0;
+		kAdjust_IZone = 0;
+		kAdjust_RampRate = 0;
+		kAdjust_Profile = 0;
 		
 		//shooter, placeholders
 		kShooter_kP = 1;
