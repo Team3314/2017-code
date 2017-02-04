@@ -11,7 +11,8 @@ public class Turret {
 	public Turret(Robot myRobot) {
 		//puts turret on pid loop w/ source being encoder on the turret talon and the output being the talon itself
 		robot = myRobot;
-		turretController = new PIDController(0.5, 0.000025, 0, 0, robot.hal.turretTalon, robot.hal.turretTalon);
+		turretController = new PIDController(Constants.kTurret_kP, Constants.kTurret_kI, Constants.kTurret_kD,
+		Constants.kTurret_kF, robot.hal.turretTalon, robot.hal.turretTalon);
 	}
 	
 	public void update() {

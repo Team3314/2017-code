@@ -41,7 +41,7 @@ public class AutoCrossBaseline {
 		
 		switch (currentState) {
 		case START:
-			robot.hal.gyro.reset();
+			robot.ahrs.reset();
 			nextState = autoCrossBaselineStates.DRIVE;
 			break;
 		case DRIVE:
@@ -62,7 +62,7 @@ public class AutoCrossBaseline {
 	public void doTransition() {
 		if (currentState == autoCrossBaselineStates.START && nextState == autoCrossBaselineStates.DRIVE) {
 			//robot drives straight forward at max speed, 4 sec
-			robot.tdt.setDriveAngle(robot.hal.gyro.angle());
+			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 200;
 		}

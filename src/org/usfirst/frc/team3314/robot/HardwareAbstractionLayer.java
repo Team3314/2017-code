@@ -28,12 +28,8 @@ public class HardwareAbstractionLayer {
 	//pneumatics
 	Compressor pcm1;
 	DoubleSolenoid gearIntake;
-	DoubleSolenoid intake;
 	DoubleSolenoid driveShifter;
 	Solenoid flashlight;
-	
-	//analog 
-	CustomGyro gyro;
 
 	public HardwareAbstractionLayer(Robot r){
 		robot = r;
@@ -56,22 +52,9 @@ public class HardwareAbstractionLayer {
 		//pneumatics
 		pcm1 = new Compressor(0);
 		gearIntake = new DoubleSolenoid(0, 1);
-		intake = new DoubleSolenoid(2, 3);
-		driveShifter = new DoubleSolenoid(4, 5);
-		flashlight = new Solenoid(6);
+		driveShifter = new DoubleSolenoid(2, 3);
+		flashlight = new Solenoid(4);
 		
 		pcm1.setClosedLoopControl(true);
-		
-		//analog
-		gyro = new CustomGyro(0, 1, 0.007);
-		gyro.calibrate();
-	}
-	
-	public void reset(){
-		gyro.reset();
-	}
-	
-	public void getStatus(){
-		gyro.update();
 	}
 }

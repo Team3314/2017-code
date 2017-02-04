@@ -47,7 +47,7 @@ public class AutoGearHopperLeft {
 		
 		switch (currentState) {
 		case START:
-			robot.hal.gyro.reset();
+			robot.ahrs.reset();
 			nextState = autoGHLeftStates.DRIVE1;
 			break;
 		case DRIVE1:
@@ -100,7 +100,7 @@ public class AutoGearHopperLeft {
 	public void doTransition() {
 		if (currentState == autoGHLeftStates.START && nextState == autoGHLeftStates.DRIVE1) {
 			//robot drives straight forward at max speed, 3 sec
-			robot.tdt.setDriveAngle(robot.hal.gyro.angle());
+			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 150;
 		}
@@ -126,7 +126,7 @@ public class AutoGearHopperLeft {
 		
 		if (currentState == autoGHLeftStates.STOP2 && nextState == autoGHLeftStates.DRIVE3){
 			//placeholder angle, robot drives forward at fullspeed, 1 sec
-			robot.tdt.setDriveAngle(robot.hal.gyro.angle());
+			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 50;
 		}
@@ -139,7 +139,7 @@ public class AutoGearHopperLeft {
 		
 		if (currentState == autoGHLeftStates.STOP3 && nextState == autoGHLeftStates.DRIVE4){
 			//place holder angle, robot drives forward at fullspeed, 1 sec
-			robot.tdt.setDriveAngle(robot.hal.gyro.angle());
+			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 50;
 		}

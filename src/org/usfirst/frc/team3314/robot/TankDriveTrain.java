@@ -3,8 +3,6 @@ package org.usfirst.frc.team3314.robot;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.*;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.PIDOutput;
 
 enum driveMode {
 	IDLE,
@@ -28,6 +26,7 @@ public class TankDriveTrain {
 	double rawRightSpeed;
 	double desiredSpeed;
 	double desiredAngle;
+	double last_world_linear_accel_y = 0;
 	
 	//for gyrolock
     GyroPIDOutput gyroPIDOutput;
@@ -54,7 +53,8 @@ public class TankDriveTrain {
 		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		
 		gyroPIDOutput = new GyroPIDOutput();
-		gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD, Constants.kGyroLock_kF, robot.ahrs, gyroPIDOutput);
+		gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD, 
+		Constants.kGyroLock_kF, robot.ahrs, gyroPIDOutput);
 		
 		//to make speedcontrol work goodly
 		lDriveTalon1.configEncoderCodesPerRev(497);
@@ -85,11 +85,33 @@ public class TankDriveTrain {
 			rawRightSpeed = rightStickInput;
 			break;
 		case GYROLOCK:
- 			rawLeftSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
- 			rawRightSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
- 			
- 			gyroControl.setSetpoint(desiredAngle);	
- 		
+ 			//motor speed determined by angle of robot relative to desired angle, pid broken atm
+			rawLeftSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
+			rawRightSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
+			gyroControl.setSetpoint(desiredAngle);	
+			
+			/*double currentAngle = robot.hal.gyro.angle();
+			double errorAngle = desiredAngle - currentAngle;
+			double correction;
+			
+			//keeps error between -180 and 180
+			errorAngle = errorAngle % 360;
+			while (errorAngle > 180){
+				errorAngle -= 360;
+			}
+			while (errorAngle < -180){
+				errorAngle += 360;
+			}
+			
+			correction = errorAngle * 0.05; //0.05 is old gyroPconstant
+			
+			rawLeftSpeed = desiredSpeed - (correction);
+			rawRightSpeed = desiredSpeed + (correction);
+			
+			//SmartDashboard.putNumber("Error angle", errorAngle);
+			//SmartDashboard.putNumber("Correction", correction);
+			//SmartDashboard.putNumber("Desired angle", desiredAngle);
+			//SmartDashboard.putNumber("Desired speed", desiredSpeed);*/
 			break;
 		case SPEEDCONTROL:
 			//motor speed is equivalent to desired rpm
@@ -104,14 +126,14 @@ public class TankDriveTrain {
 			rawLeftSpeed = leftStickInput;
 			rawRightSpeed = rightStickInput;
 			
-			if (robot.hal.driveShifter.get().toString() ==  Constants.kShiftHighGear){
-				rawLeftSpeed *= Constants.kHighGear; //high gear
-				rawRightSpeed *= Constants.kHighGear;
+			if (robot.hal.driveShifter.get().toString() == Constants.kShiftHighGear){
+				rawLeftSpeed *= Constants.kHighGearRPM; //high gear
+				rawRightSpeed *= Constants.kHighGearRPM;
 				}
 				
 			if (robot.hal.driveShifter.get().toString() == Constants.kShiftLowGear){
-				rawLeftSpeed *= Constants.kLowGear; //low gear
-				rawRightSpeed *= Constants.kLowGear;
+				rawLeftSpeed *= Constants.kLowGearRPM; //low gear
+				rawRightSpeed *= Constants.kLowGearRPM;
 			}
 			break;
 		}
@@ -133,5 +155,12 @@ public class TankDriveTrain {
 	
 	public void setDriveAngle(double angle) {
 		desiredAngle = angle;
-	}	
+	}
+	
+	public double detectCollision() {
+		double curr_world_linear_accel_y = robot.ahrs.getWorldLinearAccelY();
+		double currentJerkY = curr_world_linear_accel_y - last_world_linear_accel_y;
+		last_world_linear_accel_y = curr_world_linear_accel_y;
+		return currentJerkY;
+	}
 }

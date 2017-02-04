@@ -44,7 +44,7 @@ public class AutoDriveToHopperRight {
 		
 		switch (currentState) {
 		case START:
-			robot.hal.gyro.reset();
+			robot.ahrs.reset();
 			nextState = autoDTHRightStates.DRIVE1;
 			break;
 		case DRIVE1:
@@ -58,7 +58,7 @@ public class AutoDriveToHopperRight {
 			}
 			break;
 		case DRIVE2:
-			if (Constants.kAvgEncPos > (32*Constants.kEncConvFactor)){
+			if (robot.tdt.detectCollision() > Constants.kCollisionThreshold_DeltaG){
 				nextState = autoDTHRightStates.STOP2;
 			}
 			break;
@@ -80,7 +80,7 @@ public class AutoDriveToHopperRight {
 	public void doTransition() {
 		if (currentState == autoDTHRightStates.START && nextState == autoDTHRightStates.DRIVE1) {
 			//robot drives straight forward at max speed, 3 sec
-			robot.tdt.setDriveAngle(robot.hal.gyro.angle());
+			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 150;
 		}

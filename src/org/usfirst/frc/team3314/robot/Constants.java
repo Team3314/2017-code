@@ -6,12 +6,17 @@ public class Constants {
 	//misc tank drive train
 	public static double kAvgEncPos; //average of left + right drive talon encoder positions
 	public static double kEncConvFactor; //conversion from inches to encoder ticks
-	public static double kHighGear; //rpm for high gear
-	public static double kLowGear; //rpm for low gear
+	public static double kHighGearRPM; //rpm for high gear
+	public static double kLowGearRPM; //rpm for low gear
+	public static double kCollisionThreshold_DeltaG; //acceleration limit for collision detection
 	
-	//Solenoid states
+	//Solenoid States
+	public static String kExtendGearIntake;
+	public static String kRetractGearIntake;
 	public static String kShiftHighGear;
 	public static String kShiftLowGear;
+	public static boolean kFlashlightOn;
+	public static boolean kFlashlightOff;
 	
 	//gyrolock pidcontroller
 	public static double kGyroLock_kP;
@@ -40,12 +45,29 @@ public class Constants {
 		//misc tank drive train
 		kAvgEncPos = (robot.tdt.lDriveTalon1.getEncPosition() + robot.tdt.rDriveTalon1.getEncPosition())/2;
 		kEncConvFactor = 81.92;
-		kHighGear = 200;
-		kLowGear = 75;
+		kHighGearRPM = 200;
+		kLowGearRPM = 75;
+		kCollisionThreshold_DeltaG = 0.5; //half of earths gravity
 		
 		//Solenoid States
+		kExtendGearIntake = "kForward";
+		kRetractGearIntake = "kReverse";
 		kShiftHighGear = "kForward";
 		kShiftLowGear = "kReverse";
+		kFlashlightOn = true;
+		kFlashlightOff = false;
+		
+		//gyrolock pidcontroller, placeholders
+		kGyroLock_kP = 0;
+		kGyroLock_kI = 0;
+		kGyroLock_kD = 0;
+		kGyroLock_kF = 0;
+		
+		//turret pidcontroller, placeholders
+		kTurret_kP = 0;
+		kTurret_kI = 0;
+		kTurret_kD = 0;
+		kTurret_kF = 0;
 		
 		//speedcontrol pid
 		kSpeedControl_kP = 1;

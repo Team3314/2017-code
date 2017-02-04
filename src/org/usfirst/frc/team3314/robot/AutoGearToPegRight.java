@@ -45,7 +45,7 @@ public class AutoGearToPegRight {
 		
 		switch (currentState) {
 		case START:
-			robot.hal.gyro.reset();
+			robot.ahrs.reset();
 			nextState = autoGTPRightStates.DRIVE1;
 			break;
 		case DRIVE1:
@@ -69,7 +69,7 @@ public class AutoGearToPegRight {
 			}
 			break;
 		case RETRACT:
-			if (time <=0 && robot.hal.gearIntake.get().toString() == "kReverse"){
+			if (time <=0 && robot.hal.gearIntake.get().toString() == Constants.kRetractGearIntake){
 				nextState = autoGTPRightStates.DONE;
 			}
 			break;
@@ -81,7 +81,7 @@ public class AutoGearToPegRight {
 	public void doTransition() {
 		if (currentState == autoGTPRightStates.START && nextState == autoGTPRightStates.DRIVE1) {
 			//robot drives straight forward at max speed, 3 sec
-			robot.tdt.setDriveAngle(robot.hal.gyro.angle());
+			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 150;
 		}
@@ -107,7 +107,7 @@ public class AutoGearToPegRight {
 		
 		if (currentState == autoGTPRightStates.STOP2 && nextState == autoGTPRightStates.RETRACT){
 			//retracts gear intake, 1 sec
-			robot.hal.gearIntake.set(Value.kReverse);
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kRetractGearIntake));
 			time = 50;
 		}
 	}

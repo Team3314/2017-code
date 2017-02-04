@@ -1,11 +1,9 @@
 package org.usfirst.frc.team3314.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -48,6 +46,10 @@ public class Robot extends IterativeRobot {
 	boolean shootRequest;
 	boolean flashlightRequest;
 	
+	boolean lastGyroLock = false;
+	
+	double last_world_linear_accel_y;
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -70,8 +72,15 @@ public class Robot extends IterativeRobot {
 		auto7 = new AutoGearHopperLeft(this);
 		auto8 = new AutoGearHopperRight(this);
 		
+		//misc
+		//some placeholder pid values = 0.5, 0.000025, 0, 0
 		
-		hal.gearIntake.set(Value.kForward);
+		/*
+		camera = new UsbCamera("Logitech", 0);
+		camera = CameraServer.getInstance().startAutomaticCapture(); //remember to add cameraserver stream viewer widget
+		camera.setResolution(640, 480);*/
+
+		hal.gearIntake.set(Value.valueOf(Constants.kExtendGearIntake));
 	}
 
 	/**
@@ -84,9 +93,10 @@ public class Robot extends IterativeRobot {
 	 * You can add additional auto modes by adding additional comparisons to the
 	 * switch structure below with additional strings. If using the
 	 * SendableChooser make sure to add them to the chooser code above as well.
-	 * 
 	 */
+	
 	public void disabledInit() {
+		//resets navx
 		ahrs.reset();
 	}
 	
@@ -94,7 +104,7 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		//sets to gyrolock + low gear
 		tdt.setDriveMode(driveMode.GYROLOCK);
-		hal.driveShifter.set(Value.kReverse);
+		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
 		
 		//resets all values then auto
 		ahrs.reset();
@@ -123,8 +133,7 @@ public class Robot extends IterativeRobot {
 		//sets to tank, resets gyro, ensures robot is in low gear
 		tdt.setDriveMode(driveMode.TANK);
 		ahrs.reset();
-		//gyroControl.enable();
-		hal.driveShifter.set(Value.kReverse);
+		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
 	}
 
 	/**
@@ -139,37 +148,33 @@ public class Robot extends IterativeRobot {
 		//what each button does
     	updateButtonStatus();
     	if(extendGearIntakeRequest) {
-    		hal.gearIntake.set(Value.kForward);
+    		hal.gearIntake.set(Value.valueOf(Constants.kExtendGearIntake));
     	}
     	
     	if(retractGearIntakeRequest) {
-     		hal.gearIntake.set(Value.kReverse);
+     		hal.gearIntake.set(Value.valueOf(Constants.kRetractGearIntake));
     	}
     	
     	if(fuelIntakeRequest) {
     		hal.intakeSpark.set(1);
-    	} else {
-    		if (!fuelIntakeRequest) {
+    	} else if (!fuelIntakeRequest) {
     		hal.intakeSpark.set(0);
-    		}
     	}
     	
     	if (gyroLockRequest) {
-    		tdt.setDriveMode(driveMode.GYROLOCK);
-    		tdt.setDriveAngle(ahrs.getYaw()); //makes sure robot will move straight
+    		if (!lastGyroLock) {
+    			tdt.setDriveMode(driveMode.GYROLOCK);
+    			tdt.setDriveAngle(ahrs.getYaw()); //makes sure robot will move straight
+    		}
     		tdt.setDriveTrainSpeed(hi.rightStick.getY()); //moving speed dependent on right stick
     	} else {
-    		if (!gyroLockRequest) {
     			tdt.setDriveMode(driveMode.TANK);
-    		}
     	}
     	
     	if (speedControlRequest) {
     		tdt.setDriveMode(driveMode.SPEEDCONTROL);
-    	} else {
-    		if (!speedControlRequest) {
+    	} else if (!speedControlRequest) {
     			tdt.setDriveMode(driveMode.TANK);
-    		}
     	}
     	
     	if (highGearRequest) {
@@ -184,11 +189,13 @@ public class Robot extends IterativeRobot {
     	}
     	
     	if(flashlightRequest) {
-    		hal.flashlight.set(true);
-    	} else {
-    		if(!flashlightRequest) {
-    		hal.flashlight.set(false);
+    		hal.flashlight.set(Constants.kFlashlightOn);
+    	} else if(!flashlightRequest) {
+    		hal.flashlight.set(Constants.kFlashlightOff);
+    	}
     		
+    	lastGyroLock = gyroLockRequest;
+    	
     		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
     		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
         	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
@@ -199,8 +206,6 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
         	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
         	//SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
-    		}
-    	}
     }
 		
 	/**
