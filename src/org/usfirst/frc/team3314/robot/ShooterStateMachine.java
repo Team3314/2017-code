@@ -46,7 +46,7 @@ public class ShooterStateMachine {
 			nextState = shooterStates.AGITATE;
 			break;
 		case AGITATE:
-			if (robot.hal.agitatorSpark1.get() == 1 && robot.hal.agitatorSpark2.get() == 1 /*percentvbus placeholders*/  &&
+			if (robot.hal.agitatorSpark.get() == 1/*percentvbus placeholder*/  &&
 			robot.hal.shooterTalon.getEncVelocity() == Constants.kShooter_TargetRPM /*rpm placeholder*/) {
 				nextState = shooterStates.INDEX;
 			}
@@ -57,12 +57,12 @@ public class ShooterStateMachine {
 			}
 			break;
 		case SHOOT:
-			if (time <= 0 && robot.hal.agitatorSpark1.get() == -1 && robot.hal.agitatorSpark2.get() == -1) {
+			if (time <= 0 && robot.hal.agitatorSpark.get() == -1) {
 				nextState = shooterStates.REVERSE_AGITATE;
 			}
 			break;
 		case REVERSE_AGITATE:
-			if (robot.hal.agitatorSpark1.get() == 1 && robot.hal.agitatorSpark2.get() == 1) {
+			if (robot.hal.agitatorSpark.get() == 1) {
 				nextState = shooterStates.SHOOT;
 			}
 			break;
@@ -71,8 +71,7 @@ public class ShooterStateMachine {
 	
 	public void doTransition() {
 		if (currentState == shooterStates.START && nextState == shooterStates.AGITATE) {
-			robot.hal.agitatorSpark1.set(1);
-			robot.hal.agitatorSpark2.set(1);
+			robot.hal.agitatorSpark.set(1);
 			robot.hal.shooterTalon.set(Constants.kShooter_TargetRPM);
 		}
 		
@@ -90,15 +89,13 @@ public class ShooterStateMachine {
 			}
 			
 			if (sensorTime <= 0) {
-			robot.hal.agitatorSpark1.set(-1);
-			robot.hal.agitatorSpark2.set(-1);
+			robot.hal.agitatorSpark.set(-1);
 			time = 50;
 			}
 		}
 		
 		if (currentState == shooterStates.SHOOT && nextState == shooterStates.REVERSE_AGITATE) {
-			robot.hal.agitatorSpark1.set(1);
-			robot.hal.agitatorSpark2.set(1);
+			robot.hal.agitatorSpark.set(1);
 		}
 	}
 	
@@ -113,8 +110,7 @@ public class ShooterStateMachine {
 		//}
 		
 		if (time <= 0) {
-			robot.hal.agitatorSpark1.set(0);
-			robot.hal.agitatorSpark2.set(0);
+			robot.hal.agitatorSpark.set(0);
 			robot.hal.indexSpark.set(0);
 			robot.hal.shooterTalon.set(0);
 		}

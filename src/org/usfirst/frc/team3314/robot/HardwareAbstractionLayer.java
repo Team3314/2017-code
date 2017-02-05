@@ -18,8 +18,7 @@ public class HardwareAbstractionLayer {
 	CANTalon adjustTalon; //changes angle of shooter
 	Spark intakeSpark;
 	Spark indexSpark; //puts balls into shooter
-	Spark agitatorSpark1; //this and next move balls around so they dont get stuck
-	Spark agitatorSpark2;
+	Spark agitatorSpark; //move balls around so they dont get stuck
 	
 	//digital io
 	DigitalInput autoSelect; //choose autos with physical binary switches
@@ -45,8 +44,7 @@ public class HardwareAbstractionLayer {
 		adjustTalon = new CANTalon(7);
 		intakeSpark = new Spark(0);
 		indexSpark = new Spark(1);
-		agitatorSpark1 = new Spark(2);
-		agitatorSpark2 = new Spark(3);
+		agitatorSpark = new Spark(2);
 		
 		shooterTalon.configEncoderCodesPerRev(2048);
 		shooterTalon.changeControlMode(TalonControlMode.Speed);
