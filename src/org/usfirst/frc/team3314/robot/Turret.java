@@ -7,7 +7,6 @@ public class Turret {
 	double desiredTarget;
 	
 	public Turret(Robot myRobot) {
-		//source = encoder on turret talon; output = talon itself
 		robot = myRobot;
 
 		robot.hal.turretTalon.changeControlMode(TalonControlMode.Position);
@@ -19,5 +18,9 @@ public class Turret {
 	public void update() {
 		//talon turns motor to target
 		robot.hal.turretTalon.set(desiredTarget);
+	}
+	
+	public void setTurretPosition(double target) { //possible usage
+		desiredTarget = target;
 	}
 }

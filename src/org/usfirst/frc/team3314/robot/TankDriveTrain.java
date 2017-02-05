@@ -53,7 +53,7 @@ public class TankDriveTrain {
 		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		
 		gyroPIDOutput = new GyroPIDOutput();
-		gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD, 
+		gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
 		Constants.kGyroLock_kF, robot.ahrs, gyroPIDOutput);
 		
 		//to make speedcontrol work goodly

@@ -4,10 +4,9 @@ import com.ctre.CANTalon.*;
 
 public class AngleAdjust {
 	Robot robot;
-	double desiredTarget;
+	double desiredEncTick;
 	
 	public AngleAdjust(Robot myRobot) {
-		//source = encoder on adjust talon; output = talon itself
 		robot = myRobot;
 		
 		robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
@@ -18,6 +17,11 @@ public class AngleAdjust {
 	
 	public void update() {
 		//talon turns motor to target
-		robot.hal.adjustTalon.set(desiredTarget);
+		robot.hal.adjustTalon.set(desiredEncTick);
+	}
+
+	public double setHoodAngle(double angle) {
+		desiredEncTick = angle * Constants.kAdjust_EncConvFactor;
+		return desiredEncTick;
 	}
 }

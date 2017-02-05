@@ -41,6 +41,7 @@ public class Constants {
 	public static int kAdjust_IZone;
 	public static double kAdjust_RampRate;
 	public static int kAdjust_Profile;
+	public static double kAdjust_EncConvFactor; //conversion from degrees to enc ticks
 	
 	//shooter (pid + other values)
 	public static double kShooter_kP;
@@ -66,17 +67,21 @@ public class Constants {
 		robot = r;
 		
 		//misc tank drive train
+		kEncConvFactor = 81.92; //enc ticks in 1 inch
 		kAvgEncPos = (robot.tdt.lDriveTalon1.getEncPosition() + robot.tdt.rDriveTalon1.getEncPosition())/2;
-		kEncConvFactor = 81.92;
+	
 		kHighGearRPM = 200;
 		kLowGearRPM = 75;
+		
 		kCollisionThreshold_DeltaG = 0.5; //half of earths gravity
 		
 		//Solenoid States
 		kExtendGearIntake = "kForward";
 		kRetractGearIntake = "kReverse";
+		
 		kShiftHighGear = "kForward";
 		kShiftLowGear = "kReverse";
+		
 		kFlashlightOn = true;
 		kFlashlightOff = false;
 		
@@ -104,6 +109,8 @@ public class Constants {
 		kAdjust_RampRate = 0;
 		kAdjust_Profile = 0;
 		
+		kAdjust_EncConvFactor = 0;
+		
 		//shooter, placeholders
 		kShooter_kP = 1;
 		kShooter_kI = 0.01;
@@ -112,6 +119,7 @@ public class Constants {
 		kShooter_IZone = 0;
 		kShooter_RampRate = 0;
 		kShooter_Profile = 0;
+		
 		kShooter_TargetRPM = 5000;
 		kShooter_IndexSensorThreshold = 2;
 		
