@@ -47,7 +47,7 @@ public class AutoGearToPeg {
 			nextState = autoGearToPegStates.DRIVE;
 			break;
 		case DRIVE:
-			if (Constants.kAvgEncPos > (60*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (60*Constants.kEncConvFactor)){
 				nextState = autoGearToPegStates.STOP;
 			}
 			break;

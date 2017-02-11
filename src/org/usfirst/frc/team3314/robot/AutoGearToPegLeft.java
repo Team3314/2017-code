@@ -49,7 +49,7 @@ public class AutoGearToPegLeft {
 			nextState = autoGTPLeftStates.DRIVE1;
 			break;
 		case DRIVE1:
-			if (Constants.kAvgEncPos > (75.25*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (75.25*Constants.kEncConvFactor)){
 				nextState = autoGTPLeftStates.STOP1;
 			}
 			break;
@@ -59,7 +59,7 @@ public class AutoGearToPegLeft {
 			}
 			break;
 		case DRIVE2:
-			if (Constants.kAvgEncPos > (20*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (20*Constants.kEncConvFactor)){
 				nextState = autoGTPLeftStates.STOP2;
 			}
 			break;

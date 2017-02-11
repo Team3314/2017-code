@@ -1,135 +1,78 @@
 package org.usfirst.frc.team3314.robot;
 
 public class Constants {
-	Robot robot;
+	Robot robot = new Robot();
 	
 	//tankdrivetrain
-	public static double kAvgEncPos; //average of left + right drive talon encoder positions
-	public static double kEncConvFactor; //conversion from inches to encoder ticks
-	public static double kHighGearRPM; //rpm for high gear
-	public static double kLowGearRPM; //rpm for low gear
-	public static double kCollisionThreshold_DeltaG; //acceleration limit for collision detection
+	//public static double kAvgEncPos = (robot.tdt.lDriveTalon1.getEncPosition() + robot.tdt.rDriveTalon1.getEncPosition())/2;//average of left + right drive talon encoder positions
+	public static double kEncConvFactor = 81.92; //conversion from inches to encoder ticks
+	public static double kHighGearRPM = 200; //rpm for high gear
+	public static double kLowGearRPM = 75;//rpm for low gear
+	public static double kCollisionThreshold_DeltaG = .5; //acceleration limit for collision detection
 	
 	//Solenoid States
-	public static String kExtendGearIntake;
-	public static String kRetractGearIntake;
-	public static String kShiftHighGear;
-	public static String kShiftLowGear;
-	public static boolean kFlashlightOn;
-	public static boolean kFlashlightOff;
+	public static String kExtendGearIntake = "kForward";
+	public static String kRetractGearIntake = "kReverse";
+	
+	public static String kShiftHighGear = "kForward";
+	public static String kShiftLowGear = "kReverse";
+	
+	public static boolean kFlashlightOn = true;
+	public static boolean kFlashlightOff = false;
 	
 	//gyrolock pidcontroller
-	public static double kGyroLock_kP;
-	public static double kGyroLock_kI;
-	public static double kGyroLock_kD;
-	public static double kGyroLock_kF;
+	public static double kGyroLock_kP = 0;
+	public static double kGyroLock_kI = 0;
+	public static double kGyroLock_kD = 0;
+	public static double kGyroLock_kF = 0;
 	
 	//turret pid
-	public static double kTurret_kP;
-	public static double kTurret_kI;
-	public static double kTurret_kD;
-	public static double kTurret_kF;
-	public static int kTurret_IZone;
-	public static double kTurret_RampRate;
-	public static int kTurret_Profile;
+	public static double kTurret_kP = 0;
+	public static double kTurret_kI = 0;
+	public static double kTurret_kD = 0;
+	public static double kTurret_kF = 0;
+	public static int kTurret_IZone = 0;
+	public static double kTurret_RampRate = 0;
+	public static int kTurret_Profile = 0;
 	
 	//adjust pid
-	public static double kAdjust_kP;
-	public static double kAdjust_kI;
-	public static double kAdjust_kD;
-	public static double kAdjust_kF;
-	public static int kAdjust_IZone;
-	public static double kAdjust_RampRate;
-	public static int kAdjust_Profile;
-	public static double kAdjust_EncConvFactor; //conversion from degrees to enc ticks
+	public static double kAdjust_kP = 0;
+	public static double kAdjust_kI = 0;
+	public static double kAdjust_kD = 0;
+	public static double kAdjust_kF = 0;
+	public static int kAdjust_IZone = 0;
+	public static double kAdjust_RampRate = 0;
+	public static int kAdjust_Profile = 0;
+	
+	public static double kAdjust_EncConvFactor = 0; //conversion from degrees to enc ticks
 	
 	//shooter (pid + other values)
-	public static double kShooter_kP;
-	public static double kShooter_kI;
-	public static double kShooter_kD;
-	public static double kShooter_kF;
-	public static int kShooter_IZone;
-	public static double kShooter_RampRate;
-	public static int kShooter_Profile;
-	public static double kShooter_TargetRPM;
-	public static double kShooter_IndexSensorThreshold;
+	public static double kShooter_kP = 1;
+	public static double kShooter_kI = 0.01;
+	public static double kShooter_kD = 0;
+	public static double kShooter_kF = 3;
+	public static int kShooter_IZone = 0;
+	public static double kShooter_RampRate = 0;
+	public static int kShooter_Profile = 0;
+	
+	public static double kShooter_TargetRPM = 5000;
+	public static double kShooter_IndexSensorThreshold = 2;
 	
 	//speedcontrol pid
-	public static double kSpeedControl_kP;
-	public static double kSpeedControl_kI;
-	public static double kSpeedControl_kD;
-	public static double kSpeedControl_kF;
-	public static int kSpeedControl_IZone;
-	public static double kSpeedControl_RampRate;
-	public static int kSpeedControl_Profile;
+	public static double kSpeedControl_kP = 1;
+	public static double kSpeedControl_kI = 0.01;
+	public static double kSpeedControl_kD = 0;
+	public static double kSpeedControl_kF = 3;
+	public static int kSpeedControl_IZone = 0;
+	public static double kSpeedControl_RampRate = 0;
+	public static int kSpeedControl_Profile = 0;
 	
-	public Constants(Robot r) {
-		robot = r;
+	//camera
+	public static double kCenterOfView = 320;
+	public static double kTargetHeight = (10/12);
+	public static double kYRes = 640;
+	public static double kViewAngle = 43.5;
+	public static double kPxlToEncTicksConvFactor = 0;
+	public static double kPxlToDegConvFactor = 0;
 		
-		//misc tank drive train
-		kEncConvFactor = 81.92; //enc ticks in 1 inch
-		kAvgEncPos = (robot.tdt.lDriveTalon1.getEncPosition() + robot.tdt.rDriveTalon1.getEncPosition())/2;
-	
-		kHighGearRPM = 200;
-		kLowGearRPM = 75;
-		
-		kCollisionThreshold_DeltaG = 0.5; //half of earths gravity
-		
-		//Solenoid States
-		kExtendGearIntake = "kForward";
-		kRetractGearIntake = "kReverse";
-		
-		kShiftHighGear = "kForward";
-		kShiftLowGear = "kReverse";
-		
-		kFlashlightOn = true;
-		kFlashlightOff = false;
-		
-		//gyrolock pidcontroller, placeholders
-		kGyroLock_kP = 0;
-		kGyroLock_kI = 0;
-		kGyroLock_kD = 0;
-		kGyroLock_kF = 0;
-		
-		//turret pidcontroller, placeholders
-		kTurret_kP = 0;
-		kTurret_kI = 0;
-		kTurret_kD = 0;
-		kTurret_kF = 0;
-		kTurret_IZone = 0;
-		kTurret_RampRate = 0;
-		kTurret_Profile = 0;
-		
-		//adjust pidcontroller, placeholders
-		kAdjust_kP = 0;
-		kAdjust_kI = 0;
-		kAdjust_kD = 0;
-		kAdjust_kF = 0;
-		kAdjust_IZone = 0;
-		kAdjust_RampRate = 0;
-		kAdjust_Profile = 0;
-		
-		kAdjust_EncConvFactor = 0;
-		
-		//shooter, placeholders
-		kShooter_kP = 1;
-		kShooter_kI = 0.01;
-		kShooter_kD = 0;
-		kShooter_kF = 3;
-		kShooter_IZone = 0;
-		kShooter_RampRate = 0;
-		kShooter_Profile = 0;
-		
-		kShooter_TargetRPM = 5000;
-		kShooter_IndexSensorThreshold = 2;
-		
-		//speedcontrol pid
-		kSpeedControl_kP = 1;
-		kSpeedControl_kI = 0.01;
-		kSpeedControl_kD = 0;
-		kSpeedControl_kF = 3;
-		kSpeedControl_IZone = 0;
-		kSpeedControl_RampRate = 0;
-		kSpeedControl_Profile = 0;
-	}
 }

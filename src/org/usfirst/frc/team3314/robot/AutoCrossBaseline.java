@@ -45,7 +45,7 @@ public class AutoCrossBaseline {
 			nextState = autoCrossBaselineStates.DRIVE;
 			break;
 		case DRIVE:
-			if (Constants.kAvgEncPos > (93.25*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (93.25*Constants.kEncConvFactor)){
 				nextState = autoCrossBaselineStates.STOP;
 			}
 			break;

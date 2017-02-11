@@ -48,7 +48,7 @@ public class AutoDriveToHopperRight {
 			nextState = autoDTHRightStates.DRIVE1;
 			break;
 		case DRIVE1:
-			if (Constants.kAvgEncPos > (108*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (108*Constants.kEncConvFactor)){
 				nextState = autoDTHRightStates.STOP1;
 			}
 			break;

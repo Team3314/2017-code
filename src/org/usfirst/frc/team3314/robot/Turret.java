@@ -4,7 +4,7 @@ import com.ctre.CANTalon.*;
 
 public class Turret {
 	Robot robot;
-	double desiredTarget;
+	double desiredTarget = 0;
 	
 	public Turret(Robot myRobot) {
 		robot = myRobot;
@@ -20,7 +20,10 @@ public class Turret {
 		robot.hal.turretTalon.set(desiredTarget);
 	}
 	
-	public void setTurretPosition(double target) { //possible usage
+	public void getEncError(double pxlError) { //possible usage
+		double degreeError = pxlError * Constants.kPxlToDegConvFactor;
+		double encError = degreeError * Constants.kPxlToEncTicksConvFactor;
+		double target = encError + robot.hal.turretTalon.getEncPosition();
 		desiredTarget = target;
 	}
 }

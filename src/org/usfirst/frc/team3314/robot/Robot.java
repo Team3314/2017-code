@@ -1,9 +1,11 @@
 package org.usfirst.frc.team3314.robot;
 
+import com.ctre.CANTalon;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -19,6 +21,7 @@ public class Robot extends IterativeRobot {
 	//some classes
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
+	AHRS ahrs = new AHRS(SPI.Port.kMXP);
 	TankDriveTrain tdt;
 	ShooterStateMachine shooter;
 	
@@ -34,8 +37,13 @@ public class Robot extends IterativeRobot {
 	AutoGearHopperRight auto8;
 	
 	//misc
-	UsbCamera camera;
-	AHRS ahrs;
+	Turret turret;
+	CustomCamera camera;
+	GyroPIDOutput gyroPIDOutput = new GyroPIDOutput();
+    PIDController gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
+    		Constants.kGyroLock_kF, ahrs, gyroPIDOutput);
+	
+	
 	
 	//button input
 	boolean extendGearIntakeRequest;
@@ -48,10 +56,14 @@ public class Robot extends IterativeRobot {
 	boolean shootRequest;
 	boolean flashlightRequest;
 	
+	boolean turretTrackRequest = false;
+	
 	boolean lastGyroLock = false;
+	boolean lastSpeedControl = false;
 	
 	double last_world_linear_accel_y;
 	double time = 0;
+	
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -64,6 +76,7 @@ public class Robot extends IterativeRobot {
 		hi = new HumanInput();
 		tdt = new TankDriveTrain(this);
 		shooter = new ShooterStateMachine(this);
+		turret = new Turret(this);
 		
 		//auto classes
 		auto0 = new AutoNothing(this);
@@ -76,15 +89,12 @@ public class Robot extends IterativeRobot {
 		auto7 = new AutoGearHopperLeft(this);
 		auto8 = new AutoGearHopperRight(this);
 		
-		ahrs = new AHRS(SPI.Port.kMXP);
+		camera = new CustomCamera(this);
+		
+		
 		
 		//misc
 		//some placeholder pid values = 0.5, 0.000025, 0, 0
-		
-		/*
-		camera = new UsbCamera("Logitech", 0);
-		camera = CameraServer.getInstance().startAutomaticCapture(); //remember to add cameraserver stream viewer widget
-		camera.setResolution(640, 480);*/
 
 		hal.gearIntake.set(Value.valueOf(Constants.kExtendGearIntake));
 	}
@@ -125,8 +135,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		//goes thru auto states
-		//auto1.update();
+		//goes through auto states
+		auto1.update();
+		if (turretTrackRequest) {
+			turret.getEncError(camera.GetXError());
+			turret.update();
+		}
 		tdt.update();
 		
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
@@ -167,24 +181,29 @@ public class Robot extends IterativeRobot {
     		hal.intakeSpark.set(0);
     	}
     	
+    	
     	if (gyroLockRequest) {
     		if (!lastGyroLock) {
-    			tdt.gyroControl.enable();
+    			gyroControl.enable();
     			tdt.setDriveMode(driveMode.GYROLOCK);
     			tdt.setDriveAngle(ahrs.getYaw()); //makes sure robot will move straight
     		}
     		tdt.setDriveTrainSpeed(hi.rightStick.getY()); //moving speed dependent on right stick
     	}
+    	else if (speedControlRequest && !gyroLockRequest) {
+    		if (!lastSpeedControl) {
+    			tdt.setDriveMode(driveMode.SPEEDCONTROL);
+    			//tdt.lDriveTalon1.changeControlMode(CANTalon.TalonControlMode.Speed);
+    			//tdt.rDriveTalon1.changeControlMode(CANTalon.TalonControlMode.Speed);
+    		}
+    		
+    	}
     	else {
     		tdt.setDriveMode(driveMode.TANK);
-    		tdt.gyroControl.free();
+    		gyroControl.disable();
     	}
     	
-    	if (speedControlRequest) {
-    		tdt.setDriveMode(driveMode.SPEEDCONTROL);
-    	} else if (!speedControlRequest) {
-    			tdt.setDriveMode(driveMode.TANK);
-    	}
+    	
     	
     	if (highGearRequest) {
     		hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
@@ -210,17 +229,27 @@ public class Robot extends IterativeRobot {
     	}
     		
     	lastGyroLock = gyroLockRequest;
+    	lastSpeedControl = speedControlRequest;
     	
+    	
+    		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
     		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
     		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
         	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
-    		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
+    		SmartDashboard.putNumber("PID setpoint", gyroControl.getSetpoint());
     		SmartDashboard.putNumber("RPM", tdt.lDriveTalon1.getSpeed());
+    		
+    		SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
+    		SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
+    		
         	
         	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
         	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
         	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
-        	//SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
+        	SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
+        	
+        	SmartDashboard.putNumber("Desired Speed", tdt.desiredSpeed);
+        	SmartDashboard.putBoolean("lastGyroLock", lastGyroLock);
     }
 		
 	/**

@@ -27,15 +27,14 @@ public class TankDriveTrain {
 	double desiredSpeed;
 	double desiredAngle;
 	double last_world_linear_accel_y = 0;
-	
-	//for gyrolock
-    GyroPIDOutput gyroPIDOutput;
-    PIDController gyroControl;
+	double avgEncPos = 0;
+		
 	
 	driveMode currentMode = driveMode.IDLE;
 
 	public TankDriveTrain(Robot myRobot) {
 		robot = myRobot;
+		
 		rDriveTalon1 = new CANTalon(0);
 		rDriveTalon2 = new CANTalon(2);
 		lDriveTalon1 = new CANTalon(1);
@@ -52,18 +51,18 @@ public class TankDriveTrain {
 		lDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		
-		gyroPIDOutput = new GyroPIDOutput();
-		gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
-		Constants.kGyroLock_kF, robot.ahrs, gyroPIDOutput);
+		
 		
 		//to make speedcontrol work goodly
-		lDriveTalon1.configEncoderCodesPerRev(497);
-		rDriveTalon1.configEncoderCodesPerRev(497);
+		lDriveTalon1.configEncoderCodesPerRev(2048);
+		rDriveTalon1.configEncoderCodesPerRev(2048);
 	}
 	
 	public void update() {
 		lDriveTalon1.set(rawLeftSpeed);
 		rDriveTalon1.set(rawRightSpeed);
+		
+		avgEncPos = ((lDriveTalon1.getPosition() + rDriveTalon1.getPosition()) / 2);
 		
 		if (currentMode == driveMode.SPEEDCONTROL){
 			lDriveTalon1.changeControlMode(TalonControlMode.Speed);
@@ -86,9 +85,9 @@ public class TankDriveTrain {
 			break;
 		case GYROLOCK:
  			//motor speed determined by angle of robot relative to desired angle, pid broken atm
-			rawLeftSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
-			rawRightSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
-			gyroControl.setSetpoint(desiredAngle);	
+			rawLeftSpeed = desiredSpeed + robot.gyroPIDOutput.turnSpeed;
+			rawRightSpeed = desiredSpeed - robot.gyroPIDOutput.turnSpeed;
+			robot.gyroControl.setSetpoint(desiredAngle);	
 			break;
 		case SPEEDCONTROL:
 			//motor speed is equivalent to desired rpm
