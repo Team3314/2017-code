@@ -4,7 +4,6 @@ public class Constants {
 	Robot robot = new Robot();
 	
 	//tankdrivetrain
-	//public static double kAvgEncPos = (robot.tdt.lDriveTalon1.getEncPosition() + robot.tdt.rDriveTalon1.getEncPosition())/2;//average of left + right drive talon encoder positions
 	public static double kEncConvFactor = 81.92; //conversion from inches to encoder ticks
 	public static double kHighGearRPM = 200; //rpm for high gear
 	public static double kLowGearRPM = 75;//rpm for low gear
@@ -56,6 +55,7 @@ public class Constants {
 	public static int kShooter_Profile = 0;
 	
 	public static double kShooter_TargetRPM = 5000;
+	public static double kShooter_TargetHopperRPM = 5000;
 	public static double kShooter_IndexSensorThreshold = 2;
 	
 	//speedcontrol pid

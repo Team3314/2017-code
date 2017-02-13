@@ -6,6 +6,7 @@ enum autoDTHRightStates {
 	START,
 	DRIVE1,
 	STOP1,
+	TURN,
 	DRIVE2,
 	STOP2,
 	SHOOT,
@@ -54,6 +55,11 @@ public class AutoDriveToHopperRight {
 			break;
 		case STOP1:
 			if (time <= 0 ){
+				nextState = autoDTHRightStates.TURN;
+			}
+			break;
+		case TURN:
+			if (Math.abs(Math.abs(robot.ahrs.getYaw()) - 90) <= .25) {
 				nextState = autoDTHRightStates.DRIVE2;
 			}
 			break;
@@ -91,20 +97,24 @@ public class AutoDriveToHopperRight {
 			time = 25;
 		}
 		
-		if (currentState == autoDTHRightStates.STOP1 && nextState == autoDTHRightStates.DRIVE2) {
+		if (currentState == autoDTHRightStates.STOP1 && nextState == autoDTHRightStates.TURN) {
 			//robot drives forward again at max speed but at angle of hopper, 1.5 sec
 			robot.tdt.setDriveAngle(90);
-			robot.tdt.setDriveTrainSpeed(1);
 			time = 75;
+		}
+		if (currentState == autoDTHRightStates.TURN && nextState == autoDTHRightStates.DRIVE2) {
+			robot.tdt.setDriveTrainSpeed(1);
 		}
 		
 		if (currentState == autoDTHRightStates.DRIVE2 && nextState == autoDTHRightStates.STOP2) {
 			//stops robot again, 1 sec
+			robot.hal.shooterTalon.set(Constants.kShooter_TargetHopperRPM);
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 50;
 		}
 		
 		if (currentState == autoDTHRightStates.STOP2 && nextState == autoDTHRightStates.SHOOT){
+			robot.shootRequest = true;
 			//placeholder, will shoot balls into the hopper
 			time = 50;
 		}

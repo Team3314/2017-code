@@ -1,11 +1,11 @@
 package org.usfirst.frc.team3314.robot;
 
-import com.ctre.CANTalon;
+//import com.ctre.CANTalon;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.PIDController;
+//import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -38,10 +38,9 @@ public class Robot extends IterativeRobot {
 	
 	//misc
 	Turret turret;
-	CustomCamera camera;
-	GyroPIDOutput gyroPIDOutput = new GyroPIDOutput();
-    PIDController gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
-    		Constants.kGyroLock_kF, ahrs, gyroPIDOutput);
+	UsbCamera drivingCam;
+	CustomCamera turretCam;
+	
 	
 	
 	
@@ -89,7 +88,7 @@ public class Robot extends IterativeRobot {
 		auto7 = new AutoGearHopperLeft(this);
 		auto8 = new AutoGearHopperRight(this);
 		
-		camera = new CustomCamera(this);
+		turretCam = new CustomCamera(this);
 		
 		
 		
@@ -138,7 +137,7 @@ public class Robot extends IterativeRobot {
 		//goes through auto states
 		auto1.update();
 		if (turretTrackRequest) {
-			turret.getEncError(camera.GetXError());
+			turret.getEncError(turretCam.GetXError());
 			turret.update();
 		}
 		tdt.update();
@@ -184,7 +183,7 @@ public class Robot extends IterativeRobot {
     	
     	if (gyroLockRequest) {
     		if (!lastGyroLock) {
-    			gyroControl.enable();
+    			tdt.gyroControl.enable();
     			tdt.setDriveMode(driveMode.GYROLOCK);
     			tdt.setDriveAngle(ahrs.getYaw()); //makes sure robot will move straight
     		}
@@ -200,7 +199,7 @@ public class Robot extends IterativeRobot {
     	}
     	else {
     		tdt.setDriveMode(driveMode.TANK);
-    		gyroControl.disable();
+    		tdt.gyroControl.disable();
     	}
     	
     	
@@ -236,7 +235,7 @@ public class Robot extends IterativeRobot {
     		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
     		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
         	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
-    		SmartDashboard.putNumber("PID setpoint", gyroControl.getSetpoint());
+    		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
     		SmartDashboard.putNumber("RPM", tdt.lDriveTalon1.getSpeed());
     		
     		SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());

@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3314.robot;
 
+
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
@@ -7,6 +9,7 @@ enum autoGTPLeftStates {
 	START,
 	DRIVE1,
 	STOP1,
+	TURN,
 	DRIVE2,
 	STOP2,
 	RETRACT,
@@ -55,6 +58,11 @@ public class AutoGearToPegLeft {
 			break;
 		case STOP1:
 			if (time <= 0 ){
+				nextState = autoGTPLeftStates.TURN;
+			}
+			break;
+		case TURN:
+			if (Math.abs(Math.abs(robot.ahrs.getYaw()) - 60) <= .25){
 				nextState = autoGTPLeftStates.DRIVE2;
 			}
 			break;
@@ -88,21 +96,24 @@ public class AutoGearToPegLeft {
 		
 		if (currentState == autoGTPLeftStates.DRIVE1 && nextState == autoGTPLeftStates.STOP1) {
 			//stops robot, 1/2 sec
+			robot.ahrs.reset();
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 25;
 		}
 		
-		if (currentState == autoGTPLeftStates.STOP1 && nextState == autoGTPLeftStates.DRIVE2) {
+		if (currentState == autoGTPLeftStates.STOP1 && nextState == autoGTPLeftStates.TURN) {
 			//robot drives forward again at max speed but at angle of peg, 1.5 sec
 			robot.tdt.setDriveAngle(60); //or 66.36
-			robot.tdt.setDriveTrainSpeed(1);
 			time = 75;
 		}
 	
-		if (currentState == autoGTPLeftStates.DRIVE2 && nextState == autoGTPLeftStates.STOP2) {
+		if (currentState == autoGTPLeftStates.TURN && nextState == autoGTPLeftStates.DRIVE2) {
 			//stops robot again, 1 sec
-			robot.tdt.setDriveTrainSpeed(0);
+			robot.tdt.setDriveTrainSpeed(1);
 			time = 50;
+		}
+		if (currentState == autoGTPLeftStates.DRIVE2 && nextState == autoGTPLeftStates.STOP2) {
+			robot.tdt.setDriveTrainSpeed(0);
 		}
 		
 		if (currentState == autoGTPLeftStates.STOP2 && nextState == autoGTPLeftStates.RETRACT){

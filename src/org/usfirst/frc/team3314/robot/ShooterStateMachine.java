@@ -43,7 +43,9 @@ public class ShooterStateMachine {
 		
 		switch (currentState) {
 		case START:
-			nextState = shooterStates.AGITATE;
+			if (robot.shootRequest) {
+				nextState = shooterStates.AGITATE;
+			}
 			break;
 		case AGITATE:
 			if (robot.hal.agitatorSpark.get() == 1/*percentvbus placeholder*/  &&
