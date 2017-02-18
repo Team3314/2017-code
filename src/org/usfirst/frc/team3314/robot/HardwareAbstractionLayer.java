@@ -42,9 +42,9 @@ public class HardwareAbstractionLayer {
 		turretTalon = new CANTalon(5);
 		shooterTalon = new CANTalon(6);
 		adjustTalon = new CANTalon(7);
-		intakeSpark = new Spark(0);
-		indexSpark = new Spark(1);
-		agitatorSpark = new Spark(2);
+		intakeSpark = new Spark(7);
+		indexSpark = new Spark(8);
+		agitatorSpark = new Spark(9);
 		
 		shooterTalon.configEncoderCodesPerRev(2048);
 		shooterTalon.changeControlMode(TalonControlMode.Speed);
@@ -59,8 +59,8 @@ public class HardwareAbstractionLayer {
 		
 		//pneumatics
 		pcm1 = new Compressor(0);
-		gearIntake = new DoubleSolenoid(0, 1);
-		driveShifter = new DoubleSolenoid(2, 3);
+		gearIntake = new DoubleSolenoid(2, 3);
+		driveShifter = new DoubleSolenoid(0, 1);
 		flashlight = new Solenoid(4);
 		
 		pcm1.setClosedLoopControl(true);

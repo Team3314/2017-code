@@ -11,8 +11,8 @@ public class AngleAdjust {
 		
 		robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
 		robot.hal.adjustTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		robot.hal.adjustTalon.setPID(Constants.kAdjust_kP, Constants.kAdjust_kI, Constants.kAdjust_kD,
-		Constants.kAdjust_kF, Constants.kAdjust_IZone, Constants.kAdjust_RampRate, Constants.kAdjust_Profile);
+		robot.hal.adjustTalon.setPID(Constants.kAngleAdjust_kP, Constants.kAngleAdjust_kI, Constants.kAngleAdjust_kD,
+		Constants.kAngleAdjust_kF, Constants.kAngleAdjust_IZone, Constants.kAngleAdjust_RampRate, Constants.kAdjust_Profile);
 	}
 	
 	public void update() {

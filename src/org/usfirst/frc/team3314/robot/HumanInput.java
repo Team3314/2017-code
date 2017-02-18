@@ -67,5 +67,8 @@ public class HumanInput {
 		boolean result = false;
 		result = operator.getRawButton(3);
 		return result;
-	}
 }
+	public boolean turnNintey() {
+		return leftStick.getRawButton(7);
+	}
+	}

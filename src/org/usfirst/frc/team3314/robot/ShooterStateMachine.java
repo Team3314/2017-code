@@ -102,7 +102,7 @@ public class ShooterStateMachine {
 	}
 	
 	public void stopShoot() {
-		time = 50;
+		time = 0;
 		time --;
   		robot.hal.indexSpark.set(-1);
   		

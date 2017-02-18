@@ -37,6 +37,7 @@ public class Robot extends IterativeRobot {
 	AutoGearHopperRight auto8;
 	
 	//misc
+	AngleAdjust adjust;
 	Turret turret;
 	UsbCamera drivingCam;
 	CustomCamera turretCam;
@@ -75,6 +76,7 @@ public class Robot extends IterativeRobot {
 		hi = new HumanInput();
 		tdt = new TankDriveTrain(this);
 		shooter = new ShooterStateMachine(this);
+		adjust = new AngleAdjust(this);
 		turret = new Turret(this);
 		
 		//auto classes
@@ -95,7 +97,7 @@ public class Robot extends IterativeRobot {
 		//misc
 		//some placeholder pid values = 0.5, 0.000025, 0, 0
 
-		hal.gearIntake.set(Value.valueOf(Constants.kExtendGearIntake));
+		hal.gearIntake.set(Value.valueOf(Constants.kRetractGearIntake));
 	}
 
 	/**
@@ -110,9 +112,15 @@ public class Robot extends IterativeRobot {
 	 * SendableChooser make sure to add them to the chooser code above as well.
 	 */
 	
+	
+	
 	public void disabledInit() {
 		//resets navx
 		ahrs.reset();
+	}
+	
+	public void disabledPeriodic() {
+		SmartDashboard.putNumber("Yaw", ahrs.getYaw());
 	}
 	
 	@Override
@@ -145,7 +153,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
-		SmartDashboard.putNumber("Ticks", tdt.rDriveTalon1.getPosition());
+		SmartDashboard.putNumber("Average Encoder Position", tdt.avgEncPos);
 		}
 		
 	public void teleopInit() {
@@ -162,7 +170,18 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		//joystick input
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
+		// TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
+		 adjust.desiredEncTick = ((hi.rightStick.getZ() + 1)/2);
+		 turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2);
+		 if (hi.turnNintey()) {
+			 tdt.desiredAngle = ahrs.getYaw() + 90;
+		 }
+		 //TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
 		tdt.update();
+		
+		adjust.update();
+		turret.update();
+		
     	
 		//what each button does
     	updateButtonStatus();
@@ -221,6 +240,7 @@ public class Robot extends IterativeRobot {
     		shooter.reset();
     		}
     	
+ 
     	if(flashlightRequest) {
     		hal.flashlight.set(Constants.kFlashlightOn);
     	} else if(!flashlightRequest) {
@@ -231,12 +251,18 @@ public class Robot extends IterativeRobot {
     	lastSpeedControl = speedControlRequest;
     	
     	
+    	/**TEST CODE
+    	 *   TEST CODE
+    	 *   TEST CODE  */
+   
+    	
     		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
     		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
     		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
         	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
     		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
-    		SmartDashboard.putNumber("RPM", tdt.lDriveTalon1.getSpeed());
+    		SmartDashboard.putNumber("Left RPM", tdt.lDriveTalon1.getSpeed());
+    		SmartDashboard.putNumber("Right RPM", tdt.rDriveTalon1.getSpeed());
     		
     		SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
     		SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
@@ -247,8 +273,23 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
         	SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
         	
+        	SmartDashboard.putNumber("Left 1", tdt.lDriveTalon1.get());
+        	SmartDashboard.putNumber("Left 2 ", tdt.lDriveTalon2.get());
+        	SmartDashboard.putNumber("Right 1 ", tdt.rDriveTalon1.get());
+        	SmartDashboard.putNumber("Right 2 ", tdt.rDriveTalon2.get());
+        	
+        	
         	SmartDashboard.putNumber("Desired Speed", tdt.desiredSpeed);
+        	SmartDashboard.putNumber("Desired Angle", tdt.desiredAngle);
         	SmartDashboard.putBoolean("lastGyroLock", lastGyroLock);
+        	SmartDashboard.putBoolean("Pressure Switch", hal.pcm1.getPressureSwitchValue());
+        	SmartDashboard.putBoolean("Compressor", hal.pcm1.enabled());
+        	SmartDashboard.putBoolean("Compressor not connected", hal.pcm1.getCompressorNotConnectedFault());
+        	SmartDashboard.putBoolean("Compressor not connected", hal.pcm1.getCompressorNotConnectedStickyFault());
+        	SmartDashboard.putBoolean("Compressor shorted", hal.pcm1.getCompressorShortedFault());
+        	SmartDashboard.putBoolean("Compressor shorted sticky", hal.pcm1.getCompressorShortedFault());
+        	SmartDashboard.putBoolean("Compressor current too high", hal.pcm1.getCompressorCurrentTooHighFault());
+        	SmartDashboard.putBoolean("Compressor current too high sticky", hal.pcm1.getCompressorCurrentTooHighStickyFault());
     }
 		
 	/**
@@ -260,7 +301,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void updateButtonStatus() {
-		//checks if button is pressed
+		//checks if button is pressed f
 		extendGearIntakeRequest = hi.getExtendGearIntake();
 		retractGearIntakeRequest = hi.getRetractGearIntake();
 		fuelIntakeRequest = hi.getFuelIntake();
