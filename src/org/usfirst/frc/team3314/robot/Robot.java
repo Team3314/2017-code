@@ -42,9 +42,6 @@ public class Robot extends IterativeRobot {
 	UsbCamera drivingCam;
 	CustomCamera turretCam;
 	
-	
-	
-	
 	//button input
 	boolean extendGearIntakeRequest;
 	boolean retractGearIntakeRequest;
@@ -78,6 +75,7 @@ public class Robot extends IterativeRobot {
 		shooter = new ShooterStateMachine(this);
 		adjust = new AngleAdjust(this);
 		turret = new Turret(this);
+		turretCam = new CustomCamera(this);
 		
 		//auto classes
 		auto0 = new AutoNothing(this);
@@ -90,13 +88,7 @@ public class Robot extends IterativeRobot {
 		auto7 = new AutoGearHopperLeft(this);
 		auto8 = new AutoGearHopperRight(this);
 		
-		turretCam = new CustomCamera(this);
-		
-		
-		
 		//misc
-		//some placeholder pid values = 0.5, 0.000025, 0, 0
-
 		hal.gearIntake.set(Value.valueOf(Constants.kRetractGearIntake));
 	}
 
@@ -111,8 +103,6 @@ public class Robot extends IterativeRobot {
 	 * switch structure below with additional strings. If using the
 	 * SendableChooser make sure to add them to the chooser code above as well.
 	 */
-	
-	
 	
 	public void disabledInit() {
 		//resets navx
