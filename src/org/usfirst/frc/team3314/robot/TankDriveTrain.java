@@ -62,10 +62,6 @@ public class TankDriveTrain {
 		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		lDriveTalon1.configEncoderCodesPerRev(2048);
 		rDriveTalon1.configEncoderCodesPerRev(2048);
-		
-		//to make speedcontrol work goodly
-		lDriveTalon1.configEncoderCodesPerRev(2048);
-		rDriveTalon1.configEncoderCodesPerRev(2048);
 	}
 	
 	public void update() {
@@ -162,7 +158,7 @@ public class TankDriveTrain {
 	}
 	
 	public void setDriveTrainSpeed(double speed) {	
-		desiredSpeed = speed;
+		speed = -desiredSpeed;
 	}
 	
 	public void setDriveAngle(double angle) {

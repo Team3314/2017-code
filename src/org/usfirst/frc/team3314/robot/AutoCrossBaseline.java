@@ -50,7 +50,7 @@ public class AutoCrossBaseline {
 			}
 			break;
 		case STOP:
-			if (time <= 0 ){
+			if (time <= 0){
 				nextState = autoCrossBaselineStates.DONE;
 			}
 			break;
@@ -63,8 +63,7 @@ public class AutoCrossBaseline {
 		if (currentState == autoCrossBaselineStates.START && nextState == autoCrossBaselineStates.DRIVE) {
 			//robot drives straight forward at max speed, 4 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
-			robot.tdt.setDriveTrainSpeed(-.25);
-			time = 200;
+			robot.tdt.setDriveTrainSpeed(0.25);
 		}
 		
 		if (currentState == autoCrossBaselineStates.DRIVE && nextState == autoCrossBaselineStates.STOP) {

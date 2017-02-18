@@ -18,13 +18,13 @@ public class CustomCamera {
 		pixelHeight = pi.getNumber("pixelHeight", 0);
 	}
 	
-	public double GetXError() {
+	public double getXError() {
 		double error = 0;
 		Constants.kCenterOfView -= centerX = error;
 		return error;
 	}
 	
-	public double CalcDistance() {
+	public double calcDistance() {
 		distance = Constants.kTargetHeight * Constants.kYRes / (2 * pixelHeight * Math.tan(Constants.kViewAngle));
 		return distance;	
 	}

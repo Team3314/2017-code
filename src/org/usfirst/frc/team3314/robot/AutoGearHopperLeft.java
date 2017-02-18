@@ -1,13 +1,25 @@
 package org.usfirst.frc.team3314.robot;
+/**
+ * Somebody once told me the world is gonna roll me
+ * I ain't the sharpest tool in the shed
+ * She was lookin' kinda dumb with her finger and her thumb
+ * In the shape of an L on her forehead
+ * 
+ * Well, the years start comin' and they don't stop comin'
+ * Fed to the rules and they hit the ground running
+ * Didn't make sense not to live for fun
+ * Your brain gets smart but your head gets dumb
+ * 
+ * So much to do, so much to see
+ * So what's wrong with taking the back streets?
+ * You'll never know if you don't go
+ * You'll never shine if you don't glow
+ */
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  
-/** NOT FUNCTIONAL 
- * THE HOPPER IS ON THE OTHER SIDE
- * @author 3314Programming
- *
- */
+// NOT FUNCTIONAL, THE HOPPER IS ON THE OTHER SIDE
 
 enum autoGHLeftStates {
 	START,

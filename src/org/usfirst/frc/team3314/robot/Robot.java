@@ -135,7 +135,7 @@ public class Robot extends IterativeRobot {
 		//goes through auto states
 		auto1.update();
 		if (turretTrackRequest) {
-			turret.getEncError(turretCam.GetXError());
+			turret.getEncError(turretCam.getXError());
 			turret.update();
 		}
 		tdt.update();

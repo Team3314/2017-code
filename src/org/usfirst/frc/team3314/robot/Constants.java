@@ -74,5 +74,4 @@ public class Constants {
 	public static double kViewAngle = 43.5;
 	public static double kPxlToEncTicksConvFactor = 1;
 	public static double kPxlToDegConvFactor = 1;
-		
 }
