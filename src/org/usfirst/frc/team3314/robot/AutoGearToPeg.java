@@ -15,7 +15,7 @@ public class AutoGearToPeg {
 	autoGearToPegStates currentState;
 	autoGearToPegStates nextState;
 	Robot robot;
-	double time = 0; //times are placeholder for now
+	double time = 0;
 	
 	public AutoGearToPeg(Robot myRobot) {
 		robot = myRobot;

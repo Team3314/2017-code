@@ -17,7 +17,7 @@ public class AutoDriveToHopperRight {
 	autoDTHRightStates currentState;
 	autoDTHRightStates nextState;
 	Robot robot;
-	double time = 0; //times are placeholder for now
+	double time = 0;
 	
 	public AutoDriveToHopperRight(Robot myRobot) {
 		robot = myRobot;
@@ -115,7 +115,6 @@ public class AutoDriveToHopperRight {
 		
 		if (currentState == autoDTHRightStates.STOP2 && nextState == autoDTHRightStates.SHOOT){
 			robot.shootRequest = true;
-			//placeholder, will shoot balls into the hopper
 			time = 50;
 		}
 	}

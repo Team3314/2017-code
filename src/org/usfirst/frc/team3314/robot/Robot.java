@@ -163,15 +163,13 @@ public class Robot extends IterativeRobot {
 		// TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
 		 adjust.desiredEncTick = ((hi.rightStick.getZ() + 1)/2);
 		 turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2);
-		 if (hi.turnNintey()) {
+		 if (hi.turnNinety()) {
 			 tdt.desiredAngle = ahrs.getYaw() + 90;
 		 }
 		 //TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
 		tdt.update();
-		
 		adjust.update();
 		turret.update();
-		
     	
 		//what each button does
     	updateButtonStatus();
@@ -189,7 +187,6 @@ public class Robot extends IterativeRobot {
     		hal.intakeSpark.set(0);
     	}
     	
-    	
     	if (gyroLockRequest) {
     		if (!lastGyroLock) {
     			tdt.gyroControl.enable();
@@ -203,15 +200,12 @@ public class Robot extends IterativeRobot {
     			tdt.setDriveMode(driveMode.SPEEDCONTROL);
     			//tdt.lDriveTalon1.changeControlMode(CANTalon.TalonControlMode.Speed);
     			//tdt.rDriveTalon1.changeControlMode(CANTalon.TalonControlMode.Speed);
-    		}
-    		
+    		}	
     	}
     	else {
     		tdt.setDriveMode(driveMode.TANK);
     		tdt.gyroControl.disable();
     	}
-    	
-    	
     	
     	if (highGearRequest) {
     		hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
@@ -229,7 +223,6 @@ public class Robot extends IterativeRobot {
     		shooter.stopShoot();
     		shooter.reset();
     		}
-    	
  
     	if(flashlightRequest) {
     		hal.flashlight.set(Constants.kFlashlightOn);
@@ -240,12 +233,9 @@ public class Robot extends IterativeRobot {
     	lastGyroLock = gyroLockRequest;
     	lastSpeedControl = speedControlRequest;
     	
-    	
     	/**TEST CODE
     	 *   TEST CODE
     	 *   TEST CODE  */
-   
-    	
     		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
     		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
     		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
@@ -256,7 +246,6 @@ public class Robot extends IterativeRobot {
     		
     		SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
     		SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
-    		
         	
         	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
         	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
@@ -268,10 +257,10 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber("Right 1 ", tdt.rDriveTalon1.get());
         	SmartDashboard.putNumber("Right 2 ", tdt.rDriveTalon2.get());
         	
-        	
         	SmartDashboard.putNumber("Desired Speed", tdt.desiredSpeed);
         	SmartDashboard.putNumber("Desired Angle", tdt.desiredAngle);
         	SmartDashboard.putBoolean("lastGyroLock", lastGyroLock);
+        	
         	SmartDashboard.putBoolean("Pressure Switch", hal.pcm1.getPressureSwitchValue());
         	SmartDashboard.putBoolean("Compressor", hal.pcm1.enabled());
         	SmartDashboard.putBoolean("Compressor not connected", hal.pcm1.getCompressorNotConnectedFault());
@@ -291,7 +280,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void updateButtonStatus() {
-		//checks if button is pressed f
+		//checks if button is pressed
 		extendGearIntakeRequest = hi.getExtendGearIntake();
 		retractGearIntakeRequest = hi.getRetractGearIntake();
 		fuelIntakeRequest = hi.getFuelIntake();

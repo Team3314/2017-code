@@ -20,7 +20,8 @@ public class Turret {
 		robot.hal.turretTalon.set(desiredTarget);
 	}
 	
-	public void getEncError(double pxlError) { //possible usage
+	public void getEncError(double pxlError) {
+		//converts error in degrees to encoder ticks, then adds it to current position to calculate desired target
 		double degreeError = pxlError * Constants.kPxlToDegConvFactor;
 		double encError = degreeError * Constants.kPxlToEncTicksConvFactor;
 		double target = encError + robot.hal.turretTalon.getEncPosition();

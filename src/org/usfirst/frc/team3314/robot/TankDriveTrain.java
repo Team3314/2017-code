@@ -9,7 +9,7 @@ enum driveMode {
 	TANK,
 	GYROLOCK,
 	SPEEDCONTROL,
-	GYROLOCKSPEEDCONTROL
+	GYROLOCK_SPEEDCONTROL
 }
 
 public class TankDriveTrain {
@@ -42,17 +42,13 @@ public class TankDriveTrain {
 		gyroPIDOutput = new GyroPIDOutput();
 	    gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
 	    		Constants.kGyroLock_kF, robot.ahrs, gyroPIDOutput);
-	    gyroControl.setContinuous();
+	    gyroControl.setContinuous(); //makes angle correct itself in the shortest distance
 		gyroControl.setInputRange(-180, 180);
 		
 		rDriveTalon1 = new CANTalon(1);
 		rDriveTalon2 = new CANTalon(3);
 		lDriveTalon1 = new CANTalon(0);
 		lDriveTalon2 = new CANTalon(2);
-		
-		
-		
-		
 		
 		//sets forward talons to default mode and rear talons as following them
 		lDriveTalon2.changeControlMode(TalonControlMode.Follower);
@@ -66,8 +62,6 @@ public class TankDriveTrain {
 		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		lDriveTalon1.configEncoderCodesPerRev(2048);
 		rDriveTalon1.configEncoderCodesPerRev(2048);
-		
-		
 		
 		//to make speedcontrol work goodly
 		lDriveTalon1.configEncoderCodesPerRev(2048);
@@ -100,7 +94,7 @@ public class TankDriveTrain {
 			rawRightSpeed = rightStickInput;
 			break;
 		case GYROLOCK:
- 			//motor speed determined by angle of robot relative to desired angle, pid broken atm
+ 			//motor speed determined by angle of robot relative to desired angle
 			rawLeftSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
 			rawRightSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
 			gyroControl.setSetpoint(desiredAngle);	
@@ -124,11 +118,11 @@ public class TankDriveTrain {
 			}
 				
 			if (robot.hal.driveShifter.get().toString() == Constants.kShiftLowGear){
-				rawLeftSpeed *= Constants.kLowGearRPM; //low gear
+				rawLeftSpeed *= Constants.kLowGearRPM;
 				rawRightSpeed *= Constants.kLowGearRPM;
 			}
 			break;
-		case GYROLOCKSPEEDCONTROL:
+		case GYROLOCK_SPEEDCONTROL:
 			lDriveTalon1.setPID(Constants.kSpeedControl_kP,Constants.kSpeedControl_kI,Constants.kSpeedControl_kD,
 			Constants.kSpeedControl_kF,Constants.kSpeedControl_IZone,Constants.kSpeedControl_RampRate,
 			Constants.kSpeedControl_Profile);
@@ -136,17 +130,19 @@ public class TankDriveTrain {
 			rDriveTalon1.setPID(Constants.kSpeedControl_kP,Constants.kSpeedControl_kI,Constants.kSpeedControl_kD,
 			Constants.kSpeedControl_kF,Constants.kSpeedControl_IZone,Constants.kSpeedControl_RampRate,
 			Constants.kSpeedControl_Profile);
+			
 			rawLeftSpeed = leftStickInput;
 			rawRightSpeed = rightStickInput;
-			rawLeftSpeed += gyroPIDOutput.turnSpeed;  //high gear
+			rawLeftSpeed += gyroPIDOutput.turnSpeed;
 			rawRightSpeed += gyroPIDOutput.turnSpeed;
+			
 			if (robot.hal.driveShifter.get().toString() == Constants.kShiftHighGear){
 				rawLeftSpeed *= Constants.kHighGearRPM;
 				rawRightSpeed *= Constants.kLowGearRPM;
 			}
 				
 			if (robot.hal.driveShifter.get().toString() == Constants.kShiftLowGear){
-				rawLeftSpeed *= Constants.kLowGearRPM; //low gear
+				rawLeftSpeed *= Constants.kLowGearRPM;
 				rawRightSpeed *= Constants.kLowGearRPM;
 			}
 			

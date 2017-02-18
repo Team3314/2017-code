@@ -20,7 +20,7 @@ public class AutoGearToPegRight {
 	autoGTPRightStates currentState;
 	autoGTPRightStates nextState;
 	Robot robot;
-	double time = 0; //times are placeholder for now
+	double time = 0;
 	
 	public AutoGearToPegRight(Robot myRobot) {
 		robot = myRobot;

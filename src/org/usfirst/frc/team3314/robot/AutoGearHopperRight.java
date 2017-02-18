@@ -22,7 +22,7 @@ public class AutoGearHopperRight {
 	autoGHRightStates currentState;
 	autoGHRightStates nextState;
 	Robot robot;
-	double time = 0; //times are placeholder for now
+	double time = 0;
 	
 	public AutoGearHopperRight(Robot myRobot) {
 		robot = myRobot;
@@ -80,7 +80,7 @@ public class AutoGearHopperRight {
 			break;
 		case DRIVEBACK:
 			if (robot.tdt.avgEncPos > (-20*Constants.kEncConvFactor)){
-				//enc pos is placeholder, placeholder distance
+				//placeholders
 				nextState = autoGHRightStates.STOP3;
 			}
 			break;
@@ -96,7 +96,7 @@ public class AutoGearHopperRight {
 			break;
 		case DRIVE4:
 			if ((robot.tdt.detectCollision() > Constants.kCollisionThreshold_DeltaG)){
-				//enc pos is placeholder, placeholer distance
+				//placeholders
 				nextState = autoGHRightStates.STOP4;
 			}
 			break;

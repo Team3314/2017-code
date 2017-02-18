@@ -59,8 +59,8 @@ public class HardwareAbstractionLayer {
 		
 		//pneumatics
 		pcm1 = new Compressor(0);
-		gearIntake = new DoubleSolenoid(2, 3);
 		driveShifter = new DoubleSolenoid(0, 1);
+		gearIntake = new DoubleSolenoid(2, 3);
 		flashlight = new Solenoid(4);
 		
 		pcm1.setClosedLoopControl(true);

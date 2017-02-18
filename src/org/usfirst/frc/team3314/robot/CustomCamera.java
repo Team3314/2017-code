@@ -9,11 +9,8 @@ public class CustomCamera {
 	double pixelHeight;
 	double distance;
 	
-	
 	public CustomCamera(Robot r) {
-		
 		robot = r;
-
 	}
 	
 	public void update() {
@@ -29,8 +26,6 @@ public class CustomCamera {
 	
 	public double CalcDistance() {
 		distance = Constants.kTargetHeight * Constants.kYRes / (2 * pixelHeight * Math.tan(Constants.kViewAngle));
-		return distance;
-		
+		return distance;	
 	}
-
 }

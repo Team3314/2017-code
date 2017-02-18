@@ -21,6 +21,7 @@ public class AngleAdjust {
 	}
 
 	public double setHoodAngle(double angle) {
+		//converts desired angle to encoder ticks
 		desiredEncTick = angle * Constants.kAdjust_EncConvFactor;
 		return desiredEncTick;
 	}

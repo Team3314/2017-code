@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  
 /** NOT FUNCTIONAL 
- * 
+ * THE HOPPER IS ON THE OTHER SIDE
  * @author 3314Programming
  *
  */
@@ -28,7 +28,7 @@ public class AutoGearHopperLeft {
 	autoGHLeftStates currentState;
 	autoGHLeftStates nextState;
 	Robot robot;
-	double time = 0; //times are placeholder for now
+	double time = 0;
 	
 	public AutoGearHopperLeft(Robot myRobot) {
 		robot = myRobot;
