@@ -72,7 +72,8 @@ public class Constants {
 	public static double kTargetHeight = (10/12);
 	public static double kXRes = 640;
 	public static double kYRes = 320;
-	public static double kViewAngle = 43.5;
-	public static double kDegToEncTicksConvFactor = 0.00627790178;
+	public static double kVerticalViewAngle = 70.42;
+	public static double kHorizontalViewAngle = 43.3;
+	public static double kDegToRevolutionsConvFactor = 0.0388888888;
 	public static double kPxlToDegConvFactor = 0.271875;
 }
