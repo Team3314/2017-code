@@ -39,9 +39,9 @@ public class HardwareAbstractionLayer {
 		robot = r;
 		
 		//speed controllers
-		turretTalon = new CANTalon(5);
-		shooterTalon = new CANTalon(6);
-		adjustTalon = new CANTalon(7);
+		turretTalon = new CANTalon(4);
+		shooterTalon = new CANTalon(5);
+		adjustTalon = new CANTalon(6);
 		intakeSpark = new Spark(7);
 		indexSpark = new Spark(8);
 		agitatorSpark = new Spark(9);

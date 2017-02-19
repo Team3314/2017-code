@@ -13,8 +13,8 @@ public class Constants {
 	public static String kExtendGearIntake = "kForward";
 	public static String kRetractGearIntake = "kReverse";
 	
-	public static String kShiftHighGear = "kForward";
-	public static String kShiftLowGear = "kReverse";
+	public static String kShiftHighGear = "kReverse";
+	public static String kShiftLowGear = "kForward";
 	
 	public static boolean kFlashlightOn = false;
 	public static boolean kFlashlightOff = true;
