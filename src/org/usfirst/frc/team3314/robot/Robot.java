@@ -223,11 +223,7 @@ public class Robot extends IterativeRobot {
     	}
     	
     	if (shootRequest) {
-<<<<<<< HEAD
-    		
-=======
     		shooter.update();
->>>>>>> refs/remotes/origin/spin-shooter
     	}
  
     	if(flashlightRequest) {
