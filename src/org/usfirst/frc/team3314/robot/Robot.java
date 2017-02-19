@@ -50,6 +50,7 @@ public class Robot extends IterativeRobot {
 	boolean speedControlRequest;
 	boolean highGearRequest;
 	boolean lowGearRequest;
+	boolean spinShooterRequest;
 	boolean shootRequest;
 	boolean flashlightRequest;
 	
@@ -215,8 +216,11 @@ public class Robot extends IterativeRobot {
     		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
     	}
     	
+    	if (spinShooterRequest) {
+    		hal.shooterTalon.set(Constants.kShooter_TargetRPM);
+    	}
+    	
     	if (shootRequest) {
-    		shooter.reset();
     		shooter.update();
     	}
     	else if (!shootRequest) {
@@ -288,6 +292,7 @@ public class Robot extends IterativeRobot {
 		speedControlRequest = hi.getSpeedControl();
 		highGearRequest = hi.getHighGear();
 		lowGearRequest = hi.getLowGear();
+		spinShooterRequest = hi.getSpinShooter();
 		shootRequest = hi.getShoot();
 		flashlightRequest = hi.getFlashlight();
 	}
