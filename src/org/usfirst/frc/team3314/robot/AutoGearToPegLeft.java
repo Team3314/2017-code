@@ -90,7 +90,7 @@ public class AutoGearToPegLeft {
 		if (currentState == autoGTPLeftStates.START && nextState == autoGTPLeftStates.DRIVE1) {
 			//robot drives straight forward at max speed, 3 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
-			robot.tdt.setDriveTrainSpeed(1);
+			robot.tdt.setDriveTrainSpeed(.5);
 			time = 150;
 		}
 		
@@ -109,7 +109,7 @@ public class AutoGearToPegLeft {
 	
 		if (currentState == autoGTPLeftStates.TURN && nextState == autoGTPLeftStates.DRIVE2) {
 			//stops robot again, 1 sec
-			robot.tdt.setDriveTrainSpeed(1);
+			robot.tdt.setDriveTrainSpeed(.5);
 			time = 50;
 		}
 		if (currentState == autoGTPLeftStates.DRIVE2 && nextState == autoGTPLeftStates.STOP2) {

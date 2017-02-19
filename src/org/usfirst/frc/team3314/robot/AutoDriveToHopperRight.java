@@ -87,7 +87,7 @@ public class AutoDriveToHopperRight {
 		if (currentState == autoDTHRightStates.START && nextState == autoDTHRightStates.DRIVE1) {
 			//robot drives straight forward at max speed, 3 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
-			robot.tdt.setDriveTrainSpeed(1);
+			robot.tdt.setDriveTrainSpeed(.5);
 			time = 150;
 		}
 		
@@ -103,7 +103,7 @@ public class AutoDriveToHopperRight {
 			time = 75;
 		}
 		if (currentState == autoDTHRightStates.TURN && nextState == autoDTHRightStates.DRIVE2) {
-			robot.tdt.setDriveTrainSpeed(1);
+			robot.tdt.setDriveTrainSpeed(.5);
 		}
 		
 		if (currentState == autoDTHRightStates.DRIVE2 && nextState == autoDTHRightStates.STOP2) {

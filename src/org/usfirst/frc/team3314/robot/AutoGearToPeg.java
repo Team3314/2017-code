@@ -70,7 +70,7 @@ public class AutoGearToPeg {
 		if (currentState == autoGearToPegStates.START && nextState == autoGearToPegStates.DRIVE) {
 			//robot drives straight forward at max speed, 3 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
-			robot.tdt.setDriveTrainSpeed(1);
+			robot.tdt.setDriveTrainSpeed(.5);
 			time = 150;
 		}
 	

@@ -150,7 +150,7 @@ public class AutoGearHopperLeft {
 		}
 		
 		if(currentState == autoGHLeftStates.TURN1 && nextState == autoGHLeftStates.DRIVE2) {
-			robot.tdt.setDriveTrainSpeed(1);
+			robot.tdt.setDriveTrainSpeed(.5);
 		}
 		
 		if (currentState == autoGHLeftStates.DRIVE2 && nextState == autoGHLeftStates.STOP2) {
@@ -163,7 +163,7 @@ public class AutoGearHopperLeft {
 		if (currentState == autoGHLeftStates.STOP2 && nextState == autoGHLeftStates.DRIVEBACK){
 			//placeholder angle, robot drives forward at fullspeed, 1 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
-			robot.tdt.setDriveTrainSpeed(-1);
+			robot.tdt.setDriveTrainSpeed(-.5);
 			time = 50;
 		}
 		
@@ -181,7 +181,7 @@ public class AutoGearHopperLeft {
 		}
 		
 		if (currentState == autoGHLeftStates.TURN2 && nextState == autoGHLeftStates.DRIVE4) {
-			robot.tdt.setDriveTrainSpeed(1);
+			robot.tdt.setDriveTrainSpeed(.5);;
 		}
 		
 		if (currentState == autoGHLeftStates.DRIVE4 && nextState == autoGHLeftStates.STOP4) {
