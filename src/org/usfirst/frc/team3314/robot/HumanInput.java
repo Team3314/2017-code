@@ -57,6 +57,12 @@ public class HumanInput {
 		return result;
 	}
 	
+	public boolean getSpinShooter() {
+		boolean result = false;
+		result = operator.getRawButton(7);
+		return result;
+	}
+	
 	public boolean getShoot() {
 		boolean result = false;
 		result = operator.getRawButton(6);
