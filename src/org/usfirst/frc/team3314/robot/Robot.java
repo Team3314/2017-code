@@ -162,7 +162,7 @@ public class Robot extends IterativeRobot {
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
 		// TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
 		 adjust.desiredEncTick = ((hi.rightStick.getZ() + 1)/2);
-		 turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2);
+		 turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2)*7.777777;
 		 if (hi.turnNinety()) {
 			 tdt.desiredAngle = ahrs.getYaw() + 90;
 		 }
