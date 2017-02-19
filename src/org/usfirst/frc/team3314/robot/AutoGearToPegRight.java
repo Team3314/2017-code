@@ -110,11 +110,11 @@ public class AutoGearToPegRight {
 	
 		if (currentState == autoGTPRightStates.TURN && nextState == autoGTPRightStates.DRIVE2) {
 			//stops robot again, 1 sec
-			robot.tdt.setDriveTrainSpeed(1);
+			robot.tdt.setDriveTrainSpeed(.5);
 			time = 50;
 		}
 		if (currentState == autoGTPRightStates.DRIVE2 && nextState == autoGTPRightStates.STOP2) {
-			robot.tdt.setDriveTrainSpeed(.5);
+			robot.tdt.setDriveTrainSpeed(0);
 		}
 		
 		if (currentState == autoGTPRightStates.STOP2 && nextState == autoGTPRightStates.RETRACT){

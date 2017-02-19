@@ -139,6 +139,7 @@ public class Robot extends IterativeRobot {
 			turret.update();
 		}
 		tdt.update();
+		shooter.update();
 		
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    
@@ -162,7 +163,7 @@ public class Robot extends IterativeRobot {
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
 		// TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
 		 adjust.desiredEncTick = ((hi.rightStick.getZ() + 1)/2);
-		 turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2)*7.777777;
+		 turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2)*63715.555555;
 		 if (hi.turnNinety()) {
 			 tdt.desiredAngle = ahrs.getYaw() + 90;
 		 }
@@ -170,6 +171,7 @@ public class Robot extends IterativeRobot {
 		tdt.update();
 		adjust.update();
 		turret.update();
+		shooter.update();
     	
 		//what each button does
     	updateButtonStatus();
@@ -216,13 +218,8 @@ public class Robot extends IterativeRobot {
     	}
     	
     	if (shootRequest) {
-    		shooter.reset();
-    		shooter.update();
+    		
     	}
-    	else if (!shootRequest) {
-    		shooter.stopShoot();
-    		shooter.reset();
-    		}
  
     	if(flashlightRequest) {
     		hal.flashlight.set(Constants.kFlashlightOn);

@@ -7,7 +7,8 @@ enum shooterStates {
 	AGITATE,
 	INDEX,
 	SHOOT,
-	REVERSE_AGITATE
+	STOP,
+	DONE
 }
 
 public class ShooterStateMachine {
@@ -47,26 +48,41 @@ public class ShooterStateMachine {
 				nextState = shooterStates.AGITATE;
 			}
 			break;
+			
 		case AGITATE:
+			if (!robot.shootRequest) {
+				nextState = shooterStates.STOP;
+			}
 			if (robot.hal.agitatorSpark.get() == 1/*percentvbus placeholder*/  &&
-			robot.hal.shooterTalon.getEncVelocity() == Constants.kShooter_TargetRPM /*rpm placeholder*/) {
+			Math.abs(robot.hal.shooterTalon.getSpeed() - Constants.kShooter_TargetRPM) <= 25) /*rpm placeholder*/ {
 				nextState = shooterStates.INDEX;
 			}
 			break;
+			
 		case INDEX:
+			if (!robot.shootRequest) {
+				nextState = shooterStates.STOP;
+			}
+			
 			if (robot.hal.indexSpark.get() == 1 /*percentvbus placeholder*/) {
 				nextState = shooterStates.SHOOT;
 			}
 			break;
+			
 		case SHOOT:
-			if (time <= 0 && robot.hal.agitatorSpark.get() == -1) {
-				nextState = shooterStates.REVERSE_AGITATE;
+			if (!robot.shootRequest) {
+				nextState = shooterStates.STOP;
 			}
 			break;
-		case REVERSE_AGITATE:
-			if (robot.hal.agitatorSpark.get() == 1) {
-				nextState = shooterStates.SHOOT;
+			
+		case STOP:
+			if (robot.hal.agitatorSpark.get() == 0 && robot.hal.indexSpark.get() == 0 && robot.hal.shooterTalon.get() == 0) {
+				nextState = shooterStates.DONE;
 			}
+			break;
+			
+		case DONE:
+			nextState = shooterStates.START;
 			break;
 		}
 	}
@@ -75,46 +91,47 @@ public class ShooterStateMachine {
 		if (currentState == shooterStates.START && nextState == shooterStates.AGITATE) {
 			robot.hal.agitatorSpark.set(1);
 			robot.hal.shooterTalon.set(Constants.kShooter_TargetRPM);
+			time = 10;
 		}
 		
 		if (currentState == shooterStates.AGITATE && nextState == shooterStates.INDEX) {
 			robot.hal.indexSpark.set(1);
+			time = 10;
 		}
 		
-		if (currentState == shooterStates.INDEX || currentState == shooterStates.REVERSE_AGITATE &&
-		nextState == shooterStates.SHOOT) {
-			if (robot.hal.indexSensor.getVoltage() < Constants.kShooter_IndexSensorThreshold) {
-				sensorTime = 50;
-			}
-			else {
-				sensorTime --;
-			}
-			
-			if (sensorTime <= 0) {
-			robot.hal.agitatorSpark.set(-1);
-			time = 50;
-			}
+		if (currentState == shooterStates.INDEX && nextState == shooterStates.SHOOT) {
+			time = 10;
 		}
 		
-		if (currentState == shooterStates.SHOOT && nextState == shooterStates.REVERSE_AGITATE) {
-			robot.hal.agitatorSpark.set(1);
-		}
-	}
-	
-	public void stopShoot() {
-		time = 0;
-		time --;
-  		robot.hal.indexSpark.set(-1);
-  		
-		//if (robot.hal.agitatorSpark1.get() != 0 || robot.hal.agitatorSpark2.get() != 0 || robot.hal.indexSpark.get() != 0 ||
-		//robot.hal.shooterTalon.get() != 0) {
-		//	time --;
-		//}
-		
-		if (time <= 0) {
+		if (currentState == shooterStates.AGITATE && nextState == shooterStates.STOP) {
 			robot.hal.agitatorSpark.set(0);
-			robot.hal.indexSpark.set(0);
 			robot.hal.shooterTalon.set(0);
+			robot.hal.indexSpark.set(0);
+			}
+		
+		if (currentState == shooterStates.INDEX && nextState == shooterStates.STOP) {
+			robot.hal.agitatorSpark.set(0);
+			robot.hal.shooterTalon.set(0);
+			if (time > 0) {
+				robot.hal.indexSpark.set(-1);
+			}
+			if (time <= 0) {
+				robot.hal.indexSpark.set(0);
+			}
+		}
+		
+		
+		
+		if (currentState == shooterStates.SHOOT && nextState == shooterStates.STOP) {
+			robot.hal.agitatorSpark.set(0);
+			robot.hal.shooterTalon.set(0);
+			if (time > 0) {
+				robot.hal.indexSpark.set(-1);
+			}
+			if (time <= 0) {
+				robot.hal.indexSpark.set(0);
+			}
+				
 		}
 	}
 }
