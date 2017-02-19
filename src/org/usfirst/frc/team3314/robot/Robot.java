@@ -221,10 +221,6 @@ public class Robot extends IterativeRobot {
     	if (spinShooterRequest) {
     		hal.shooterTalon.set(Constants.kShooter_TargetRPM);
     	}
-    	
-    	if (shootRequest) {
-    		shooter.update();
-    	}
  
     	if(flashlightRequest) {
     		hal.flashlight.set(Constants.kFlashlightOn);
