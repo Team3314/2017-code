@@ -125,25 +125,26 @@ public class AutoGearHopperRight {
 		}
 		
 		if (currentState == autoGHRightStates.STOP1 && nextState == autoGHRightStates.TURN1) {
-			//robot drives forward again at max speed but at angle of hopper, 1.5 sec
+			//robot turns left to angle of hopper, 1.5 sec
 			robot.ahrs.reset();
 			robot.tdt.setDriveAngle(-60);
 			time = 75;
 		}
 		
 		if(currentState == autoGHRightStates.TURN1 && nextState == autoGHRightStates.DRIVE2) {
+			//robot drives at max speed
 			robot.tdt.setDriveTrainSpeed(1);
 		}
 		
 		if (currentState == autoGHRightStates.DRIVE2 && nextState == autoGHRightStates.STOP2) {
-			//stops robot again, 1 sec
+			//stops robot again + gear intake retracts , 1 sec
 			robot.tdt.setDriveTrainSpeed(0);
 			robot.hal.gearIntake.set(Value.valueOf(Constants.kRetractGearIntake));
 			time = 50;
 		}
 		
 		if (currentState == autoGHRightStates.STOP2 && nextState == autoGHRightStates.DRIVEBACK){
-			//placeholder angle, robot drives forward at fullspeed, 1 sec
+			//robot drives straight back at max speed, 1 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(-1);
 			time = 50;
@@ -157,12 +158,13 @@ public class AutoGearHopperRight {
 		}
 		
 		if (currentState == autoGHRightStates.STOP3 && nextState == autoGHRightStates.TURN2){
-			//place holder angle, robot drives forward at fullspeed, 1 sec
+			//robot turns left at angle, 1 sec
 			robot.tdt.setDriveAngle(-30);
 			time = 50;
 		}
 		
 		if (currentState == autoGHRightStates.TURN2 && nextState == autoGHRightStates.DRIVE4) {
+			//robot drives at max speed
 			robot.tdt.setDriveTrainSpeed(1);
 		}
 		

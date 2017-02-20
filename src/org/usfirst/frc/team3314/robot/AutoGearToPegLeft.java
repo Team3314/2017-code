@@ -88,7 +88,7 @@ public class AutoGearToPegLeft {
 	
 	public void doTransition() {
 		if (currentState == autoGTPLeftStates.START && nextState == autoGTPLeftStates.DRIVE1) {
-			//robot drives straight forward at max speed, 3 sec
+			//robot drives straight forward at 1/2 speed, 3 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(.5);
 			time = 150;
@@ -102,17 +102,18 @@ public class AutoGearToPegLeft {
 		}
 		
 		if (currentState == autoGTPLeftStates.STOP1 && nextState == autoGTPLeftStates.TURN) {
-			//robot drives forward again at max speed but at angle of peg, 1.5 sec
-			robot.tdt.setDriveAngle(60); //or 66.36
+			//robot turns right to angle of peg, 1.5 sec
+			robot.tdt.setDriveAngle(60);
 			time = 75;
 		}
 	
 		if (currentState == autoGTPLeftStates.TURN && nextState == autoGTPLeftStates.DRIVE2) {
-			//stops robot again, 1 sec
+			//robot drives at 1/2 speed, 1 sec
 			robot.tdt.setDriveTrainSpeed(.5);
 			time = 50;
 		}
 		if (currentState == autoGTPLeftStates.DRIVE2 && nextState == autoGTPLeftStates.STOP2) {
+			//robot stops
 			robot.tdt.setDriveTrainSpeed(0);
 		}
 		

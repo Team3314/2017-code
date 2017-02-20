@@ -1,11 +1,9 @@
 package org.usfirst.frc.team3314.robot;
 
-//import com.ctre.CANTalon;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
-//import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -21,9 +19,10 @@ public class Robot extends IterativeRobot {
 	//some classes
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
-	AHRS ahrs = new AHRS(SPI.Port.kMXP);
 	TankDriveTrain tdt;
 	ShooterStateMachine shooter;
+	AngleAdjust adjust;
+	Turret turret;
 	
 	//auto classes
 	AutoNothing auto0;
@@ -37,8 +36,7 @@ public class Robot extends IterativeRobot {
 	AutoGearHopperRight auto8;
 	
 	//misc
-	AngleAdjust adjust;
-	Turret turret;
+	AHRS ahrs = new AHRS(SPI.Port.kMXP);
 	UsbCamera drivingCam;
 	CustomCamera turretCam;
 	
@@ -55,13 +53,11 @@ public class Robot extends IterativeRobot {
 	boolean flashlightRequest;
 	
 	boolean turretTrackRequest = false;
-	
 	boolean lastGyroLock = false;
 	boolean lastSpeedControl = false;
 	
 	double last_world_linear_accel_y;
 	double time = 0;
-	
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -111,6 +107,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void disabledPeriodic() {
+		//current angle
 		SmartDashboard.putNumber("Yaw", ahrs.getYaw());
 	}
 	
@@ -133,7 +130,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		//goes through auto states
+		//updates auto, driving, shooter states + turret finds distance it needs to move if requested
 		auto1.update();
 		if (turretTrackRequest) {
 			turret.getEncError(turretCam.getXError());
@@ -162,6 +159,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		//joystick input
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
+		
 		// TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
 		 adjust.desiredEncTick = ((hi.rightStick.getZ() + 1)/2);
 		 turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2)*63715.555555;
@@ -169,6 +167,7 @@ public class Robot extends IterativeRobot {
 			 tdt.desiredAngle = ahrs.getYaw() + 90;
 		 }
 		 //TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
+		
 		tdt.update();
 		adjust.update();
 		turret.update();
@@ -231,42 +230,39 @@ public class Robot extends IterativeRobot {
     	lastGyroLock = gyroLockRequest;
     	lastSpeedControl = speedControlRequest;
     	
-    	/**TEST CODE
-    	 *   TEST CODE
-    	 *   TEST CODE  */
-    		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
-    		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
-    		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
-        	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
-    		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
-    		SmartDashboard.putNumber("Left RPM", tdt.lDriveTalon1.getSpeed());
-    		SmartDashboard.putNumber("Right RPM", tdt.rDriveTalon1.getSpeed());
+   		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
+   		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
+   		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
+       	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
+   		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
+    	SmartDashboard.putNumber("Left RPM", tdt.lDriveTalon1.getSpeed());
+    	SmartDashboard.putNumber("Right RPM", tdt.rDriveTalon1.getSpeed());
     		
-    		SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
-    		SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
+    	SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
+    	SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
         	
-        	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
-        	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
-        	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
-        	SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
+       	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
+       	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
+       	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
+       	SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
         	
-        	SmartDashboard.putNumber("Left 1", tdt.lDriveTalon1.get());
-        	SmartDashboard.putNumber("Left 2 ", tdt.lDriveTalon2.get());
-        	SmartDashboard.putNumber("Right 1 ", tdt.rDriveTalon1.get());
-        	SmartDashboard.putNumber("Right 2 ", tdt.rDriveTalon2.get());
+       	SmartDashboard.putNumber("Left 1", tdt.lDriveTalon1.get());
+       	SmartDashboard.putNumber("Left 2 ", tdt.lDriveTalon2.get());
+       	SmartDashboard.putNumber("Right 1 ", tdt.rDriveTalon1.get());
+       	SmartDashboard.putNumber("Right 2 ", tdt.rDriveTalon2.get());
+        
+        SmartDashboard.putNumber("Desired Speed", tdt.desiredSpeed);
+        SmartDashboard.putNumber("Desired Angle", tdt.desiredAngle);
+       	SmartDashboard.putBoolean("lastGyroLock", lastGyroLock);
         	
-        	SmartDashboard.putNumber("Desired Speed", tdt.desiredSpeed);
-        	SmartDashboard.putNumber("Desired Angle", tdt.desiredAngle);
-        	SmartDashboard.putBoolean("lastGyroLock", lastGyroLock);
-        	
-        	SmartDashboard.putBoolean("Pressure Switch", hal.pcm1.getPressureSwitchValue());
-        	SmartDashboard.putBoolean("Compressor", hal.pcm1.enabled());
-        	SmartDashboard.putBoolean("Compressor not connected", hal.pcm1.getCompressorNotConnectedFault());
-        	SmartDashboard.putBoolean("Compressor not connected", hal.pcm1.getCompressorNotConnectedStickyFault());
-        	SmartDashboard.putBoolean("Compressor shorted", hal.pcm1.getCompressorShortedFault());
-        	SmartDashboard.putBoolean("Compressor shorted sticky", hal.pcm1.getCompressorShortedFault());
-        	SmartDashboard.putBoolean("Compressor current too high", hal.pcm1.getCompressorCurrentTooHighFault());
-        	SmartDashboard.putBoolean("Compressor current too high sticky", hal.pcm1.getCompressorCurrentTooHighStickyFault());
+       	SmartDashboard.putBoolean("Pressure Switch", hal.pcm1.getPressureSwitchValue());
+       	SmartDashboard.putBoolean("Compressor", hal.pcm1.enabled());
+       	SmartDashboard.putBoolean("Compressor not connected", hal.pcm1.getCompressorNotConnectedFault());
+       	SmartDashboard.putBoolean("Compressor not connected", hal.pcm1.getCompressorNotConnectedStickyFault());
+       	SmartDashboard.putBoolean("Compressor shorted", hal.pcm1.getCompressorShortedFault());
+       	SmartDashboard.putBoolean("Compressor shorted sticky", hal.pcm1.getCompressorShortedFault());
+       	SmartDashboard.putBoolean("Compressor current too high", hal.pcm1.getCompressorCurrentTooHighFault());
+        SmartDashboard.putBoolean("Compressor current too high sticky", hal.pcm1.getCompressorCurrentTooHighStickyFault());
     }
 		
 	/**

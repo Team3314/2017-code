@@ -61,7 +61,7 @@ public class AutoCrossBaseline {
 	
 	public void doTransition() {
 		if (currentState == autoCrossBaselineStates.START && nextState == autoCrossBaselineStates.DRIVE) {
-			//robot drives straight forward at max speed, 4 sec
+			//robot drives straight forward at 1/4 speed
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(0.25);
 		}

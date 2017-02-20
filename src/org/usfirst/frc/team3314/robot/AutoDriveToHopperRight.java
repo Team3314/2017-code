@@ -85,7 +85,7 @@ public class AutoDriveToHopperRight {
 	
 	public void doTransition() {
 		if (currentState == autoDTHRightStates.START && nextState == autoDTHRightStates.DRIVE1) {
-			//robot drives straight forward at max speed, 3 sec
+			//robot drives straight forward at 1/2 speed, 3 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(.5);
 			time = 150;
@@ -98,22 +98,24 @@ public class AutoDriveToHopperRight {
 		}
 		
 		if (currentState == autoDTHRightStates.STOP1 && nextState == autoDTHRightStates.TURN) {
-			//robot drives forward again at max speed but at angle of hopper, 1.5 sec
+			//robot turns right, 1.5 sec
 			robot.tdt.setDriveAngle(90);
 			time = 75;
 		}
 		if (currentState == autoDTHRightStates.TURN && nextState == autoDTHRightStates.DRIVE2) {
+			//robot drives at 1/2 speed
 			robot.tdt.setDriveTrainSpeed(.5);
 		}
 		
 		if (currentState == autoDTHRightStates.DRIVE2 && nextState == autoDTHRightStates.STOP2) {
-			//stops robot again, 1 sec
+			//stops robot again + shooter rpm set, 1 sec
 			robot.hal.shooterTalon.set(Constants.kShooter_TargetHopperRPM);
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 50;
 		}
 		
 		if (currentState == autoDTHRightStates.STOP2 && nextState == autoDTHRightStates.SHOOT){
+			//robot goes thru shooter states, 1 sec
 			robot.shootRequest = true;
 			time = 50;
 		}

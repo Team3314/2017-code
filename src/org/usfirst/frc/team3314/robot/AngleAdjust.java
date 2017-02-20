@@ -19,11 +19,11 @@ public class AngleAdjust {
 		//talon turns motor to target
 		robot.hal.adjustTalon.set(desiredEncTick);
 		robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(true, false);
-		robot.hal.adjustTalon.getPinStateQuadIdx();
+		robot.hal.adjustTalon.getPinStateQuadIdx(); //encoder status
 	}
 
 	public double setCamPosition(double position) {
-		//converts desired angle to encoder ticks
+		//set using desired encoder tick value
 		desiredEncTick = position;
 		return desiredEncTick;
 	}

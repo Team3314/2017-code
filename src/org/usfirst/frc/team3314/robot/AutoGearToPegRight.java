@@ -1,7 +1,5 @@
 package org.usfirst.frc.team3314.robot;
 
-
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
@@ -88,7 +86,7 @@ public class AutoGearToPegRight {
 	
 	public void doTransition() {
 		if (currentState == autoGTPRightStates.START && nextState == autoGTPRightStates.DRIVE1) {
-			//robot drives straight forward at max speed, 3 sec
+			//robot drives straight forward at 1/2 speed, 3 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 			robot.tdt.setDriveTrainSpeed(.5);
 			time = 150;
@@ -102,18 +100,18 @@ public class AutoGearToPegRight {
 		}
 		
 		if (currentState == autoGTPRightStates.STOP1 && nextState == autoGTPRightStates.TURN) {
-
-			//robot drives forward again at max speed but at angle of peg, 1.5 sec
-			robot.tdt.setDriveAngle(-60); //or 66.36
+			//robot turns left at angle of peg, 1.5 sec
+			robot.tdt.setDriveAngle(-60);
 			time = 75;
 		}
 	
 		if (currentState == autoGTPRightStates.TURN && nextState == autoGTPRightStates.DRIVE2) {
-			//stops robot again, 1 sec
+			//robot drives at 1/2 speed, 1 sec
 			robot.tdt.setDriveTrainSpeed(.5);
 			time = 50;
 		}
 		if (currentState == autoGTPRightStates.DRIVE2 && nextState == autoGTPRightStates.STOP2) {
+			//robot stops
 			robot.tdt.setDriveTrainSpeed(0);
 		}
 		
