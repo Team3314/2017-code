@@ -104,26 +104,12 @@ public class ShooterStateMachine {
 			time = 10;
 		}
 		
-		if (currentState == shooterStates.AGITATE && nextState == shooterStates.STOP) {
+		if (currentState == shooterStates.AGITATE || currentState == shooterStates.INDEX ||
+			currentState == shooterStates.SHOOT 	&& nextState == shooterStates.STOP) {
 			robot.hal.agitatorSpark.set(0);
 			robot.hal.shooterTalon.set(0);
 			robot.hal.lowerIndexSpark.set(0);
 			robot.hal.upperIndexSpark.set(0);
-			}
-		
-		if (currentState == shooterStates.INDEX && nextState == shooterStates.STOP) {
-			robot.hal.agitatorSpark.set(0);
-			robot.hal.shooterTalon.set(0);
-			robot.hal.lowerIndexSpark.set(0);
-			robot.hal.upperIndexSpark.set(0);
-			}
-		
-		if (currentState == shooterStates.SHOOT && nextState == shooterStates.STOP) {
-			robot.hal.agitatorSpark.set(0);
-			robot.hal.shooterTalon.set(0);
-			robot.hal.lowerIndexSpark.set(0);
-			robot.hal.upperIndexSpark.set(0);
-				
 		}
 	}
 }

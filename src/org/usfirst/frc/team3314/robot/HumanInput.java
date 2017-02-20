@@ -15,66 +15,48 @@ public class HumanInput {
 		
 	//following methods return whether driver/operator press button to do something specific
 	public boolean getGyroLock() {
-		boolean result = false;
-		result = rightStick.getRawButton(1);
-		return result;
+		return rightStick.getRawButton(1);
 	}
 	
 	public boolean getSpeedControl() {
-		boolean result = false;
-		result = leftStick.getRawButton(1);
-		return result;
+		return leftStick.getRawButton(9);
 	}
 		
 	public boolean getHighGear() {
-		boolean result = false;
-		result = leftStick.getRawButton(3);
-		return result;
+		return leftStick.getRawButton(3);
 	}
 	
 	public boolean getLowGear() {
-		boolean result = false;
-		result = leftStick.getRawButton(2);
-		return result;
+		return leftStick.getRawButton(2);
 	}
 	
 	public boolean getExtendGearIntake() {
-		boolean result = false;
-		result = operator.getRawButton(1);
-		return result;
+		return operator.getRawButton(1);
 	}
 	
 	public boolean getRetractGearIntake() {
-		boolean result = false;
-		result = operator.getRawButton(2);
-		return result;
+		return operator.getRawButton(2);
 	}
 	
 	public boolean getFuelIntake() {
 		//ball intake
-		boolean result = false;
-		result = rightStick.getRawButton(5);
-		return result;
+		return leftStick.getRawButton(1);
 	}
 	
 	public boolean getSpinShooter() {
-		boolean result = false;
-		result = operator.getRawButton(7);
-		return result;
+		//spins up shooter motor but doesn't actually shoot
+		return operator.getRawButton(7);
 	}
 	
 	public boolean getShoot() {
-		boolean result = false;
-		result = operator.getRawButton(6);
-		return result;
+		return operator.getRawButton(6);
 	}
 	
 	public boolean getFlashlight() {
-		boolean result = false;
-		result = operator.getRawButton(3);
-		return result;
-}
+		return operator.getRawButton(3);
+	}
+	
 	public boolean turnNinety() {
 		return leftStick.getRawButton(7);
 	}
-	}
+}
