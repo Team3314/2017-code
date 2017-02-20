@@ -156,7 +156,7 @@ public class AutoGearHopperLeft {
 		if (currentState == autoGHLeftStates.DRIVE2 && nextState == autoGHLeftStates.STOP2) {
 			//stops robot again, 1 sec
 			robot.tdt.setDriveTrainSpeed(0);
-			robot.hal.gearIntake.set(Value.valueOf(Constants.kRetractGearIntake));
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
 			time = 50;
 		}
 		

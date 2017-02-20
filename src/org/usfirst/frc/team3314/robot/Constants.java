@@ -10,8 +10,8 @@ public class Constants {
 	public static double kCollisionThreshold_DeltaG = .5; //acceleration limit for collision detection
 	
 	//Solenoid States
-	public static String kExtendGearIntake = "kForward";
-	public static String kRetractGearIntake = "kReverse";
+	public static String kRaiseGearIntake = "kForward";
+	public static String kDropGearIntake = "kReverse";
 	
 	public static String kShiftHighGear = "kReverse";
 	public static String kShiftLowGear = "kForward";

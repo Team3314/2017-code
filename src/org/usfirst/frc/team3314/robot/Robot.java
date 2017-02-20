@@ -43,8 +43,8 @@ public class Robot extends IterativeRobot {
 	CustomCamera turretCam;
 	
 	//button input
-	boolean extendGearIntakeRequest;
-	boolean retractGearIntakeRequest;
+	boolean raiseGearIntakeRequest;
+	boolean dropGearIntakeRequest;
 	boolean fuelIntakeRequest;
 	boolean gyroLockRequest;
 	boolean speedControlRequest;
@@ -90,7 +90,7 @@ public class Robot extends IterativeRobot {
 		auto8 = new AutoGearHopperRight(this);
 		
 		//misc
-		hal.gearIntake.set(Value.valueOf(Constants.kRetractGearIntake));
+		hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
 	}
 
 	/**
@@ -134,6 +134,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		//goes through auto states
+		if (!adjust.calibrated) {
+			adjust.calibrate();
+		}
 		auto1.update();
 		if (turretTrackRequest) {
 			turret.getEncError(turretCam.getXError());
@@ -176,15 +179,15 @@ public class Robot extends IterativeRobot {
     	
 		//what each button does
     	updateButtonStatus();
-    	if(extendGearIntakeRequest) {
-    		hal.gearIntake.set(Value.valueOf(Constants.kExtendGearIntake));
+    	if(raiseGearIntakeRequest) {
+    		hal.gearIntake.set(Value.valueOf(Constants.kRaiseGearIntake));
     	}
     	
-    	if(retractGearIntakeRequest) {
-     		hal.gearIntake.set(Value.valueOf(Constants.kRetractGearIntake));
+    	if(dropGearIntakeRequest) {
+     		hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
     	}
     	
-    	if(fuelIntakeRequest) {
+    	if(fuelIntakeRequest && hal.gearIntake.get().toString() == Constants.kRaiseGearIntake) {
     		hal.intakeSpark.set(1);
     	} else if (!fuelIntakeRequest) {
     		hal.intakeSpark.set(0);
@@ -279,8 +282,8 @@ public class Robot extends IterativeRobot {
 	
 	public void updateButtonStatus() {
 		//checks if button is pressed
-		extendGearIntakeRequest = hi.getExtendGearIntake();
-		retractGearIntakeRequest = hi.getRetractGearIntake();
+		raiseGearIntakeRequest = hi.getExtendGearIntake();
+		dropGearIntakeRequest = hi.getRetractGearIntake();
 		fuelIntakeRequest = hi.getFuelIntake();
 		gyroLockRequest = hi.getGyroLock();
 		speedControlRequest = hi.getSpeedControl();

@@ -77,7 +77,7 @@ public class AutoGearToPegLeft {
 			}
 			break;
 		case RETRACT:
-			if (time <=0 && robot.hal.gearIntake.get().toString() == Constants.kRetractGearIntake){
+			if (time <=0 && robot.hal.gearIntake.get().toString() == Constants.kDropGearIntake){
 				nextState = autoGTPLeftStates.DONE;
 			}
 			break;
@@ -118,7 +118,7 @@ public class AutoGearToPegLeft {
 		
 		if (currentState == autoGTPLeftStates.STOP2 && nextState == autoGTPLeftStates.RETRACT){
 			//retracts gear intake, 1 sec
-			robot.hal.gearIntake.set(Value.valueOf(Constants.kRetractGearIntake));
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
 			time = 50;
 		}
 	}
