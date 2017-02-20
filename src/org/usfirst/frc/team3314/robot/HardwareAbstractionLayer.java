@@ -16,8 +16,9 @@ public class HardwareAbstractionLayer {
 	CANTalon turretTalon;
 	CANTalon shooterTalon;
 	CANTalon adjustTalon; //changes angle of shooter
+	Spark upperIndexSpark;
 	Spark intakeSpark;
-	Spark indexSpark; //puts balls into shooter
+	Spark lowerIndexSpark; //puts balls into shooter
 	Spark agitatorSpark; //move balls around so they dont get stuck
 	
 	//digital io
@@ -42,8 +43,9 @@ public class HardwareAbstractionLayer {
 		turretTalon = new CANTalon(4);
 		shooterTalon = new CANTalon(5);
 		adjustTalon = new CANTalon(6);
+		upperIndexSpark = new Spark(6);
 		intakeSpark = new Spark(7);
-		indexSpark = new Spark(8);
+		lowerIndexSpark = new Spark(8);
 		agitatorSpark = new Spark(9);
 		
 		shooterTalon.configEncoderCodesPerRev(2048);

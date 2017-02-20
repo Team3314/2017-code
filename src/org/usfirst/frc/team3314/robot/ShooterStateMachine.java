@@ -64,7 +64,7 @@ public class ShooterStateMachine {
 				nextState = shooterStates.STOP;
 			}
 			
-			if (robot.hal.indexSpark.get() == 1 /*percentvbus placeholder*/) {
+			if (robot.hal.lowerIndexSpark.get() == 1 && robot.hal.upperIndexSpark.get() == 1 /*percentvbus placeholder*/) {
 				nextState = shooterStates.SHOOT;
 			}
 			break;
@@ -76,7 +76,7 @@ public class ShooterStateMachine {
 			break;
 			
 		case STOP:
-			if (robot.hal.agitatorSpark.get() == 0 && robot.hal.indexSpark.get() == 0 && robot.hal.shooterTalon.get() == 0) {
+			if (robot.hal.agitatorSpark.get() == 0 && robot.hal.lowerIndexSpark.get() == 0 && robot.hal.shooterTalon.get() == 0) {
 				nextState = shooterStates.DONE;
 			}
 			break;
@@ -95,7 +95,8 @@ public class ShooterStateMachine {
 		}
 		
 		if (currentState == shooterStates.AGITATE && nextState == shooterStates.INDEX) {
-			robot.hal.indexSpark.set(1);
+			robot.hal.lowerIndexSpark.set(1);
+			robot.hal.upperIndexSpark.set(1);
 			time = 10;
 		}
 		
@@ -106,31 +107,22 @@ public class ShooterStateMachine {
 		if (currentState == shooterStates.AGITATE && nextState == shooterStates.STOP) {
 			robot.hal.agitatorSpark.set(0);
 			robot.hal.shooterTalon.set(0);
-			robot.hal.indexSpark.set(0);
+			robot.hal.lowerIndexSpark.set(0);
+			robot.hal.upperIndexSpark.set(0);
 			}
 		
 		if (currentState == shooterStates.INDEX && nextState == shooterStates.STOP) {
 			robot.hal.agitatorSpark.set(0);
 			robot.hal.shooterTalon.set(0);
-			if (time > 0) {
-				robot.hal.indexSpark.set(-1);
+			robot.hal.lowerIndexSpark.set(0);
+			robot.hal.upperIndexSpark.set(0);
 			}
-			if (time <= 0) {
-				robot.hal.indexSpark.set(0);
-			}
-		}
-		
-		
 		
 		if (currentState == shooterStates.SHOOT && nextState == shooterStates.STOP) {
 			robot.hal.agitatorSpark.set(0);
 			robot.hal.shooterTalon.set(0);
-			if (time > 0) {
-				robot.hal.indexSpark.set(-1);
-			}
-			if (time <= 0) {
-				robot.hal.indexSpark.set(0);
-			}
+			robot.hal.lowerIndexSpark.set(0);
+			robot.hal.upperIndexSpark.set(0);
 				
 		}
 	}
