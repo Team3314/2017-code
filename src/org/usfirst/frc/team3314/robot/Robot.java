@@ -51,7 +51,7 @@ public class Robot extends IterativeRobot {
 	boolean highGearRequest;
 	boolean lowGearRequest;
 	boolean spinShooterRequest;
-	boolean shootRequest;
+	boolean shootRequest = false;
 	boolean flashlightRequest;
 	
 	boolean turretTrackRequest = false;
@@ -90,7 +90,6 @@ public class Robot extends IterativeRobot {
 		auto8 = new AutoGearHopperRight(this);
 		
 		//misc
-		hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
 	}
 
 	/**
@@ -144,7 +143,7 @@ public class Robot extends IterativeRobot {
 		}
 		tdt.update();
 		shooter.update();
-		
+		adjust.update();
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
@@ -156,6 +155,7 @@ public class Robot extends IterativeRobot {
 		tdt.setDriveMode(driveMode.TANK);
 		ahrs.reset();
 		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
+		hal.turretTalon.setPosition(0);
 	}
 
 	/**
@@ -166,16 +166,25 @@ public class Robot extends IterativeRobot {
 		//joystick input
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
 		// TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
-		 adjust.desiredEncTick = ((hi.rightStick.getZ() + 1)/2);
-		 turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2)*63715.555555;
+		 adjust.setCamPosition((hi.rightStick.getZ() + 1)/2);
+		 turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2)*7;
 		 if (hi.turnNinety()) {
 			 tdt.desiredAngle = ahrs.getYaw() + 90;
 		 }
+		 if (hi.leftStick.getRawButton(9)) {
+			 hal.ringLight.set(true);
+		 }
+		 else {
+			 hal.ringLight.set(false);
+		 }
+		 hal.shooterTalon.set(((hi.lmao.getRawAxis(3) + 1) /2)*5900);
 		 //TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
+		 
 		tdt.update();
 		adjust.update();
 		turret.update();
 		shooter.update();
+		
     	
 		//what each button does
     	updateButtonStatus();
@@ -189,7 +198,9 @@ public class Robot extends IterativeRobot {
     	
     	if(fuelIntakeRequest && hal.gearIntake.get().toString() == Constants.kRaiseGearIntake) {
     		hal.intakeSpark.set(1);
+    		hal.upperIntakeSpark.set(1);
     	} else if (!fuelIntakeRequest) {
+    		hal.upperIntakeSpark.set(0);
     		hal.intakeSpark.set(0);
     	}
     	
@@ -204,8 +215,6 @@ public class Robot extends IterativeRobot {
     	else if (speedControlRequest && !gyroLockRequest) {
     		if (!lastSpeedControl) {
     			tdt.setDriveMode(driveMode.SPEEDCONTROL);
-    			//tdt.lDriveTalon1.changeControlMode(CANTalon.TalonControlMode.Speed);
-    			//tdt.rDriveTalon1.changeControlMode(CANTalon.TalonControlMode.Speed);
     		}	
     	}
     	else {
@@ -220,15 +229,32 @@ public class Robot extends IterativeRobot {
     	if (lowGearRequest) {
     		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
     	}
-    	
+    	/*
     	if (spinShooterRequest) {
     		hal.shooterTalon.set(Constants.kShooter_TargetRPM);
     	}
- 
+    	else if (!spinShooterRequest && !shootRequest) {
+    		hal.shooterTalon.set(0);
+    	}
+ 		*/
     	if(flashlightRequest) {
     		hal.flashlight.set(Constants.kFlashlightOn);
     	} else if(!flashlightRequest) {
     		hal.flashlight.set(Constants.kFlashlightOff);
+    	}
+    	if (hi.operator.getRawButton(3)) {
+    		hal.agitatorSpark.set(1);
+    	}
+    	else {
+    		hal.agitatorSpark.set(0);
+    	}
+    	if (hi.operator.getRawButton(4)) {
+    		hal.upperIndexSpark.set(1);
+    		hal.lowerIndexSpark.set(1);
+    	}
+    	else {
+    		hal.upperIndexSpark.set(0);
+    		hal.lowerIndexSpark.set(0);
     	}
     		
     	lastGyroLock = gyroLockRequest;
@@ -263,13 +289,29 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putBoolean("lastGyroLock", lastGyroLock);
         	
         	SmartDashboard.putBoolean("Pressure Switch", hal.pcm1.getPressureSwitchValue());
-        	SmartDashboard.putBoolean("Compressor", hal.pcm1.enabled());
-        	SmartDashboard.putBoolean("Compressor not connected", hal.pcm1.getCompressorNotConnectedFault());
-        	SmartDashboard.putBoolean("Compressor not connected", hal.pcm1.getCompressorNotConnectedStickyFault());
-        	SmartDashboard.putBoolean("Compressor shorted", hal.pcm1.getCompressorShortedFault());
-        	SmartDashboard.putBoolean("Compressor shorted sticky", hal.pcm1.getCompressorShortedFault());
-        	SmartDashboard.putBoolean("Compressor current too high", hal.pcm1.getCompressorCurrentTooHighFault());
-        	SmartDashboard.putBoolean("Compressor current too high sticky", hal.pcm1.getCompressorCurrentTooHighStickyFault());
+        	SmartDashboard.putString("Shooter State", shooter.currentState.toString());
+        	
+        	SmartDashboard.putNumber("Cam position", hal.adjustTalon.getPosition()*8192);
+        	SmartDashboard.putNumber("Target Cam Position", hal.adjustTalon.getSetpoint() * 8192);
+        	
+        	SmartDashboard.putNumber("Turret Position", hal.turretTalon.getPosition());
+        	SmartDashboard.putNumber("Target Turret Position", hal.turretTalon.getSetpoint());
+        	
+        	SmartDashboard.putNumber("Lower Roller Input", hal.lowerIndexSpark.get());
+        	
+        	SmartDashboard.putBoolean("Intake Spark", hal.intakeSpark.isAlive());        	
+        	SmartDashboard.putString("Gear Intake state", hal.gearIntake.get().toString());
+        	
+        	SmartDashboard.putNumber("Shooter RPM", hal.shooterTalon.getSpeed());
+        	
+        	SmartDashboard.putNumber("Target ShooterRPM" ,(((hi.lmao.getRawAxis(3) + 1) /2)*5900));
+        	
+        	SmartDashboard.putNumber("Shooter Error", hal.shooterTalon.getSetpoint());
+        	
+        	SmartDashboard.putString("Gear Intake State", hal.gearIntake.getSmartDashboardType());
+        	
+        	
+        	
     }
 		
 	/**
@@ -278,12 +320,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	
 	public void testPeriodic() {
+		adjust.calibrate();
 	}
 	
 	public void updateButtonStatus() {
 		//checks if button is pressed
-		raiseGearIntakeRequest = hi.getExtendGearIntake();
-		dropGearIntakeRequest = hi.getRetractGearIntake();
+		raiseGearIntakeRequest = hi.getRaiseGearIntake();
+		dropGearIntakeRequest = hi.getDropGearIntake();
 		fuelIntakeRequest = hi.getFuelIntake();
 		gyroLockRequest = hi.getGyroLock();
 		speedControlRequest = hi.getSpeedControl();

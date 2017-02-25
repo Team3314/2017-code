@@ -5,11 +5,13 @@ import edu.wpi.first.wpilibj.Joystick;
 public class HumanInput {
 	Joystick leftStick;
 	Joystick rightStick;
+	Joystick lmao;
 	Joystick operator;
 
 	public HumanInput() {
 		leftStick = new Joystick(0); //left attack3 stick
 		rightStick = new Joystick(1); //right attack3 stick
+		lmao = new Joystick(3);
 		operator = new Joystick(2); //xbox controller
 	}
 		
@@ -38,15 +40,15 @@ public class HumanInput {
 		return result;
 	}
 	
-	public boolean getExtendGearIntake() {
+	public boolean getRaiseGearIntake() {
 		boolean result = false;
-		result = operator.getRawButton(1);
+		result = rightStick.getRawButton(3);
 		return result;
 	}
 	
-	public boolean getRetractGearIntake() {
+	public boolean getDropGearIntake() {
 		boolean result = false;
-		result = operator.getRawButton(2);
+		result = rightStick.getRawButton(2);
 		return result;
 	}
 	
@@ -54,6 +56,7 @@ public class HumanInput {
 		//ball intake
 		boolean result = false;
 		result = rightStick.getRawButton(5);
+
 		return result;
 	}
 	

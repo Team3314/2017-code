@@ -10,14 +10,17 @@ public class Constants {
 	public static double kCollisionThreshold_DeltaG = .5; //acceleration limit for collision detection
 	
 	//Solenoid States
-	public static String kRaiseGearIntake = "kForward";
-	public static String kDropGearIntake = "kReverse";
+	public static String kRaiseGearIntake = "kReverse";
+	public static String kDropGearIntake = "kForward";
 	
 	public static String kShiftHighGear = "kReverse";
 	public static String kShiftLowGear = "kForward";
 	
-	public static boolean kFlashlightOn = false;
-	public static boolean kFlashlightOff = true;
+	public static boolean kFlashlightOn = true;
+	public static boolean kFlashlightOff = false;
+	
+	public static boolean kRingLightOn = true;
+	public static boolean kRingLightOff = false;
 	
 	//gyrolock pidcontroller
 	public static double kGyroLock_kP = .0175;
@@ -35,8 +38,8 @@ public class Constants {
 	public static int kTurret_Profile = 0;
 	
 	//adjust pid
-	public static double kAngleAdjust_kP = .8;
-	public static double kAngleAdjust_kI = .008;
+	public static double kAngleAdjust_kP = .6;
+	public static double kAngleAdjust_kI = .002;
 	public static double kAngleAdjust_kD = 0;
 	public static double kAngleAdjust_kF = .0;
 	public static int kAngleAdjust_IZone = 0;

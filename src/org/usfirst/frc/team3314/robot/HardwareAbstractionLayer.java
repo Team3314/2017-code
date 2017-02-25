@@ -20,6 +20,8 @@ public class HardwareAbstractionLayer {
 	Spark intakeSpark;
 	Spark lowerIndexSpark; //puts balls into shooter
 	Spark agitatorSpark; //move balls around so they dont get stuck
+	Spark upperIntakeSpark;
+	Spark climberSpark;
 	
 	//digital io
 	DigitalInput autoSelect; //choose autos with physical binary switches
@@ -32,6 +34,7 @@ public class HardwareAbstractionLayer {
 	DoubleSolenoid gearIntake;
 	DoubleSolenoid driveShifter;
 	Solenoid flashlight;
+	Solenoid ringLight;
 	
 	//misc
 	AnalogInput indexSensor;
@@ -40,16 +43,27 @@ public class HardwareAbstractionLayer {
 		robot = r;
 		
 		//speed controllers
+		lowerIndexSpark = new Spark(0);
+		upperIntakeSpark = new Spark(1);
+		climberSpark = new Spark(2);
 		turretTalon = new CANTalon(4);
 		shooterTalon = new CANTalon(5);
 		adjustTalon = new CANTalon(6);
-		upperIndexSpark = new Spark(6);
 		intakeSpark = new Spark(7);
-		lowerIndexSpark = new Spark(8);
+		upperIndexSpark = new Spark(8);
 		agitatorSpark = new Spark(9);
+		
+		upperIndexSpark.setInverted(true);
+		upperIntakeSpark.setInverted(true);
+		
+		
+		
+		
 		
 		shooterTalon.configEncoderCodesPerRev(2048);
 		shooterTalon.changeControlMode(TalonControlMode.Speed);
+		shooterTalon.reverseSensor(true);
+		shooterTalon.setInverted(true);
 		shooterTalon.setPID(Constants.kShooter_kP, Constants.kShooter_kI, Constants.kShooter_kD,
 		Constants.kShooter_kF, Constants.kShooter_IZone, Constants.kShooter_RampRate, Constants.kShooter_Profile);
 		
@@ -63,7 +77,9 @@ public class HardwareAbstractionLayer {
 		pcm1 = new Compressor(0);
 		driveShifter = new DoubleSolenoid(0, 1);
 		gearIntake = new DoubleSolenoid(2, 3);
-		flashlight = new Solenoid(4);
+
+		flashlight = new Solenoid(7);
+		ringLight = new Solenoid(6);
 		
 		pcm1.setClosedLoopControl(true);
 		

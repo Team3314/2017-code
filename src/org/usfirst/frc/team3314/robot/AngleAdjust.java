@@ -12,15 +12,17 @@ public class AngleAdjust {
 		
 		robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
 		robot.hal.adjustTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		robot.hal.adjustTalon.configEncoderCodesPerRev(2048);
 		robot.hal.adjustTalon.setPID(Constants.kAngleAdjust_kP, Constants.kAngleAdjust_kI, Constants.kAngleAdjust_kD,
 		Constants.kAngleAdjust_kF, Constants.kAngleAdjust_IZone, Constants.kAngleAdjust_RampRate, Constants.kAdjust_Profile);
+		robot.hal.adjustTalon.setAllowableClosedLoopErr(100);
 	}
 	
 	public void update() {
 		//talon turns motor to target
 		robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
 		robot.hal.adjustTalon.set(desiredEncTick);
-		robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(true, false);
+		robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(false, false);
 		robot.hal.adjustTalon.getPinStateQuadIdx();
 	}
 

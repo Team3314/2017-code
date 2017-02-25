@@ -10,7 +10,7 @@ public class Turret {
 		robot = myRobot;
 
 		robot.hal.turretTalon.changeControlMode(TalonControlMode.Position);
-		robot.hal.turretTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		robot.hal.turretTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 		robot.hal.turretTalon.setPID(Constants.kTurret_kP, Constants.kTurret_kI, Constants.kTurret_kD,
 		Constants.kTurret_kF, Constants.kTurret_IZone, Constants.kTurret_RampRate, Constants.kTurret_Profile);
 	}

@@ -62,10 +62,11 @@ public class TankDriveTrain {
 		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		lDriveTalon1.configEncoderCodesPerRev(2048);
 		rDriveTalon1.configEncoderCodesPerRev(2048);
+		lDriveTalon1.setInverted(true);
 	}
 	
 	public void update() {
-		lDriveTalon1.set(-rawLeftSpeed);
+		lDriveTalon1.set(rawLeftSpeed);
 		rDriveTalon1.set(rawRightSpeed);
 		
 		avgEncPos = (lDriveTalon1.getPosition() + rDriveTalon1.getPosition()) / 2;

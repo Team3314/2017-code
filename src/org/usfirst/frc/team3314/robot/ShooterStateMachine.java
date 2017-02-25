@@ -17,6 +17,7 @@ public class ShooterStateMachine {
 	Robot robot;
 	double time = 0;
 	double sensorTime = 50;
+	double rpm;
 	
 	public ShooterStateMachine(Robot myRobot) {
 		robot = myRobot;
@@ -47,6 +48,7 @@ public class ShooterStateMachine {
 			if (robot.shootRequest) {
 				nextState = shooterStates.AGITATE;
 			}
+			
 			break;
 			
 		case AGITATE:
