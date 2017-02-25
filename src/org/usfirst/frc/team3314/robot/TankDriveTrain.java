@@ -32,8 +32,6 @@ public class TankDriveTrain {
 	PIDController gyroControl;
 	GyroPIDOutput gyroPIDOutput;
 	
-
-	
 	driveMode currentMode = driveMode.IDLE;
 
 	public TankDriveTrain(Robot myRobot) {
@@ -71,6 +69,7 @@ public class TankDriveTrain {
 		
 		avgEncPos = (lDriveTalon1.getPosition() + rDriveTalon1.getPosition()) / 2;
 		
+		//talon changes mode based on tank drive state
 		if (currentMode == driveMode.SPEEDCONTROL){
 			lDriveTalon1.changeControlMode(TalonControlMode.Speed);
 			rDriveTalon1.changeControlMode(TalonControlMode.Speed);
@@ -158,7 +157,8 @@ public class TankDriveTrain {
 		currentMode = mode;
 	}
 	
-	public void setDriveTrainSpeed(double speed) {	
+	public void setDriveTrainSpeed(double speed) {
+		//set negative so robot movement isnt inverted
 		speed = -desiredSpeed;
 	}
 	

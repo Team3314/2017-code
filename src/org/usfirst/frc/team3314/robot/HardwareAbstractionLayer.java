@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
+//import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class HardwareAbstractionLayer {
@@ -18,16 +18,16 @@ public class HardwareAbstractionLayer {
 	CANTalon adjustTalon; //changes angle of shooter
 	Spark upperIndexSpark;
 	Spark intakeSpark;
-	Spark lowerIndexSpark; //puts balls into shooter
+	Spark lowerIndexSpark; //both put balls into shooter
 	Spark agitatorSpark; //move balls around so they dont get stuck
 	Spark upperIntakeSpark;
 	Spark climberSpark;
 	
 	//digital io
-	DigitalInput autoSelect; //choose autos with physical binary switches
-	DigitalInput autoSelect2;
-	DigitalInput autoSelect3;
-	DigitalInput autoSelect4;
+	//DigitalInput autoSelect; //choose autos with physical binary switches
+	//	DigitalInput autoSelect2;
+	//DigitalInput autoSelect3;
+	//DigitalInput autoSelect4;
 	
 	//pneumatics
 	Compressor pcm1;
@@ -68,10 +68,10 @@ public class HardwareAbstractionLayer {
 		Constants.kShooter_kF, Constants.kShooter_IZone, Constants.kShooter_RampRate, Constants.kShooter_Profile);
 		
 		//digital io
-		autoSelect = new DigitalInput(0);
-		autoSelect2 = new DigitalInput(1);
-		autoSelect3 = new DigitalInput(2);
-		autoSelect4 = new DigitalInput(3);
+		//autoSelect = new DigitalInput(0);
+		//autoSelect2 = new DigitalInput(1);
+		//autoSelect3 = new DigitalInput(2);
+		//autoSelect4 = new DigitalInput(3);
 		
 		//pneumatics
 		pcm1 = new Compressor(0);
