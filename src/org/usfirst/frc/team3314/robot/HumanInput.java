@@ -5,14 +5,16 @@ import edu.wpi.first.wpilibj.Joystick;
 public class HumanInput {
 	Joystick leftStick;
 	Joystick rightStick;
-	Joystick lmao;
 	Joystick operator;
+	Joystick buttonBox;
+	Joystick lmao;
 
 	public HumanInput() {
 		leftStick = new Joystick(0); //left attack3 stick
 		rightStick = new Joystick(1); //right attack3 stick
-		lmao = new Joystick(3);
 		operator = new Joystick(2); //xbox controller
+		buttonBox = new Joystick(3);
+		lmao = new Joystick(4); //extreme 3d stick
 	}
 		
 	//following methods return whether driver/operator press button to do something specific
@@ -60,5 +62,21 @@ public class HumanInput {
 	
 	public boolean turnNinety() {
 		return leftStick.getRawButton(7);
+	}
+	
+	public boolean getBinaryOne() {
+		return buttonBox.getRawButton(1);
+	}
+	
+	public boolean getBinaryTwo() {
+		return buttonBox.getRawButton(2);
+	}
+	
+	public boolean getBinaryFour() {
+		return buttonBox.getRawButton(3);
+	}
+	
+	public boolean getBinaryEight() {
+		return buttonBox.getRawButton(4);
 	}
 }

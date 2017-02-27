@@ -55,6 +55,10 @@ public class Robot extends IterativeRobot {
 	boolean turretTrackRequest = false;
 	boolean lastGyroLock = false;
 	boolean lastSpeedControl = false;
+	boolean binaryOne;
+	boolean binaryTwo;
+	boolean binaryFour;
+	boolean binaryEight;
 	
 	double last_world_linear_accel_y;
 	double time = 0;
@@ -103,11 +107,36 @@ public class Robot extends IterativeRobot {
 	public void disabledInit() {
 		//resets navx
 		ahrs.reset();
-	}
+		}
 	
 	public void disabledPeriodic() {
 		//current angle
 		SmartDashboard.putNumber("Yaw", ahrs.getYaw());
+		
+		//lets auto chooser work with human input by setting vars
+		if (hi.getBinaryOne()) {
+			binaryOne = true;
+		} else {
+			binaryOne = false;
+		}
+		
+		if (hi.getBinaryTwo()) {
+			binaryTwo = true;
+		} else {
+			binaryTwo = false;
+		}
+		
+		if (hi.getBinaryFour()) {
+			binaryFour = true;
+		} else {
+			binaryFour = false;
+		}
+		
+		if (hi.getBinaryEight()) {
+			binaryEight = true;
+		} else {
+			binaryEight = false;
+		}
 	}
 	
 	@Override
@@ -116,12 +145,48 @@ public class Robot extends IterativeRobot {
 		tdt.setDriveMode(driveMode.GYROLOCK);
 		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
 		
-		//resets all values then auto
+		//resets drive + gyro vals
 		ahrs.reset();
 		tdt.lDriveTalon1.setPosition(0);
 		tdt.rDriveTalon1.setPosition(0);
 		tdt.setDriveTrainSpeed(0);
-		auto1.reset();
+		
+		//auto chooser
+		if (!binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+			auto0.reset();
+		}
+			
+		if (!binaryEight && !binaryFour && !binaryTwo && binaryOne) {
+			auto1.reset();
+		}
+		
+		if (!binaryEight && !binaryFour && binaryTwo && !binaryOne) {
+			auto2.reset();
+		}
+		
+		if (!binaryEight && !binaryFour && binaryTwo && binaryOne) {
+			auto3.reset();
+		}
+		
+		if (!binaryEight && binaryFour && !binaryTwo && !binaryOne) {
+			auto4.reset();
+		}
+		
+		if (!binaryEight && binaryFour && !binaryTwo && binaryOne) {
+			auto5.reset();
+		}
+		
+		if (!binaryEight && binaryFour && binaryTwo && !binaryOne) {
+			auto6.reset();
+		}
+		
+		if (!binaryEight && binaryFour && binaryTwo && binaryOne) {
+			auto7.reset();
+		}
+		
+		if (binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+			auto8.reset();
+		}
 	}
 
 	/**
@@ -129,12 +194,48 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		//updates auto, driving, shooter states + turret finds distance it needs to move if requested
+		//updates driving, shooter states + turret finds distance it needs to move if requested
 		if (!adjust.calibrated) {
 			adjust.calibrate();
 		}
 		
-		auto1.update();
+		//auto chooser
+		if (!binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+			auto0.update();
+		}
+			
+		if (!binaryEight && !binaryFour && !binaryTwo && binaryOne) {
+			auto1.update();
+		}
+		
+		if (!binaryEight && !binaryFour && binaryTwo && !binaryOne) {
+			auto2.update();
+		}
+		
+		if (!binaryEight && !binaryFour && binaryTwo && binaryOne) {
+			auto3.update();
+		}
+		
+		if (!binaryEight && binaryFour && !binaryTwo && !binaryOne) {
+			auto4.update();
+		}
+		
+		if (!binaryEight && binaryFour && !binaryTwo && binaryOne) {
+			auto5.update();
+		}
+		
+		if (!binaryEight && binaryFour && binaryTwo && !binaryOne) {
+			auto6.update();
+		}
+		
+		if (!binaryEight && binaryFour && binaryTwo && binaryOne) {
+			auto7.update();
+		}
+		
+		if (binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+			auto8.update();
+		}
+		
 		if (turretTrackRequest) {
 			turret.getEncError(turretCam.getXError());
 			turret.update();
