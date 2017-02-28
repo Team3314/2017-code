@@ -44,6 +44,7 @@ public class TankDriveTrain {
 	    		Constants.kGyroLock_kF, robot.ahrs, gyroPIDOutput);
 	    gyroControl.setContinuous(); //makes angle correct itself in the shortest distance
 		gyroControl.setInputRange(-180, 180);
+		gyroControl.setOutputRange(-.5, .5);
 		
 		rDriveTalon1 = new CANTalon(1);
 		rDriveTalon2 = new CANTalon(3);
@@ -63,6 +64,8 @@ public class TankDriveTrain {
 		lDriveTalon1.configEncoderCodesPerRev(2048);
 		rDriveTalon1.configEncoderCodesPerRev(2048);
 		lDriveTalon1.setInverted(true);
+		lDriveTalon1.reverseSensor(true);
+		rDriveTalon1.reverseSensor(true);
 	}
 	
 	public void update() {
@@ -92,6 +95,16 @@ public class TankDriveTrain {
 			break;
 		case GYROLOCK:
  			//motor speed determined by angle of robot relative to desired angle
+			if (!gyroControl.isEnabled()){
+				gyroControl.enable();
+			}
+			if(Math.abs(desiredAngle - robot.ahrs.getYaw()) > 10 ) {
+				gyroControl.setPID(Constants.kGyroLock_kP, 0, Constants.kGyroLock_kD);
+			}
+			else if (Math.abs(desiredAngle - robot.ahrs.getYaw()) <= 10 ) {
+				gyroControl.setPID(Constants.kGyroLock_kP, Constants.kGyroLock_kI , Constants.kGyroLock_kD);
+			}
+			
 			rawLeftSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
 			rawRightSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
 			gyroControl.setSetpoint(desiredAngle);	
@@ -159,7 +172,7 @@ public class TankDriveTrain {
 	}
 	
 	public void setDriveTrainSpeed(double speed) {	
-		speed = -desiredSpeed;
+		desiredSpeed = speed;
 	}
 	
 	public void setDriveAngle(double angle) {

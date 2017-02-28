@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3314.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 enum autoCrossBaselineStates {
@@ -14,6 +15,7 @@ public class AutoCrossBaseline {
 	autoCrossBaselineStates nextState;
 	Robot robot;
 	double time = 0;
+	double desiredDistance = 77.5;
 
 	public AutoCrossBaseline(Robot myRobot) {
 		robot = myRobot;
@@ -45,7 +47,7 @@ public class AutoCrossBaseline {
 			nextState = autoCrossBaselineStates.DRIVE;
 			break;
 		case DRIVE:
-			if (robot.tdt.avgEncPos > (/*93.25*/25*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (desiredDistance*Constants.kEncConvFactor)){
 				nextState = autoCrossBaselineStates.STOP;
 			}
 			break;
@@ -62,8 +64,9 @@ public class AutoCrossBaseline {
 	public void doTransition() {
 		if (currentState == autoCrossBaselineStates.START && nextState == autoCrossBaselineStates.DRIVE) {
 			//robot drives straight forward at max speed, 4 sec
-			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
-			robot.tdt.setDriveTrainSpeed(0.25);
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
+			robot.tdt.setDriveAngle(0);
+			robot.tdt.setDriveTrainSpeed(-0.25);
 		}
 		
 		if (currentState == autoCrossBaselineStates.DRIVE && nextState == autoCrossBaselineStates.STOP) {

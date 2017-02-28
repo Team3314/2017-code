@@ -13,6 +13,10 @@ public class Turret {
 		robot.hal.turretTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 		robot.hal.turretTalon.setPID(Constants.kTurret_kP, Constants.kTurret_kI, Constants.kTurret_kD,
 		Constants.kTurret_kF, Constants.kTurret_IZone, Constants.kTurret_RampRate, Constants.kTurret_Profile);
+		robot.hal.turretTalon.enableForwardSoftLimit(true);
+		robot.hal.turretTalon.setForwardSoftLimit(7);
+		robot.hal.turretTalon.enableReverseSoftLimit(true);
+		robot.hal.turretTalon.setReverseSoftLimit(0);
 	}
 	
 	public void update() {
