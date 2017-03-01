@@ -182,8 +182,6 @@ public class Robot extends IterativeRobot {
 		//joystick input
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
 		// TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
-		cam.desiredPosition = (hi.rightStick.getZ() + 1) / 2;
-		 shooter.desiredSpeed = (((hi.leftStick.getZ() + 1) /2)*5900);
 		// turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2)*7;
 		
 		 if (hi.turnTen()) {
@@ -303,7 +301,7 @@ public class Robot extends IterativeRobot {
     	}
     	if (calibrateCamRequest) {
     		cam.calibrated = false;
-    	}
+    	}/*
     	if (hi.runClimber()) {
     		hal.upperIntakeSpark.set(1);
     	}
@@ -312,17 +310,21 @@ public class Robot extends IterativeRobot {
     	}
     	else {
     		hal.upperIntakeSpark.set(0);
-    	}
+    	}*/
     	if (setShooterCloseRequest) {
-    		hal.adjustTalon.set(Constants.kCamClosePosition);
-    		hal.shooterTalon.set(Constants.kShooterCloseSpeed);
+    		cam.desiredPosition = Constants.kCamClosePosition;
+    		shooter.desiredSpeed = Constants.kShooterCloseSpeed;
     		hal.turretTalon.set(Constants.kTurretClosePosition);
     	}
     	
     	if (setShooterFarRequest) {
-    		hal.adjustTalon.set(Constants.kCamFarPosition);
-    		hal.shooterTalon.set(Constants.kShooterFarSpeed);
+    		cam.desiredPosition = Constants.kCamFarPosition;
+    		shooter.desiredSpeed = Constants.kShooterFarSpeed;
     		hal.turretTalon.set(Constants.kTurretFarPosition);
+    	}
+    	if (hi.setShooterManual()) {
+    		cam.desiredPosition = (hi.rightStick.getZ() + 1) / 2;
+   		 	shooter.desiredSpeed = (((hi.leftStick.getZ() + 1) /2)*5900);
     	}
     		
     	lastGyroLock = gyroLockRequest;

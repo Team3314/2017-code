@@ -45,7 +45,11 @@ public class Constants {
 	public static int kAngleAdjust_IZone = 0;
 	public static double kAngleAdjust_RampRate = 0;
 	public static int kAdjust_Profile = 0;
-	public static double kCamOffset = -.69;
+	public static double kCamOffset = -.86999; // PRACTICE BOT ###  -.69; ####
+	
+	
+	
+	
 	public static double kCamInitPosition = 2;
 	
 	
@@ -85,11 +89,11 @@ public class Constants {
 	public static double kDegToEncTicksConvFactor = 318.5777777777;
 	public static double kPxlToDegConvFactor = 0.271875;
 	
-	public static double kCamClosePosition = .25;
+	public static double kCamClosePosition = .2892;
 	public static double kShooterCloseSpeed = 3500;
 	public static double kTurretClosePosition = 0;
 	
-	public static double kCamFarPosition = .9;
+	public static double kCamFarPosition = .3555;
 	public static double kShooterFarSpeed = 4500;
 	public static double kTurretFarPosition = 0;
 }

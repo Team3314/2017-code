@@ -92,41 +92,32 @@ public class ShooterStateMachine {
 	
 	public void doTransition() {
 		if (currentState == shooterStates.START && nextState == shooterStates.AGITATE) {
+			//agitator + shooter motors started, 1/5 sec
 			robot.hal.agitatorSpark.set(1);
 			robot.hal.shooterTalon.set(desiredSpeed);
 			time = 10;
 		}
 		
 		if (currentState == shooterStates.AGITATE && nextState == shooterStates.INDEX) {
+			//index shooters started, 1/5 sec
 			robot.hal.lowerIndexSpark.set(1);
 			robot.hal.upperIndexSpark.set(1);
 			time = 10;
 		}
 		
 		if (currentState == shooterStates.INDEX && nextState == shooterStates.SHOOT) {
+			//prior code allows robot to shoot w/o code needed here
+			//if button is let go, robot stop shooting after 1/5 sec
 			time = 10;
 		}
 		
-		if (currentState == shooterStates.AGITATE && nextState == shooterStates.STOP) {
+		if (currentState == shooterStates.AGITATE || currentState == shooterStates.INDEX ||
+			currentState == shooterStates.SHOOT 	&& nextState == shooterStates.STOP) {
+			//all motors off
 			robot.hal.agitatorSpark.set(0);
 			robot.hal.shooterTalon.set(0);
 			robot.hal.lowerIndexSpark.set(0);
 			robot.hal.upperIndexSpark.set(0);
-			}
-		
-		if (currentState == shooterStates.INDEX && nextState == shooterStates.STOP) {
-			robot.hal.agitatorSpark.set(0);
-			robot.hal.shooterTalon.set(0);
-			robot.hal.lowerIndexSpark.set(0);
-			robot.hal.upperIndexSpark.set(0);
-			}
-		
-		if (currentState == shooterStates.SHOOT && nextState == shooterStates.STOP) {
-			robot.hal.agitatorSpark.set(0);
-			robot.hal.shooterTalon.set(0);
-			robot.hal.lowerIndexSpark.set(0);
-			robot.hal.upperIndexSpark.set(0);
-				
 		}
 	}
 }

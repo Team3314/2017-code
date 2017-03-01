@@ -42,6 +42,7 @@ public class HumanInput {
 	
 	public boolean getRaiseGearIntake() {
 		boolean result = false;
+		
 		result = rightStick.getRawButton(3);
 		return result;
 	}
@@ -144,6 +145,9 @@ public class HumanInput {
 	}
 	public boolean setShooterFar() {
 		return operator.getRawButton(8);
+	} 
+	public boolean setShooterManual() {
+		return operator.getRawButton(4);
 	}
 }
 

@@ -74,7 +74,7 @@ public class CamStateMachine {
 	}
 	public void calibrate() {
 		if (robot.hal.adjustTalon.getPosition() >= 1) {
-			robot.hal.adjustTalon.set(.1);
+			robot.hal.adjustTalon.set(.2);
 		}
 		else if (robot.hal.adjustTalon.getPosition() <1) {
 			robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(false, false);

@@ -32,8 +32,6 @@ public class TankDriveTrain {
 	PIDController gyroControl;
 	GyroPIDOutput gyroPIDOutput;
 	
-
-	
 	driveMode currentMode = driveMode.IDLE;
 
 	public TankDriveTrain(Robot myRobot) {
@@ -74,6 +72,7 @@ public class TankDriveTrain {
 		
 		avgEncPos = (lDriveTalon1.getPosition() + rDriveTalon1.getPosition()) / 2;
 		
+		//talon changes mode based on tank drive state
 		if (currentMode == driveMode.SPEEDCONTROL){
 			lDriveTalon1.changeControlMode(TalonControlMode.Speed);
 			rDriveTalon1.changeControlMode(TalonControlMode.Speed);
