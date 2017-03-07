@@ -52,7 +52,6 @@ public class AutoShootTen {
 				}
 				break;
 			case DONE:
-				
 				break;
 		}
 		

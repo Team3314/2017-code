@@ -47,7 +47,7 @@ public class AutoCrossBaseline {
 			nextState = autoCrossBaselineStates.DRIVE;
 			break;
 		case DRIVE:
-			if (robot.tdt.avgEncPos > (desiredDistance*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (desiredDistance*Constants.kInToRevConvFactor)){
 				nextState = autoCrossBaselineStates.STOP;
 			}
 			break;
@@ -66,7 +66,7 @@ public class AutoCrossBaseline {
 			//robot drives straight forward at max speed, 4 sec
 			robot.hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
 			robot.tdt.setDriveAngle(0);
-			robot.tdt.setDriveTrainSpeed(-0.25);
+			robot.tdt.setDriveTrainSpeed(0.25);
 		}
 		
 		if (currentState == autoCrossBaselineStates.DRIVE && nextState == autoCrossBaselineStates.STOP) {

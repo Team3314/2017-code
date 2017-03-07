@@ -72,7 +72,7 @@ public class AutoGearHopperLeft {
 			nextState = autoGHLeftStates.DRIVE1;
 			break;
 		case DRIVE1:
-			if (robot.tdt.avgEncPos > (75.25*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (75.25*Constants.kInToRevConvFactor)){
 				nextState = autoGHLeftStates.STOP1;
 			}
 			break;
@@ -87,7 +87,7 @@ public class AutoGearHopperLeft {
 			}
 			break;
 		case DRIVE2:
-			if (robot.tdt.avgEncPos > (20*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (20*Constants.kInToRevConvFactor)){
 				nextState = autoGHLeftStates.STOP2;
 			}
 			break;
@@ -97,7 +97,7 @@ public class AutoGearHopperLeft {
 			}
 			break;
 		case DRIVEBACK:
-			if (robot.tdt.avgEncPos > (-20*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (-20*Constants.kInToRevConvFactor)){
 				//enc pos is placeholder, placeholder distance
 				nextState = autoGHLeftStates.STOP3;
 			}

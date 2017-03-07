@@ -27,12 +27,14 @@ public class Robot extends IterativeRobot {
 	AutoNothing auto0;
 	AutoCrossBaseline auto1;
 	AutoShootTen auto2;
-	AutoGearToPegLeft auto3;
-	AutoGearToPegRight auto4;
-	AutoDriveToHopperLeft auto5;
-	AutoDriveToHopperRight auto6;
-	AutoGearHopperLeft auto7;
-	AutoGearHopperRight auto8;
+	AutoShootTenGear auto3;
+	AutoGearToPegLeft auto4;
+	AutoGearToPegRight auto5;
+	AutoDriveToHopperLeft auto6;
+	AutoDriveToHopperRight auto7;
+	AutoGearHopperLeft auto8;
+	AutoGearHopperRight auto9;
+	
 	
 	//misc
 	CamStateMachine cam;
@@ -85,6 +87,8 @@ public class Robot extends IterativeRobot {
 	boolean auto5Request;
 	boolean auto6Request;
 	boolean auto7Request;
+	boolean auto8Request;
+	boolean auto9Request;
 	
 	boolean redRequest = false;
 	boolean blueRequest = false;
@@ -111,12 +115,13 @@ public class Robot extends IterativeRobot {
 		auto0 = new AutoNothing(this);
 		auto1 = new AutoCrossBaseline(this);
 		auto2 = new AutoShootTen(this);
-		auto3 = new AutoGearToPegLeft(this);
-		auto4 = new AutoGearToPegRight(this);
-		auto5 = new AutoDriveToHopperLeft(this);
-		auto6 = new AutoDriveToHopperRight(this);
-		auto7 = new AutoGearHopperLeft(this);
-		auto8 = new AutoGearHopperRight(this);
+		auto3 = new AutoShootTenGear(this);
+		auto4 = new AutoGearToPegLeft(this);
+		auto5 = new AutoGearToPegRight(this);
+		auto6 = new AutoDriveToHopperLeft(this);
+		auto7 = new AutoDriveToHopperRight(this);
+		auto8 = new AutoGearHopperLeft(this);
+		auto9 = new AutoGearHopperRight(this);
 		
 		//misc
 	}
@@ -191,17 +196,23 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		//sets to gyrolock + low gear
-		tdt.setDriveMode(driveMode.GYROLOCK);
+		tdt.setDriveMode(driveMode.TANK);
+		SmartDashboard.putNumber("Line", 200);
 		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
+		SmartDashboard.putNumber("Line", 202);
 		cam.calibrated = false;
+		SmartDashboard.putNumber("Line", 204);
 		cam.reset();
-
+		SmartDashboard.putNumber("Line", 206);
 		//resets drive + gyro vals
 		ahrs.reset();
+		SmartDashboard.putNumber("Line", 209);
 		tdt.lDriveTalon1.setPosition(0);
+		SmartDashboard.putNumber("Line", 211);
 		tdt.rDriveTalon1.setPosition(0);
+		SmartDashboard.putNumber("Line", 213);
 		tdt.setDriveTrainSpeed(0);
-		
+		SmartDashboard.putNumber("Line", 215);
 		//auto chooser
 		if (autoSelect == 0) {
 			auto0.reset();
@@ -238,6 +249,7 @@ public class Robot extends IterativeRobot {
 		if (autoSelect == 8) {
 			auto8.reset();
 		}
+		SmartDashboard.putNumber("Line", 252);
 	}
 
 	/**
@@ -247,56 +259,64 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		//auto chooser
 		if (autoSelect == 0) {
+			SmartDashboard.putString("Auto State", auto0.currentState.toString());
 			auto0.update();
 		}
 			
 		if (autoSelect == 1) {
+			SmartDashboard.putString("Auto State", auto1.currentState.toString());
 			auto1.update();
 		}
 		
 		if (autoSelect == 2) {
+			SmartDashboard.putString("Auto State", auto2.currentState.toString());
 			auto2.update();
 		}
 		
 		if (autoSelect == 3) {
+			SmartDashboard.putString("Auto State", auto3.currentState.toString());
 			auto3.update();
 		}
 		
 		if (autoSelect == 4) {
+			SmartDashboard.putString("Auto State", auto4.currentState.toString());
 			auto4.update();
 		}
 		
 		if (autoSelect == 5) {
+			SmartDashboard.putString("Auto State", auto5.currentState.toString());
 			auto5.update();
 		}
 		
 		if (autoSelect == 6) {
+			SmartDashboard.putString("Auto State", auto6.currentState.toString());
 			auto6.update();
 		}
 		
 		if (autoSelect == 7) {
+			SmartDashboard.putString("Auto State", auto7.currentState.toString());
 			auto7.update();
 		}
 		
 		if (autoSelect == 8) {
+			SmartDashboard.putString("Auto State", auto8.currentState.toString());
 			auto8.update();
-		}
-
-		if (turretTrackRequest) {
-			turret.getEncError(turretCam.getXError());
-			turret.update();
 		}
 		
 		tdt.update();
 		shooter.update();
+		turret.update();
 		cam.update();
 		//auto1.update();
+		SmartDashboard.putString("Shooter state", shooter.currentState.toString());
 		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
 		SmartDashboard.putNumber("Desired Angle", tdt.desiredAngle);
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    
     	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
 		SmartDashboard.putNumber("Average Encoder Position", tdt.avgEncPos);
+		SmartDashboard.putNumber("Turret Error", hal.turretTalon.getClosedLoopError());
+		SmartDashboard.putNumber("Turret Position", hal.turretTalon.getPosition());
 		}
 		
 	public void teleopInit() {
@@ -377,7 +397,7 @@ public class Robot extends IterativeRobot {
     			tdt.setDriveMode(driveMode.GYROLOCK);
     			tdt.setDriveAngle(ahrs.getYaw()); //makes sure robot will move straight
     		}
-    		tdt.setDriveTrainSpeed(hi.rightStick.getY()); //moving speed dependent on right stick
+    		tdt.setDriveTrainSpeed(tdt.rightStickInput); //moving speed dependent on right stick
     	}
     	else if (speedControlRequest && !gyroLockRequest) {
     		if (!lastSpeedControl) {
@@ -560,6 +580,10 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber("Desired Speed", shooter.desiredSpeed);
         	
         	SmartDashboard.putNumber("Acceleration", ahrs.getWorldLinearAccelX());
+        	SmartDashboard.putNumber("left stick input", hi.leftStick.getY());
+    		SmartDashboard.putNumber("right stick input", hi.rightStick.getY());
+    		SmartDashboard.putBoolean("Red", redRequest);
+    		SmartDashboard.putBoolean("Blue", blueRequest);
     }
 		
 	/**
@@ -580,6 +604,8 @@ public class Robot extends IterativeRobot {
     		hal.pcm1.start();
     	}
 		SmartDashboard.putNumber("Turret Position", hal.turretTalon.getEncPosition());
+		SmartDashboard.putNumber("left stick input", hi.leftStick.getY());
+		SmartDashboard.putNumber("right stick input", hi.rightStick.getY());
 		
 	}
 	

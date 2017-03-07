@@ -50,6 +50,7 @@ public class TankDriveTrain {
 	    gyroControl.setContinuous(); //makes angle correct itself in the shortest distance
 		gyroControl.setInputRange(-180, 180);
 		gyroControl.setOutputRange(-.5, .5);
+		gyroControl.setAbsoluteTolerance(.5);
 		
 		rDriveTalon1 = new CANTalon(1);
 		rDriveTalon2 = new CANTalon(3);
@@ -68,7 +69,7 @@ public class TankDriveTrain {
 		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		lDriveTalon1.configEncoderCodesPerRev(2048);
 		rDriveTalon1.configEncoderCodesPerRev(2048);
-		lDriveTalon1.setInverted(true);
+		rDriveTalon1.setInverted(true);
 		lDriveTalon1.reverseSensor(true);
 	}
 	
@@ -82,7 +83,7 @@ public class TankDriveTrain {
 		rightDriveRPM = rDriveTalon1.getSpeed();
 		leftDriveRPM = lDriveTalon1.getSpeed();
 		
-		avgEncPos = (leftDrivePosition + rightDrivePosition) / 2;
+		avgEncPos = (leftDrivePosition);// + rightDrivePosition) / 2;
 		avgEncError = (leftDriveError + rightDriveError) / 2;
 		
 		//talon changes mode based on tank drive state
@@ -117,8 +118,8 @@ public class TankDriveTrain {
 				gyroControl.setPID(Constants.kGyroLock_kP, Constants.kGyroLock_kI , Constants.kGyroLock_kD);
 			}
 			
-			rawLeftSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
-			rawRightSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
+			rawLeftSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
+			rawRightSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
 			gyroControl.setSetpoint(desiredAngle);	
 			break;
 		case SPEEDCONTROL:
@@ -175,8 +176,8 @@ public class TankDriveTrain {
 	
 	public void setStickInputs(double leftInput, double rightInput) {
 		//sets what joystick input to get
-		leftStickInput = leftInput;
-		rightStickInput = rightInput;
+		leftStickInput = -leftInput;
+		rightStickInput = -rightInput;
 	}
 		
 	public void setDriveMode(driveMode mode) {
