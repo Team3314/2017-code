@@ -15,7 +15,8 @@ public class ShooterStateMachine {
 	shooterStates currentState;
 	shooterStates nextState;
 	Robot robot;
-	double desiredSpeed;
+	double shooterSpeed = 0;
+	double desiredSpeed = 4500;
 	double time = 0;
 	double sensorTime = 50;
 	double rpm;
@@ -33,6 +34,7 @@ public class ShooterStateMachine {
 	public void update() {
 		//sees whether requirements to go to next state are fulfilled and switches states if necessary,
 		//executes code assigned to each state, counts down time every 20ms
+		shooterSpeed = robot.hal.shooterTalon.getSpeed();
 		calcNext();
 		doTransition();
 		currentState = nextState;
@@ -100,6 +102,7 @@ public class ShooterStateMachine {
 		
 		if (currentState == shooterStates.AGITATE && nextState == shooterStates.INDEX) {
 			//index shooters started, 1/5 sec
+			robot.hal.agitatorSpark.set(1);
 			robot.hal.lowerIndexSpark.set(1);
 			robot.hal.upperIndexSpark.set(1);
 			time = 10;
@@ -111,13 +114,26 @@ public class ShooterStateMachine {
 			time = 10;
 		}
 		
-		if (currentState == shooterStates.AGITATE || currentState == shooterStates.INDEX ||
-			currentState == shooterStates.SHOOT 	&& nextState == shooterStates.STOP) {
+		if (currentState == shooterStates.AGITATE && nextState == shooterStates.STOP) {
 			//all motors off
 			robot.hal.agitatorSpark.set(0);
 			robot.hal.shooterTalon.set(0);
 			robot.hal.lowerIndexSpark.set(0);
 			robot.hal.upperIndexSpark.set(0);
 		}
+		if (currentState == shooterStates.INDEX && nextState == shooterStates.STOP) {
+				//all motors off
+				robot.hal.agitatorSpark.set(0);
+				robot.hal.shooterTalon.set(0);
+				robot.hal.lowerIndexSpark.set(0);
+				robot.hal.upperIndexSpark.set(0);
+			}
+		if (currentState == shooterStates.SHOOT 	&& nextState == shooterStates.STOP) {
+				//all motors off
+				robot.hal.agitatorSpark.set(0);
+				robot.hal.shooterTalon.set(0);
+				robot.hal.lowerIndexSpark.set(0);
+				robot.hal.upperIndexSpark.set(0);
+			}
 	}
 }

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3314.robot;
 
+import com.ctre.CANTalon.TalonControlMode;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
@@ -25,7 +26,7 @@ public class Robot extends IterativeRobot {
 	//auto classes
 	AutoNothing auto0;
 	AutoCrossBaseline auto1;
-	AutoGearToPeg auto2;
+	AutoShootTen auto2;
 	AutoGearToPegLeft auto3;
 	AutoGearToPegRight auto4;
 	AutoDriveToHopperLeft auto5;
@@ -65,11 +66,28 @@ public class Robot extends IterativeRobot {
 	boolean calibrateCamRequest = false;
 	boolean setShooterCloseRequest = false;
 	boolean setShooterFarRequest = false;
+	boolean ringLightRequest = false;
 	
-	boolean binaryOne;
-	boolean binaryTwo;
-	boolean binaryFour;
-	boolean binaryEight;
+	boolean binaryOne = false;
+	boolean binaryTwo = false;
+	boolean binaryFour = false;
+	boolean binaryEight = false;
+	
+	int autoSelect = 0;
+	
+	boolean compressorOverrideRequest = false;
+	
+	boolean auto0Request;
+	boolean auto1Request;
+	boolean auto2Request;
+	boolean auto3Request;
+	boolean auto4Request;
+	boolean auto5Request;
+	boolean auto6Request;
+	boolean auto7Request;
+	
+	boolean redRequest = false;
+	boolean blueRequest = false;
 	
 	double last_world_linear_accel_y;
 	double time = 0;
@@ -92,7 +110,7 @@ public class Robot extends IterativeRobot {
 		//auto classes
 		auto0 = new AutoNothing(this);
 		auto1 = new AutoCrossBaseline(this);
-		auto2 = new AutoGearToPeg(this);
+		auto2 = new AutoShootTen(this);
 		auto3 = new AutoGearToPegLeft(this);
 		auto4 = new AutoGearToPegRight(this);
 		auto5 = new AutoDriveToHopperLeft(this);
@@ -124,32 +142,49 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void disabledPeriodic() {
+		updateButtonStatus();
+		SmartDashboard.putNumber("Auto Selection", autoSelect);
+		
 		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
 		SmartDashboard.putNumber("DPad", hi.operator.getPOV());
 
 		//lets auto chooser work with human input by setting vars
-		if (hi.getBinaryOne()) {
-			binaryOne = true;
-		} else {
-			binaryOne = false;
+		
+		
+		if (!binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+			autoSelect = 0;
+		}
+			
+		if (!binaryEight && !binaryFour && !binaryTwo && binaryOne) {
+			autoSelect = 1;
 		}
 		
-		if (hi.getBinaryTwo()) {
-			binaryTwo = true;
-		} else {
-			binaryTwo = false;
+		if (!binaryEight && !binaryFour && binaryTwo && !binaryOne) {
+			autoSelect = 2;
 		}
 		
-		if (hi.getBinaryFour()) {
-			binaryFour = true;
-		} else {
-			binaryFour = false;
+		if (!binaryEight && !binaryFour && binaryTwo && binaryOne) {
+			autoSelect = 3;
 		}
 		
-		if (hi.getBinaryEight()) {
-			binaryEight = true;
-		} else {
-			binaryEight = false;
+		if (!binaryEight && binaryFour && !binaryTwo && !binaryOne) {
+			autoSelect = 4;
+		}
+		
+		if (!binaryEight && binaryFour && !binaryTwo && binaryOne) {
+			autoSelect = 5;
+		}
+		
+		if (!binaryEight && binaryFour && binaryTwo && !binaryOne) {
+			autoSelect = 6;
+		}
+		
+		if (!binaryEight && binaryFour && binaryTwo && binaryOne) {
+			autoSelect = 7;
+		}
+		
+		if (binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+			autoSelect = 8;
 		}
 	}
 	
@@ -168,39 +203,39 @@ public class Robot extends IterativeRobot {
 		tdt.setDriveTrainSpeed(0);
 		
 		//auto chooser
-		if (!binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+		if (autoSelect == 0) {
 			auto0.reset();
 		}
 			
-		if (!binaryEight && !binaryFour && !binaryTwo && binaryOne) {
+		if (autoSelect == 1) {
 			auto1.reset();
 		}
 		
-		if (!binaryEight && !binaryFour && binaryTwo && !binaryOne) {
+		if (autoSelect == 2) {
 			auto2.reset();
 		}
 		
-		if (!binaryEight && !binaryFour && binaryTwo && binaryOne) {
+		if (autoSelect == 3) {
 			auto3.reset();
 		}
 		
-		if (!binaryEight && binaryFour && !binaryTwo && !binaryOne) {
+		if (autoSelect == 4) {
 			auto4.reset();
 		}
 		
-		if (!binaryEight && binaryFour && !binaryTwo && binaryOne) {
+		if (autoSelect == 5) {
 			auto5.reset();
 		}
 		
-		if (!binaryEight && binaryFour && binaryTwo && !binaryOne) {
+		if (autoSelect == 6) {
 			auto6.reset();
 		}
 		
-		if (!binaryEight && binaryFour && binaryTwo && binaryOne) {
+		if (autoSelect == 7) {
 			auto7.reset();
 		}
 		
-		if (binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+		if (autoSelect == 8) {
 			auto8.reset();
 		}
 	}
@@ -211,39 +246,39 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		//auto chooser
-		if (!binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+		if (autoSelect == 0) {
 			auto0.update();
 		}
 			
-		if (!binaryEight && !binaryFour && !binaryTwo && binaryOne) {
+		if (autoSelect == 1) {
 			auto1.update();
 		}
 		
-		if (!binaryEight && !binaryFour && binaryTwo && !binaryOne) {
+		if (autoSelect == 2) {
 			auto2.update();
 		}
 		
-		if (!binaryEight && !binaryFour && binaryTwo && binaryOne) {
+		if (autoSelect == 3) {
 			auto3.update();
 		}
 		
-		if (!binaryEight && binaryFour && !binaryTwo && !binaryOne) {
+		if (autoSelect == 4) {
 			auto4.update();
 		}
 		
-		if (!binaryEight && binaryFour && !binaryTwo && binaryOne) {
+		if (autoSelect == 5) {
 			auto5.update();
 		}
 		
-		if (!binaryEight && binaryFour && binaryTwo && !binaryOne) {
+		if (autoSelect == 6) {
 			auto6.update();
 		}
 		
-		if (!binaryEight && binaryFour && binaryTwo && binaryOne) {
+		if (autoSelect == 7) {
 			auto7.update();
 		}
 		
-		if (binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
+		if (autoSelect == 8) {
 			auto8.update();
 		}
 
@@ -255,7 +290,7 @@ public class Robot extends IterativeRobot {
 		tdt.update();
 		shooter.update();
 		cam.update();
-		auto1.update();
+		//auto1.update();
 		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
 		SmartDashboard.putNumber("Desired Angle", tdt.desiredAngle);
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
@@ -266,7 +301,10 @@ public class Robot extends IterativeRobot {
 		
 	public void teleopInit() {
 		//sets to tank, resets gyro, ensures robot is in low gear
+		shootRequest = false;
 		cam.reset();
+		tdt.lDriveTalon1.setPosition(0);
+		tdt.rDriveTalon1.setPosition(0);
 		tdt.setDriveMode(driveMode.TANK);
 		cam.calibrated = false;
 		ahrs.reset();
@@ -301,12 +339,7 @@ public class Robot extends IterativeRobot {
 			 tdt.desiredAngle = ahrs.getYaw() - 90;
 		 }
 		 
-		 if (hi.leftStick.getRawButton(9)) {
-			 hal.ringLight.set(true);
-		 }
-		 else {
-			 hal.ringLight.set(false);
-		 }
+	
 		 //hal.shooterTalon.set(0);
 		// hal.shooterTalon.set(((hi.leftStick.getZ() + 1) /2)*5900);
 		 //TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
@@ -330,7 +363,8 @@ public class Robot extends IterativeRobot {
      		hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
     	}
     	
-    	if(fuelIntakeRequest && hal.gearIntake.get().toString() == Constants.kRaiseGearIntake) {
+    	if(fuelIntakeRequest) {
+    		hal.gearIntake.set(Value.valueOf(Constants.kRaiseGearIntake));
     		hal.intakeSpark.set(1);
     		hal.upperIntakeSpark.set(1);
     	} else if (!fuelIntakeRequest) {
@@ -369,7 +403,7 @@ public class Robot extends IterativeRobot {
     	else if (!spinShooterRequest && !shootRequest) {
     		hal.shooterTalon.set(0);
     	}
- 	
+		
     	if(flashlightRequest) {
     		hal.flashlight.set(Constants.kFlashlightOn);
     	} else if(!flashlightRequest) {
@@ -380,7 +414,7 @@ public class Robot extends IterativeRobot {
     		hal.lowerIndexSpark.set(1);
     		hal.agitatorSpark.set(1);
     	}
-    	else if(!feedShooterRequest && !shootRequest){
+    	else if(!feedShooterRequest && !shootRequest && !hi.buttonBox.getRawButton(1) && !hi.buttonBox.getRawButton(2)){
     		hal.upperIndexSpark.set(0);
     		hal.lowerIndexSpark.set(0);
     		hal.agitatorSpark.set(0);
@@ -402,30 +436,56 @@ public class Robot extends IterativeRobot {
     	}
     	if (calibrateCamRequest) {
     		cam.calibrated = false;
-    	}/*
+    	}
     	if (hi.runClimber()) {
-    		hal.upperIntakeSpark.set(1);
+    		hal.climberSpark.set(1);
     	}
     	else if (hi.runClimberReverse()) {
-    		hal.upperIntakeSpark.set(-1);
+    		hal.climberSpark.set(-1);
     	}
     	else {
-    		hal.upperIntakeSpark.set(0);
-    	}*/
+    		hal.climberSpark.set(0);
+    	}
     	if (setShooterCloseRequest) {
     		cam.desiredPosition = Constants.kCamClosePosition;
     		shooter.desiredSpeed = Constants.kShooterCloseSpeed;
-    		hal.turretTalon.set(Constants.kTurretClosePosition);
+    		//hal.turretTalon.set(Constants.kTurretClosePosition);
     	}
     	
-    	if (setShooterFarRequest) {
+    	else if (setShooterFarRequest) {
     		cam.desiredPosition = Constants.kCamFarPosition;
     		shooter.desiredSpeed = Constants.kShooterFarSpeed;
-    		hal.turretTalon.set(Constants.kTurretFarPosition);
+    		//hal.turretTalon.set(Constants.kTurretFarPosition);
     	}
-    	if (hi.setShooterManual()) {
+    	else if (hi.setShooterManual()) {
     		cam.desiredPosition = (hi.rightStick.getZ() + 1) / 2;
    		 	shooter.desiredSpeed = (((hi.leftStick.getZ() + 1) /2)*5900);
+    	}
+    	if (compressorOverrideRequest) { 
+    		hal.pcm1.stop();
+    	}
+    	else {
+    		hal.pcm1.start();
+    	}
+    	if (ringLightRequest) {
+    		hal.ringLight.set(true);
+    	}
+    	else {
+    		
+    		hal.ringLight.set(false);
+    	}
+    	if (hi.buttonBox.getRawButton(1)) {
+    		hal.agitatorSpark.set(-1);   
+    	}
+    	else if(!hi.buttonBox.getRawButton(1) && !feedShooterRequest && !shootRequest) {
+    		hal.agitatorSpark.set(0);
+    	}
+    	
+    	if (hi.buttonBox.getRawButton(2)) {
+    		hal.lowerIndexSpark.set(-1);
+    	}
+    	else if(!hi.buttonBox.getRawButton(1) && !feedShooterRequest && !shootRequest) {
+    		hal.lowerIndexSpark.set(0);
     	}
     		
     	lastGyroLock = gyroLockRequest;
@@ -436,8 +496,8 @@ public class Robot extends IterativeRobot {
    		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
        	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
    		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
-    	SmartDashboard.putNumber("Left RPM", tdt.lDriveTalon1.getSpeed());
-    	SmartDashboard.putNumber("Right RPM", tdt.rDriveTalon1.getSpeed());
+    	SmartDashboard.putNumber("Left RPM", tdt.leftDriveRPM);
+    	SmartDashboard.putNumber("Right RPM", tdt.rightDriveRPM);
     		
     	SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
     	SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
@@ -453,6 +513,9 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber("Right 2 ", tdt.rDriveTalon2.get());
         	
         	SmartDashboard.putNumber("Average Encoder Position", tdt.avgEncPos);
+        	
+        	SmartDashboard.putNumber("Left Encoder Position", tdt.leftDrivePosition);
+        	SmartDashboard.putNumber("Right Encoder Position", tdt.rightDrivePosition);
         	
         	SmartDashboard.putNumber("Desired Speed", tdt.desiredSpeed);
         	SmartDashboard.putNumber("Desired Angle", tdt.desiredAngle);
@@ -476,7 +539,7 @@ public class Robot extends IterativeRobot {
 
         	SmartDashboard.putBoolean("Intake Spark", hal.intakeSpark.isAlive());        	
         	SmartDashboard.putString("Gear Intake state", hal.gearIntake.get().toString());
-        	SmartDashboard.putNumber("Shooter RPM", hal.shooterTalon.getSpeed());
+        	SmartDashboard.putNumber("Shooter RPM", shooter.shooterSpeed);
         	SmartDashboard.putNumber("Shooter Voltage", hal.shooterTalon.getOutputVoltage());
         	SmartDashboard.putNumber("Shooter Current", hal.shooterTalon.getOutputCurrent());
         	
@@ -486,8 +549,17 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber("Shooter Error", hal.shooterTalon.getSetpoint());
         	
         	SmartDashboard.putBoolean("Cam Calibrated", cam.calibrated);
+      
         	
         	SmartDashboard.putNumber("Index Pulse Value", hal.adjustTalon.getPinStateQuadIdx());
+        	
+        	SmartDashboard.putNumber("Get Agitator", hal.agitatorSpark.get());
+        	SmartDashboard.putNumber("Lower Index Get", hal.lowerIndexSpark.get());
+        	SmartDashboard.putNumber("Upper Index get", hal.upperIndexSpark.get());
+        	SmartDashboard.putBoolean("Shoot Request", shootRequest);
+        	SmartDashboard.putNumber("Desired Speed", shooter.desiredSpeed);
+        	
+        	SmartDashboard.putNumber("Acceleration", ahrs.getWorldLinearAccelX());
     }
 		
 	/**
@@ -495,8 +567,20 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	
+	public void testInit() {
+		hal.turretTalon.changeControlMode(TalonControlMode.PercentVbus);
+	}
+	
 	public void testPeriodic() {
-		cam.calibrate();
+		updateButtonStatus();
+		if (compressorOverrideRequest) {
+    		hal.pcm1.stop();
+    	}
+    	else {
+    		hal.pcm1.start();
+    	}
+		SmartDashboard.putNumber("Turret Position", hal.turretTalon.getEncPosition());
+		
 	}
 	
 	public void updateButtonStatus() {
@@ -519,5 +603,15 @@ public class Robot extends IterativeRobot {
 		calibrateCamRequest = hi.calibrateCam();
 		setShooterCloseRequest = hi.setShooterClose();
 		setShooterFarRequest = hi.setShooterFar();
+		binaryOne = hi.getBinaryOne();
+		binaryTwo = hi.getBinaryTwo();
+		binaryFour = hi.getBinaryFour();
+		binaryEight = hi.getBinaryEight();	
+		compressorOverrideRequest = hi.compressorOverride();
+		ringLightRequest = hi.getRingLight();
+		blueRequest = hi.getBlue();
+		redRequest = hi.getRed();
+		
+		
 	}
 }

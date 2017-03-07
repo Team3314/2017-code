@@ -15,7 +15,7 @@ public class CamStateMachine {
 	camStates nextState;
 	Robot robot;
 	boolean calibrated;
-	double desiredPosition;
+	double desiredPosition = .3555;
 	
 	public CamStateMachine(Robot myRobot) {
 		robot = myRobot;

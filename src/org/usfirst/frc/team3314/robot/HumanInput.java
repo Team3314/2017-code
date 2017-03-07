@@ -64,8 +64,13 @@ public class HumanInput {
 	
 	public boolean getFlashlight() {
 		boolean result = false;
-		result = operator.getRawButton(7);
-		return result;
+		if (leftStick.getRawButton(1)) {
+			return leftStick.getRawButton(1);
+		}
+		else {
+			return operator.getRawButton(2);
+		}
+		
 	}
 	public boolean feedShooter() {
 		boolean result = false;
@@ -139,18 +144,34 @@ public class HumanInput {
 	}
 	
 	public boolean getBinaryOne() {
-		return buttonBox.getRawButton(1);
+		return buttonBox.getRawButton(13);
 	}
 	
 	public boolean getBinaryTwo() {
-		return buttonBox.getRawButton(2);
+		return buttonBox.getRawButton(14);
 	}
 	
 	public boolean getBinaryFour() {
-		return buttonBox.getRawButton(3);
+		return buttonBox.getRawButton(15);
 	}
 	
 	public boolean getBinaryEight() {
-		return buttonBox.getRawButton(4);
+		return buttonBox.getRawButton(16);
+	}
+	public boolean getRed() {
+		return buttonBox.getRawButton(12);
+	}
+	public boolean getBlue() {
+		boolean result = false;
+		if (!buttonBox.getRawButton(12)) {
+			result = true;
+		}
+		return result;
+	}
+	public boolean compressorOverride() {
+		return buttonBox.getRawButton(11);
+	}
+	public boolean getRingLight() {
+		return leftStick.getRawButton(4);
 	}
 }

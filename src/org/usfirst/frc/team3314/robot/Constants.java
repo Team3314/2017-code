@@ -4,7 +4,7 @@ public class Constants {
 	Robot robot = new Robot();
 	
 	//tankdrivetrain
-	public static double kEncConvFactor = 0.0583; //conversion from inches to drivetrain revolutions --- ** 17.15 in per rev **
+	public static double kEncConvFactor = 0.119742; //conversion from inches to drivetrain revolutions --- ** 17.15 in per rev **
 	public static double kHighGearRPM = 500; //rpm for high gear
 	public static double kLowGearRPM = 200;//rpm for low gear
 	public static double kCollisionThreshold_DeltaG = .5; //acceleration limit for collision detection
@@ -88,6 +88,8 @@ public class Constants {
 	public static double kHorizontalViewAngle = 43.3;
 	public static double kDegToEncTicksConvFactor = 318.5777777777;
 	public static double kPxlToDegConvFactor = 0.271875;
+	
+	public static double kDefaultCamPosition = .3555;
 	
 	public static double kCamClosePosition = .2892;
 	public static double kShooterCloseSpeed = 3500;

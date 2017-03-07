@@ -29,6 +29,13 @@ public class TankDriveTrain {
 	double desiredAngle;
 	double last_world_linear_accel_y = 0;
 	double avgEncPos = 0;
+	double avgEncError = 0;
+	double rightDrivePosition = 0;
+	double leftDrivePosition = 0;
+	double leftDriveError = 0;
+	double rightDriveError = 0;
+	double rightDriveRPM = 0;
+	double leftDriveRPM = 0;
 	PIDController gyroControl;
 	GyroPIDOutput gyroPIDOutput;
 	
@@ -63,14 +70,20 @@ public class TankDriveTrain {
 		rDriveTalon1.configEncoderCodesPerRev(2048);
 		lDriveTalon1.setInverted(true);
 		lDriveTalon1.reverseSensor(true);
-		rDriveTalon1.reverseSensor(true);
 	}
 	
 	public void update() {
 		lDriveTalon1.set(rawLeftSpeed);
 		rDriveTalon1.set(rawRightSpeed);
+		rightDrivePosition = rDriveTalon1.getPosition();
+		leftDrivePosition = lDriveTalon1.getPosition();
+		rightDriveError = rDriveTalon1.getClosedLoopError();
+		leftDriveError = lDriveTalon1.getClosedLoopError();
+		rightDriveRPM = rDriveTalon1.getSpeed();
+		leftDriveRPM = lDriveTalon1.getSpeed();
 		
-		avgEncPos = (lDriveTalon1.getPosition() + rDriveTalon1.getPosition()) / 2;
+		avgEncPos = (leftDrivePosition + rightDrivePosition) / 2;
+		avgEncError = (leftDriveError + rightDriveError) / 2;
 		
 		//talon changes mode based on tank drive state
 		if (currentMode == driveMode.SPEEDCONTROL){

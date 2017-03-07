@@ -10,7 +10,6 @@ enum autoGTPRightStates {
 	TURN,
 	DRIVE2,
 	STOP2,
-	RETRACT,
 	DONE
 }
 
@@ -47,10 +46,12 @@ public class AutoGearToPegRight {
 		switch (currentState) {
 		case START:
 			robot.ahrs.reset();
+			robot.tdt.lDriveTalon1.setPosition(0);
+			robot.tdt.rDriveTalon1.setPosition(0);
 			nextState = autoGTPRightStates.DRIVE1;
 			break;
 		case DRIVE1:
-			if (robot.tdt.avgEncPos > (75.25*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (77*Constants.kEncConvFactor)){
 				nextState = autoGTPRightStates.STOP1;
 			}
 			break;
@@ -65,17 +66,12 @@ public class AutoGearToPegRight {
 			}
 			break;
 		case DRIVE2:
-			if (robot.tdt.avgEncPos > (20*Constants.kEncConvFactor)){
+			if (robot.tdt.avgEncPos > (30*Constants.kEncConvFactor)){
 				nextState = autoGTPRightStates.STOP2;
 			}
 			break;
 		case STOP2:
 			if (time <=0){
-				nextState = autoGTPRightStates.RETRACT;
-			}
-			break;
-		case RETRACT:
-			if (time <=0 && robot.hal.gearIntake.get().toString() == Constants.kDropGearIntake){
 				nextState = autoGTPRightStates.DONE;
 			}
 			break;
@@ -87,8 +83,9 @@ public class AutoGearToPegRight {
 	public void doTransition() {
 		if (currentState == autoGTPRightStates.START && nextState == autoGTPRightStates.DRIVE1) {
 			//robot drives straight forward at 1/2 speed, 3 sec
-			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
-			robot.tdt.setDriveTrainSpeed(.5);
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
+			robot.tdt.setDriveAngle(0);
+			robot.tdt.setDriveTrainSpeed(-.5);
 			time = 150;
 		}
 		
@@ -102,12 +99,14 @@ public class AutoGearToPegRight {
 		if (currentState == autoGTPRightStates.STOP1 && nextState == autoGTPRightStates.TURN) {
 			//robot turns left at angle of peg, 1.5 sec
 			robot.tdt.setDriveAngle(-60);
+			robot.tdt.rDriveTalon1.setPosition(0);
+			robot.tdt.lDriveTalon1.setPosition(0);
 			time = 75;
 		}
 	
 		if (currentState == autoGTPRightStates.TURN && nextState == autoGTPRightStates.DRIVE2) {
 			//robot drives at 1/2 speed, 1 sec
-			robot.tdt.setDriveTrainSpeed(.5);
+			robot.tdt.setDriveTrainSpeed(-.5);
 			time = 50;
 		}
 		if (currentState == autoGTPRightStates.DRIVE2 && nextState == autoGTPRightStates.STOP2) {
@@ -115,9 +114,8 @@ public class AutoGearToPegRight {
 			robot.tdt.setDriveTrainSpeed(0);
 		}
 		
-		if (currentState == autoGTPRightStates.STOP2 && nextState == autoGTPRightStates.RETRACT){
-			//retracts gear intake, 1 sec
-			robot.hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
+		if (currentState == autoGTPRightStates.STOP2 && nextState == autoGTPRightStates.DONE){
+			//retracts gear intake, 1 sec00000000000000000000000000
 			time = 50;
 		}
 	}

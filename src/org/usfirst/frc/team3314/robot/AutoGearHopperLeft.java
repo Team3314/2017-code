@@ -163,7 +163,8 @@ public class AutoGearHopperLeft {
 		if (currentState == autoGHLeftStates.STOP2 && nextState == autoGHLeftStates.DRIVEBACK){
 			//placeholder angle, robot drives forward at fullspeed, 1 sec
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
-			robot.tdt.setDriveTrainSpeed(-.5);
+
+				robot.tdt.setDriveTrainSpeed(-.5);
 			time = 50;
 		}
 		

@@ -15,7 +15,7 @@ public class AutoCrossBaseline {
 	autoCrossBaselineStates nextState;
 	Robot robot;
 	double time = 0;
-	double desiredDistance = 77.5;
+	double desiredDistance = 80;
 
 	public AutoCrossBaseline(Robot myRobot) {
 		robot = myRobot;
