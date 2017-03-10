@@ -14,7 +14,7 @@ public class Turret {
 		robot.hal.turretTalon.setPID(Constants.kTurret_kP, Constants.kTurret_kI, Constants.kTurret_kD,
 		Constants.kTurret_kF, Constants.kTurret_IZone, Constants.kTurret_RampRate, Constants.kTurret_Profile);
 		robot.hal.turretTalon.enableForwardSoftLimit(true);
-		robot.hal.turretTalon.setForwardSoftLimit(7);
+		robot.hal.turretTalon.setForwardSoftLimit(7.55);
 		robot.hal.turretTalon.enableReverseSoftLimit(true);
 		robot.hal.turretTalon.setReverseSoftLimit(0);
 	}
@@ -22,6 +22,11 @@ public class Turret {
 	public void update() {
 		//talon turns motor to target
 		robot.hal.turretTalon.set(desiredTarget);
+	}
+	
+	public void reset() {
+		robot.hal.turretTalon.set(0);
+		robot.hal.turretTalon.setPosition(0);
 	}
 	
 	public void getEncError(double pxlError) {

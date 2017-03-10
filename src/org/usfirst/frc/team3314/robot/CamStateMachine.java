@@ -81,6 +81,7 @@ public class CamStateMachine {
 			robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
 			robot.hal.adjustTalon.setPosition(0 + Constants.kCamOffset);
 			robot.hal.adjustTalon.set(0);
+			robot.hal.adjustTalon.setAllowableClosedLoopErr(20);
 			calibrated = true;
 		}
 	}

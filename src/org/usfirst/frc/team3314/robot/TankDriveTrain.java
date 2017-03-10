@@ -49,8 +49,8 @@ public class TankDriveTrain {
 	    		Constants.kGyroLock_kF, robot.ahrs, gyroPIDOutput);
 	    gyroControl.setContinuous(); //makes angle correct itself in the shortest distance
 		gyroControl.setInputRange(-180, 180);
-		gyroControl.setOutputRange(-.5, .5);
-		gyroControl.setAbsoluteTolerance(.5);
+		gyroControl.setOutputRange(-.6, .6);
+		gyroControl.setAbsoluteTolerance(1);
 		
 		rDriveTalon1 = new CANTalon(1);
 		rDriveTalon2 = new CANTalon(3);
@@ -83,7 +83,7 @@ public class TankDriveTrain {
 		rightDriveRPM = rDriveTalon1.getSpeed();
 		leftDriveRPM = lDriveTalon1.getSpeed();
 		
-		avgEncPos = (leftDrivePosition);// + rightDrivePosition) / 2;
+		avgEncPos = (leftDrivePosition + rightDrivePosition) / 2;
 		avgEncError = (leftDriveError + rightDriveError) / 2;
 		
 		//talon changes mode based on tank drive state
@@ -197,5 +197,10 @@ public class TankDriveTrain {
 		double currentJerkY = curr_world_linear_accel_y - last_world_linear_accel_y;
 		last_world_linear_accel_y = curr_world_linear_accel_y;
 		return currentJerkY;
+	}
+
+	public void resetDriveEncoders() {
+		lDriveTalon1.setPosition(0);
+		rDriveTalon1.setPosition(0);
 	}
 }

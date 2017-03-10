@@ -112,7 +112,7 @@ public class HumanInput {
 		
 	}
 	public boolean calibrateCam() {
-		return leftStick.getRawButton(10);
+		return buttonBox.getRawButton(3);
 	}
 	
 	public boolean turnNinety() {
@@ -128,11 +128,11 @@ public class HumanInput {
 		return rightStick.getRawButton(8);
 	}
 	public boolean runClimber() {
-		return operator.getRawButton(3);
-	}
+		return operator.getRawButton(1);
+	}/*
 	public boolean runClimberReverse() {
 		return operator.getRawButton(1);
-	}
+	}*/
 	public boolean setShooterClose(){
 		return operator.getRawButton(7);
 	}
@@ -168,7 +168,7 @@ public class HumanInput {
 		}
 		return result;
 	}
-	public boolean compressorOverride() {
+	public boolean getCloseGearIntake() {
 		return buttonBox.getRawButton(11);
 	}
 	public boolean getRingLight() {

@@ -4,15 +4,15 @@ public class Constants {
 	Robot robot = new Robot();
 	
 	//tankdrivetrain
-	public static double kInToRevConvFactor = 0.119742; //conversion from inches to drivetrain revolutions --- ** 17.15 in per rev **
+	public static double kInToRevConvFactor = 0.1197; //conversion from inches to drivetrain revolutions --- ** 17.15 in per rev **
 	public static double kRevToInConvFactor = 8.351288;
 	public static double kHighGearRPM = 500; //rpm for high gear
 	public static double kLowGearRPM = 200;//rpm for low gear
 	public static double kCollisionThreshold_DeltaG = .5; //acceleration limit for collision detection
 	
 	//Solenoid States
-	public static String kRaiseGearIntake = "kForward";
-	public static String kDropGearIntake = "kReverse";
+	public static String kCloseGearIntake = "kReverse";
+	public static String kOpenGearIntake = "kForward";
 	
 	public static String kShiftHighGear = "kReverse";
 	public static String kShiftLowGear = "kForward";
@@ -46,7 +46,7 @@ public class Constants {
 	public static int kAngleAdjust_IZone = 0;
 	public static double kAngleAdjust_RampRate = 0;
 	public static int kAdjust_Profile = 0;
-	public static double kCamOffset = -.69; //-.86999; // PRACTICE BOT ###  -.69; ####
+	public static double kCamOffset = -.86999; // PRACTICE BOT ###  -.69; ####
 	
 	
 	

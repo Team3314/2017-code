@@ -26,14 +26,13 @@ public class Robot extends IterativeRobot {
 	//auto classes
 	AutoNothing auto0;
 	AutoCrossBaseline auto1;
-	AutoShootTen auto2;
-	AutoShootTenGear auto3;
-	AutoGearToPegLeft auto4;
-	AutoGearToPegRight auto5;
-	AutoDriveToHopperLeft auto6;
-	AutoDriveToHopperRight auto7;
-	AutoGearHopperLeft auto8;
-	AutoGearHopperRight auto9;
+	AutoSideGearDrive auto2;
+	AutoShootTenGearDrive auto3;
+	AutoShootTen auto4;
+	AutoSideGear auto5;
+	AutoShootTenGear auto6;
+	AutoDriveToHopperShoot auto7;
+	AutoGearDriveToHopperShoot auto8;
 	
 	
 	//misc
@@ -59,7 +58,9 @@ public class Robot extends IterativeRobot {
 	boolean lastGyroLock = false;
 	boolean lastSpeedControl = false;
 	
-	boolean feedShooterRequest = false;
+	boolean feedShooterRequest = false; 
+	
+	boolean climberRequest = false;
 	
 	boolean turnShooterLeftRequest = false;
 	boolean turnShooterForwardRequest = false;
@@ -77,7 +78,7 @@ public class Robot extends IterativeRobot {
 	
 	int autoSelect = 0;
 	
-	boolean compressorOverrideRequest = false;
+	boolean closeGearIntakeRequest = false;
 	
 	boolean auto0Request;
 	boolean auto1Request;
@@ -114,14 +115,13 @@ public class Robot extends IterativeRobot {
 		//auto classes
 		auto0 = new AutoNothing(this);
 		auto1 = new AutoCrossBaseline(this);
-		auto2 = new AutoShootTen(this);
-		auto3 = new AutoShootTenGear(this);
-		auto4 = new AutoGearToPegLeft(this);
-		auto5 = new AutoGearToPegRight(this);
-		auto6 = new AutoDriveToHopperLeft(this);
-		auto7 = new AutoDriveToHopperRight(this);
-		auto8 = new AutoGearHopperLeft(this);
-		auto9 = new AutoGearHopperRight(this);
+		auto2 = new AutoSideGearDrive(this);
+		auto3 = new AutoShootTenGearDrive(this);
+		auto4 = new AutoShootTen(this);
+		auto5 = new AutoSideGear(this); 
+		auto6 = new AutoShootTenGear(this); 
+		auto7 = new AutoDriveToHopperShoot(this);
+		auto8 = new AutoGearDriveToHopperShoot(this);
 		
 		//misc
 	}
@@ -149,9 +149,12 @@ public class Robot extends IterativeRobot {
 	public void disabledPeriodic() {
 		updateButtonStatus();
 		SmartDashboard.putNumber("Auto Selection", autoSelect);
-		
+		SmartDashboard.putBoolean("Red", redRequest);
+		SmartDashboard.putBoolean("Blue", blueRequest);
 		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
 		SmartDashboard.putNumber("DPad", hi.operator.getPOV());
+		SmartDashboard.putNumber("Turret Error", hal.turretTalon.getClosedLoopError());
+		SmartDashboard.putNumber("Turret Position", hal.turretTalon.getPosition());
 
 		//lets auto chooser work with human input by setting vars
 		
@@ -197,22 +200,14 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		//sets to gyrolock + low gear
 		tdt.setDriveMode(driveMode.TANK);
-		SmartDashboard.putNumber("Line", 200);
 		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
-		SmartDashboard.putNumber("Line", 202);
 		cam.calibrated = false;
-		SmartDashboard.putNumber("Line", 204);
 		cam.reset();
-		SmartDashboard.putNumber("Line", 206);
+		turret.reset();
 		//resets drive + gyro vals
 		ahrs.reset();
-		SmartDashboard.putNumber("Line", 209);
-		tdt.lDriveTalon1.setPosition(0);
-		SmartDashboard.putNumber("Line", 211);
-		tdt.rDriveTalon1.setPosition(0);
-		SmartDashboard.putNumber("Line", 213);
+		tdt.resetDriveEncoders();
 		tdt.setDriveTrainSpeed(0);
-		SmartDashboard.putNumber("Line", 215);
 		//auto chooser
 		if (autoSelect == 0) {
 			auto0.reset();
@@ -249,7 +244,6 @@ public class Robot extends IterativeRobot {
 		if (autoSelect == 8) {
 			auto8.reset();
 		}
-		SmartDashboard.putNumber("Line", 252);
 	}
 
 	/**
@@ -259,46 +253,55 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		//auto chooser
 		if (autoSelect == 0) {
+			SmartDashboard.putString("Auto Mode", "Nothing");
 			SmartDashboard.putString("Auto State", auto0.currentState.toString());
 			auto0.update();
 		}
 			
 		if (autoSelect == 1) {
+			SmartDashboard.putString("Auto Mode", "Cross Baseline");
 			SmartDashboard.putString("Auto State", auto1.currentState.toString());
 			auto1.update();
 		}
 		
 		if (autoSelect == 2) {
+			SmartDashboard.putString("Auto Mode", "Side Gear");
 			SmartDashboard.putString("Auto State", auto2.currentState.toString());
 			auto2.update();
 		}
 		
 		if (autoSelect == 3) {
+			SmartDashboard.putString("Auto Mode", "Shoot Side Drive");
 			SmartDashboard.putString("Auto State", auto3.currentState.toString());
 			auto3.update();
 		}
 		
 		if (autoSelect == 4) {
+			SmartDashboard.putString("Auto Mode", "Shoot Ten");
 			SmartDashboard.putString("Auto State", auto4.currentState.toString());
 			auto4.update();
 		}
 		
 		if (autoSelect == 5) {
+			SmartDashboard.putString("Auto Mode", "Shoot Ten Gear");
 			SmartDashboard.putString("Auto State", auto5.currentState.toString());
 			auto5.update();
 		}
 		
 		if (autoSelect == 6) {
+			SmartDashboard.putString("Auto Mode", "Shoot Ten Gear Drive");
 			SmartDashboard.putString("Auto State", auto6.currentState.toString());
 			auto6.update();
 		}
 		
 		if (autoSelect == 7) {
+			SmartDashboard.putString("Auto Mode", "Drive to Hopper Shoot");
 			SmartDashboard.putString("Auto State", auto7.currentState.toString());
 			auto7.update();
 		}
 		
 		if (autoSelect == 8) {
+			SmartDashboard.putString("Auto Mode", "Gear Drive to Hopper Shoot");
 			SmartDashboard.putString("Auto State", auto8.currentState.toString());
 			auto8.update();
 		}
@@ -308,6 +311,16 @@ public class Robot extends IterativeRobot {
 		turret.update();
 		cam.update();
 		//auto1.update();
+		SmartDashboard.putNumber("Distance", tdt.avgEncPos / Constants.kInToRevConvFactor);
+		SmartDashboard.putNumber("Desired Distance", auto6.desiredDistance);
+		SmartDashboard.putNumber("Left 1 Voltage", tdt.lDriveTalon1.getOutputVoltage());
+       	SmartDashboard.putNumber("Left 2 Voltage", tdt.lDriveTalon2.getOutputVoltage());
+       	SmartDashboard.putNumber("Right 1 Voltage", tdt.rDriveTalon1.getOutputVoltage());
+       	SmartDashboard.putNumber("Right 2 Voltage", tdt.rDriveTalon2.getOutputVoltage());
+		SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
+       	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
+       	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
+       	SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
 		SmartDashboard.putString("Shooter state", shooter.currentState.toString());
 		SmartDashboard.putNumber("Gyro Angle", ahrs.getYaw());
 		SmartDashboard.putNumber("Desired Angle", tdt.desiredAngle);
@@ -340,10 +353,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		//joystick input
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
-		
-		// TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
-		// turret.desiredTarget = ((hi.leftStick.getZ() + 1)/2)*7;
-		
+		/*
 		 if (hi.turnTen()) {
 			 tdt.desiredAngle = ahrs.getYaw() + 10;
 		 }
@@ -358,12 +368,7 @@ public class Robot extends IterativeRobot {
 		 if (hi.turnNegativeNinety()) {
 			 tdt.desiredAngle = ahrs.getYaw() - 90;
 		 }
-		 
-	
-		 //hal.shooterTalon.set(0);
-		// hal.shooterTalon.set(((hi.leftStick.getZ() + 1) /2)*5900);
-		 //TEST CODE TEST CODE TEST CODE TEST CODE TEST CODE
-
+*/
 		tdt.update();
 		cam.update();
 		turret.update();
@@ -376,15 +381,15 @@ public class Robot extends IterativeRobot {
 		//what each button does
     	updateButtonStatus();
     	if(raiseGearIntakeRequest) {
-    		hal.gearIntake.set(Value.valueOf(Constants.kRaiseGearIntake));
+    		hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
     	}
     	
     	if(dropGearIntakeRequest) {
-     		hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
+     		hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
     	}
     	
     	if(fuelIntakeRequest) {
-    		hal.gearIntake.set(Value.valueOf(Constants.kRaiseGearIntake));
+    		hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
     		hal.intakeSpark.set(1);
     		hal.upperIntakeSpark.set(1);
     	} else if (!fuelIntakeRequest) {
@@ -457,12 +462,13 @@ public class Robot extends IterativeRobot {
     	if (calibrateCamRequest) {
     		cam.calibrated = false;
     	}
-    	if (hi.runClimber()) {
+    	if (climberRequest) {
     		hal.climberSpark.set(1);
     	}
+    	/*
     	else if (hi.runClimberReverse()) {
     		hal.climberSpark.set(-1);
-    	}
+    	}*/
     	else {
     		hal.climberSpark.set(0);
     	}
@@ -481,12 +487,13 @@ public class Robot extends IterativeRobot {
     		cam.desiredPosition = (hi.rightStick.getZ() + 1) / 2;
    		 	shooter.desiredSpeed = (((hi.leftStick.getZ() + 1) /2)*5900);
     	}
-    	if (compressorOverrideRequest) { 
-    		hal.pcm1.stop();
+    	if (closeGearIntakeRequest) {
+    		hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
     	}
     	else {
-    		hal.pcm1.start();
+    		hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
     	}
+    	
     	if (ringLightRequest) {
     		hal.ringLight.set(true);
     	}
@@ -597,12 +604,6 @@ public class Robot extends IterativeRobot {
 	
 	public void testPeriodic() {
 		updateButtonStatus();
-		if (compressorOverrideRequest) {
-    		hal.pcm1.stop();
-    	}
-    	else {
-    		hal.pcm1.start();
-    	}
 		SmartDashboard.putNumber("Turret Position", hal.turretTalon.getEncPosition());
 		SmartDashboard.putNumber("left stick input", hi.leftStick.getY());
 		SmartDashboard.putNumber("right stick input", hi.rightStick.getY());
@@ -633,10 +634,11 @@ public class Robot extends IterativeRobot {
 		binaryTwo = hi.getBinaryTwo();
 		binaryFour = hi.getBinaryFour();
 		binaryEight = hi.getBinaryEight();	
-		compressorOverrideRequest = hi.compressorOverride();
 		ringLightRequest = hi.getRingLight();
 		blueRequest = hi.getBlue();
 		redRequest = hi.getRed();
+		closeGearIntakeRequest = hi.getCloseGearIntake();
+		climberRequest = hi.runClimber();
 		
 		
 	}

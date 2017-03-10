@@ -9,8 +9,9 @@ enum autoShootTenGearStates {
 		DRIVE1,
 		STOP1,
 		TURN,
-		DRIVE2,
 		STOP2,
+		DRIVE2,
+		STOP3,
 		DROPGEAR,
 		WAIT,
 		DRIVEBACK,
@@ -59,7 +60,7 @@ public class AutoShootTenGear {
 				}
 				break;
 			case DRIVE1:
-				if (robot.tdt.avgEncPos > (desiredDistance*Constants.kInToRevConvFactor)) {
+				if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)) {
 					nextState = autoShootTenGearStates.STOP1;
 				}
 				break;
@@ -74,7 +75,7 @@ public class AutoShootTenGear {
 				}
 				break;
 			case DRIVE2:
-				if (robot.tdt.avgEncPos > (desiredDistance*Constants.kInToRevConvFactor)) {
+				if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)) {
 					nextState = autoShootTenGearStates.STOP2;
 				}
 				break;
@@ -83,7 +84,7 @@ public class AutoShootTenGear {
 						nextState = autoShootTenGearStates.DROPGEAR;
 				}
 			case DROPGEAR:
-				if (robot.hal.gearIntake.get().toString() == Constants.kRaiseGearIntake) {
+				if (robot.hal.gearIntake.get().toString() == Constants.kCloseGearIntake) {
 					nextState = autoShootTenGearStates.WAIT;
 				}
 				break;
@@ -93,7 +94,7 @@ public class AutoShootTenGear {
 				}
 				break;
 			case DRIVEBACK:
-				if (robot.tdt.avgEncPos * Constants.kRevToInConvFactor <= desiredDistance) {
+				if (robot.tdt.avgEncPos <= (desiredDistance*Constants.kInToRevConvFactor)) {
 					nextState = autoShootTenGearStates.DONE;
 				}
 				break;
@@ -104,15 +105,19 @@ public class AutoShootTenGear {
 	
 	public void doTransition() {
 		if (currentState == autoShootTenGearStates.START && nextState == autoShootTenGearStates.TURNTURRET) {
-			robot.hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
-			robot.shooter.desiredSpeed = 3500;
-			robot.cam.desiredPosition = .3555;			
-			
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
+				
 			if (robot.blueRequest) {
-				robot.turret.desiredTarget = .1;
+				robot.shooter.desiredSpeed = 3370;
+				robot.cam.desiredPosition = .265625;		
+				robot.turret.desiredTarget = 0;
+				desiredDistance = 92;
 			}
 			else if (robot.redRequest) {
-				robot.turret.desiredTarget = 7;
+				robot.shooter.desiredSpeed = 3500;
+				robot.cam.desiredPosition = .3555;		
+				robot.turret.desiredTarget = 7.5;
+				desiredDistance = 92;
 			}
 		}
 		if (currentState == autoShootTenGearStates.TURNTURRET && nextState == autoShootTenGearStates.SHOOT) {
@@ -122,52 +127,58 @@ public class AutoShootTenGear {
 		if (currentState == autoShootTenGearStates.SHOOT && nextState == autoShootTenGearStates.DRIVE1) {
 			robot.shootRequest = false;
 			robot.tdt.setDriveMode(driveMode.GYROLOCK);
-			robot.tdt.rDriveTalon1.setPosition(0);
-			robot.tdt.lDriveTalon1.setPosition(0);
+			robot.tdt.resetDriveEncoders();
 			robot.tdt.setDriveAngle(0);
-			robot.tdt.setDriveTrainSpeed(0.5);
+			robot.tdt.setDriveTrainSpeed(1);
 		}
 		if (currentState == autoShootTenGearStates.DRIVE1 && nextState == autoShootTenGearStates.STOP1) {
 			//stops robot, 1/2 sec
 			robot.ahrs.reset();
 			robot.tdt.setDriveTrainSpeed(0);
-			time = 25;
+			time = 20;
 		}
 		
 		if (currentState == autoShootTenGearStates.STOP1 && nextState == autoShootTenGearStates.TURN) {
 			//robot turns right to angle of peg, 1.5 sec
 			if (robot.blueRequest) {
+				desiredDistance = 18;
 				robot.tdt.setDriveAngle(60);
 			}
 			if (robot.redRequest) {
+				desiredDistance = 18;
 				robot.tdt.setDriveAngle(-60);
 			}
-			robot.tdt.rDriveTalon1.setPosition(0);
-			robot.tdt.lDriveTalon1.setPosition(0);
-			desiredDistance = 30;
-			time = 75;
 		}
-	
-		if (currentState == autoShootTenGearStates.TURN && nextState == autoShootTenGearStates.DRIVE2) {
-			//robot drives at 1/2 speed, 1 sec
-			robot.tdt.setDriveTrainSpeed(.5);
-			time = 50;
+
+		if (currentState == autoShootTenGearStates.TURN && nextState == autoShootTenGearStates.STOP2) {
+			robot.tdt.resetDriveEncoders();
+			robot.tdt.setDriveTrainSpeed(0);
+			time = 12;
 		}
-		if (currentState == autoShootTenGearStates.DRIVE2 && nextState == autoShootTenGearStates.STOP2) {
+		if (currentState == autoShootTenGearStates.STOP2 && nextState == autoShootTenGearStates.DRIVE2) {
+			robot.tdt.setDriveTrainSpeed(.75);	
+		}
+		
+		if (currentState == autoShootTenGearStates.DRIVE2 && nextState == autoShootTenGearStates.STOP3) {
 			//robot stops
+			time = 7;
 			robot.tdt.setDriveTrainSpeed(0);
 		}
-		if (currentState == autoShootTenGearStates.STOP2 && nextState == autoShootTenGearStates.DROPGEAR) {
-			robot.hal.gearIntake.set(Value.valueOf(Constants.kRaiseGearIntake));
-			time = 25;
+		if (currentState == autoShootTenGearStates.STOP3 && nextState == autoShootTenGearStates.DROPGEAR) {
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
 		}
 		if (currentState == autoShootTenGearStates.DROPGEAR && nextState == autoShootTenGearStates.WAIT) {
-			desiredDistance = -25;
+			if (robot.blueRequest) {
+				desiredDistance = -20;
+			}
+			if (robot.redRequest) {
+				desiredDistance = -20;
+			}
+			time = 50;
 		}
 		if (currentState == autoShootTenGearStates.WAIT && nextState == autoShootTenGearStates.DRIVEBACK) {
-			robot.tdt.rDriveTalon1.setPosition(0);
-			robot.tdt.lDriveTalon1.setPosition(0);
-			robot.tdt.setDriveTrainSpeed(-.5);
+			robot.tdt.resetDriveEncoders();
+			robot.tdt.setDriveTrainSpeed(-1);
 			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
 		}
 		if (currentState == autoShootTenGearStates.DRIVEBACK && nextState == autoShootTenGearStates.DONE) {
