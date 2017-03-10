@@ -34,7 +34,6 @@ public class AutoCrossBaseline {
 		doTransition();
 		currentState = nextState;
 		time --;
-		SmartDashboard.putString("Auto state", currentState.toString());
 		SmartDashboard.putNumber("Time", time);
 	}
 	
@@ -64,8 +63,9 @@ public class AutoCrossBaseline {
 	public void doTransition() {
 		if (currentState == autoCrossBaselineStates.START && nextState == autoCrossBaselineStates.DRIVE) {
 			//robot drives straight forward at max speed, 4 sec
-			robot.hal.gearIntake.set(Value.valueOf(Constants.kDropGearIntake));
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
 			robot.tdt.setDriveAngle(0);
+			robot.tdt.setDriveMode(driveMode.GYROLOCK);
 			robot.tdt.setDriveTrainSpeed(0.25);
 		}
 		
