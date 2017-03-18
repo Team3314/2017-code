@@ -83,6 +83,7 @@ public class AutoShootTenGear {
 				if (time<= 0 ){
 						nextState = autoShootTenGearStates.DROPGEAR;
 				}
+				break;
 			case DROPGEAR:
 				if (robot.hal.gearIntake.get().toString() == Constants.kCloseGearIntake) {
 					nextState = autoShootTenGearStates.WAIT;

@@ -5,6 +5,7 @@ import com.ctre.CANTalon.*;
 public class Turret {
 	Robot robot;
 	double desiredTarget = 0;
+	double turretPosition;
 	
 	public Turret(Robot myRobot) {
 		robot = myRobot;
@@ -13,6 +14,7 @@ public class Turret {
 		robot.hal.turretTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 		robot.hal.turretTalon.setPID(Constants.kTurret_kP, Constants.kTurret_kI, Constants.kTurret_kD,
 		Constants.kTurret_kF, Constants.kTurret_IZone, Constants.kTurret_RampRate, Constants.kTurret_Profile);
+		robot.hal.turretTalon.configMaxOutputVoltage(8);
 		robot.hal.turretTalon.enableForwardSoftLimit(true);
 		robot.hal.turretTalon.setForwardSoftLimit(7.55);
 		robot.hal.turretTalon.enableReverseSoftLimit(true);
@@ -21,6 +23,14 @@ public class Turret {
 	
 	public void update() {
 		//talon turns motor to target
+		if(Math.abs(robot.hal.turretTalon.getClosedLoopError()) > 1000 ) {
+			
+			robot.hal.turretTalon.setPID(Constants.kTurret_kP,  0,  Constants.kTurret_kD);
+		}
+		else if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 1000) {
+			robot.hal.turretTalon.setPID(Constants.kTurret_kP,  Constants.kTurret_kI,  Constants.kTurret_kD);
+		}
+		turretPosition = robot.hal.turretTalon.getPosition();
 		robot.hal.turretTalon.set(desiredTarget);
 	}
 	

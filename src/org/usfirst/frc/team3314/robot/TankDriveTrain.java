@@ -71,29 +71,31 @@ public class TankDriveTrain {
 		rDriveTalon1.configEncoderCodesPerRev(2048);
 		rDriveTalon1.setInverted(true);
 		lDriveTalon1.reverseSensor(true);
+		rDriveTalon1.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 20);
+		lDriveTalon1.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 20);
 	}
 	
 	public void update() {
 		lDriveTalon1.set(rawLeftSpeed);
-		rDriveTalon1.set(rawRightSpeed);
+		rDriveTalon1.set(rawRightSpeed);/*
 		rightDrivePosition = rDriveTalon1.getPosition();
 		leftDrivePosition = lDriveTalon1.getPosition();
 		rightDriveError = rDriveTalon1.getClosedLoopError();
 		leftDriveError = lDriveTalon1.getClosedLoopError();
 		rightDriveRPM = rDriveTalon1.getSpeed();
-		leftDriveRPM = lDriveTalon1.getSpeed();
+		leftDriveRPM = lDriveTalon1.getSpeed();*/
 		
-		avgEncPos = (leftDrivePosition + rightDrivePosition) / 2;
-		avgEncError = (leftDriveError + rightDriveError) / 2;
+
 		
 		//talon changes mode based on tank drive state
+		/*
 		if (currentMode == driveMode.SPEEDCONTROL){
 			lDriveTalon1.changeControlMode(TalonControlMode.Speed);
 			rDriveTalon1.changeControlMode(TalonControlMode.Speed);
 		} else {
 			lDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
 			rDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
-		}
+		}*/
 		
 		switch(currentMode){
 		case IDLE:

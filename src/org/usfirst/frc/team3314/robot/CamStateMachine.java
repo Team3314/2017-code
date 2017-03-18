@@ -4,7 +4,7 @@ import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
 public class CamStateMachine {
-	
+	/*s
 	enum camStates {
 		INIT,
 		CALIBRATE,
@@ -13,30 +13,31 @@ public class CamStateMachine {
 	
 	camStates currentState;
 	camStates nextState;
+	*/
 	Robot robot;
 	boolean calibrated;
-	double desiredPosition = .3555;
+	double desiredPosition;
 	
 	public CamStateMachine(Robot myRobot) {
 		robot = myRobot;
-		currentState = camStates.INIT;	
-		robot.hal.adjustTalon.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		robot.hal.adjustTalon.configEncoderCodesPerRev(2048);
+		//currentState = camStates.INIT;	
+		robot.hal.adjustTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+		robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(false, false);
+		robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
 		robot.hal.adjustTalon.setPID(Constants.kAngleAdjust_kP, Constants.kAngleAdjust_kI, Constants.kAngleAdjust_kD,
 		Constants.kAngleAdjust_kF, Constants.kAngleAdjust_IZone, Constants.kAngleAdjust_RampRate, Constants.kAdjust_Profile);
 	}
 	
 	public void reset() {
-		//sets shooter back to beginning
-		nextState = camStates.INIT;
+		//sets shooter back to bginning
+		desiredPosition = 0;
 	}
+	
 	
 	public void update() {
-		calcNext();
-		doTransition();
-		currentState = nextState;
+		robot.hal.adjustTalon.set(desiredPosition / 4096);
 	}
-	
+	/*
 	public void calcNext() {
 		nextState = currentState;
 		
@@ -72,6 +73,7 @@ public class CamStateMachine {
 		}
 		
 	}
+	
 	public void calibrate() {
 		if (robot.hal.adjustTalon.getPosition() >= 1) {
 			robot.hal.adjustTalon.set(.2);
@@ -80,10 +82,10 @@ public class CamStateMachine {
 			robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(false, false);
 			robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
 			robot.hal.adjustTalon.setPosition(0 + Constants.kCamOffset);
-			robot.hal.adjustTalon.set(0);
-			robot.hal.adjustTalon.setAllowableClosedLoopErr(20);
+			robot.hal.adjustTalon.set(0 + Constants.kCamOffset);
+			robot.hal.adjustTalon.setAllowableClosedLoopErr(10);
 			calibrated = true;
 		}
-	}
+	}*/
 
 }

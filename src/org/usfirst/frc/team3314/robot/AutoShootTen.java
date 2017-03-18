@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3314.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 enum autoShootTenState{
 	START,
 	TURNTURRET,
@@ -15,7 +17,7 @@ public class AutoShootTen {
 	int time;
 	
 	public AutoShootTen(Robot myRobot) {
-		myRobot = robot;
+		robot = myRobot;
 		currentState = autoShootTenState.START;
 		time = 0;
 	
@@ -58,14 +60,18 @@ public class AutoShootTen {
 		
 	}
 	public void doTransition() {
-		if (currentState == autoShootTenState.START && nextState == autoShootTenState.TURNTURRET) {
-			robot.shooter.desiredSpeed = 3500;
-			robot.cam.desiredPosition = .3555;				
+		if (currentState == autoShootTenState.START && nextState == autoShootTenState.TURNTURRET) {	
+			SmartDashboard.putBoolean("Red", robot.redRequest);
+			SmartDashboard.putBoolean("Blue", robot.blueRequest);
 			if (robot.blueRequest) {
+				robot.shooter.desiredSpeed = 3370;
+				robot.cam.desiredPosition = .265625;		
 				robot.turret.desiredTarget = 0;
 			}
 			else if (robot.redRequest) {
-				robot.turret.desiredTarget = 7;
+				robot.shooter.desiredSpeed = 4000;
+				robot.cam.desiredPosition = .2578125;		
+				robot.turret.desiredTarget = 7.25;
 			}
 		}
 		if (currentState == autoShootTenState.TURNTURRET && nextState == autoShootTenState.SHOOT) {

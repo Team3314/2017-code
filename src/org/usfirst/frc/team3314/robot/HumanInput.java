@@ -111,8 +111,8 @@ public class HumanInput {
 		return result;
 		
 	}
-	public boolean calibrateCam() {
-		return buttonBox.getRawButton(3);
+	public boolean zeroCam() {
+		return operator.getRawButton(3);
 	}
 	
 	public boolean turnNinety() {
@@ -168,10 +168,21 @@ public class HumanInput {
 		}
 		return result;
 	}
+	public boolean getOpenGearIntake() {
+		boolean result = false;
+		if (!buttonBox.getRawButton(11)) {
+			result = true;
+		}
+		return result;
+	}
+	
 	public boolean getCloseGearIntake() {
 		return buttonBox.getRawButton(11);
 	}
 	public boolean getRingLight() {
 		return leftStick.getRawButton(4);
+	}
+	public boolean turnCamNearZero() {
+		return buttonBox.getRawButton(5);
 	}
 }

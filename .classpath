@@ -14,5 +14,6 @@
 	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
 	<classpathentry kind="var" path="navx-mxp"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/sf2-frc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/3314Programming/wpilib/user/java/lib/Pathfinder-Java.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

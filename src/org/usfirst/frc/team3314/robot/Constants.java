@@ -30,7 +30,7 @@ public class Constants {
 	public static double kGyroLock_kF = 0;
 	
 	//turret pid
-	public static double kTurret_kP = 1;
+	public static double kTurret_kP = .8;
 	public static double kTurret_kI = .000;
 	public static double kTurret_kD = 80;
 	public static double kTurret_kF = 0;
@@ -39,14 +39,14 @@ public class Constants {
 	public static int kTurret_Profile = 0;
 	
 	//adjust pid
-	public static double kAngleAdjust_kP = .8;
-	public static double kAngleAdjust_kI = .002;
+	public static double kAngleAdjust_kP = 3.2; //.8;
+	public static double kAngleAdjust_kI = .00; //.002;
 	public static double kAngleAdjust_kD = 0;
 	public static double kAngleAdjust_kF = .0;
 	public static int kAngleAdjust_IZone = 0;
 	public static double kAngleAdjust_RampRate = 0;
 	public static int kAdjust_Profile = 0;
-	public static double kCamOffset = -.86999; // PRACTICE BOT ###  -.69; ####
+	//public static double kCamOffset = -.86999; // PRACTICE BOT ###  -.69; ####  No Longer Used
 	
 	
 	
