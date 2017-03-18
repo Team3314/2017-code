@@ -81,14 +81,15 @@ public class Constants {
 	public static int kSpeedControl_Profile = 0;
 	
 	//camera
-	public static double kCenterOfView = 160;
-	public static double kTargetHeight = (10/12);
-	public static double kXRes = 640;
-	public static double kYRes = 320;
+	public static double kCenterOfView = 89.5;
+	//public static double kTargetHeight = (10/12);
+	public static double kXRes = 320;
+	public static double kYRes = 180;
 	public static double kVerticalViewAngle = 70.42;
 	public static double kHorizontalViewAngle = 43.3;
-	public static double kDegToEncTicksConvFactor = 318.5777777777;
-	public static double kPxlToDegConvFactor = 0.271875;
+	public static double kFocalLength = 226.7;
+	//public static double kPxlToDegConvFactor = 0.271875;
+	public static double kDegToEncTicksConvFactor = 159.2888888888;
 	
 	public static double kDefaultCamPosition = .3555;
 	

@@ -102,6 +102,8 @@ public class Robot extends IterativeRobot {
 	double last_world_linear_accel_y;
 	double time = 0;
 	
+	boolean enableDistanceCheckingRequest = false;
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -327,6 +329,7 @@ public class Robot extends IterativeRobot {
 		turret.update();
 		cam.update();
 		//auto1.update();
+		
 		SmartDashboard.putNumber("Distance", tdt.avgEncPos / Constants.kInToRevConvFactor);
 		SmartDashboard.putNumber("Left 1 Voltage", tdt.lDriveTalon1.getOutputVoltage());
        	SmartDashboard.putNumber("Left 2 Voltage", tdt.lDriveTalon2.getOutputVoltage());
@@ -348,7 +351,6 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Cam Error",hal.adjustTalon.getClosedLoopError());
 		SmartDashboard.putNumber("Cam Position",hal.adjustTalon.getEncPosition());
 		SmartDashboard.putBoolean("Calibrated", cam.calibrated);*/
-		
 		}
 		
 	public void teleopInit() {
@@ -363,7 +365,6 @@ public class Robot extends IterativeRobot {
 		tdt.setDriveMode(driveMode.TANK);
 		turret.desiredTarget = turret.turretPosition;
 		ahrs.reset();
-		//
 		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
 	}
 
@@ -393,11 +394,16 @@ public class Robot extends IterativeRobot {
 */
 		tdt.update();
 		cam.update();
-		turret.update();
 		shooter.update();
+		turret.update();
+		turretCam.update();
 		
 		 if (turretTrackRequest) {
-				turret.getEncError(turretCam.getTurnErrorPixels());
+				turret.getEncError(turretCam.calcTurretYaw());
+		 }
+		 
+		 if (enableDistanceCheckingRequest) {
+			 turretCam.distanceCheck();
 		 }
     	
 		//what each button does
@@ -558,25 +564,24 @@ public class Robot extends IterativeRobot {
    		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
        	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
    		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
-   		/*
-    	SmartDashboard.putNumber("Left RPM", tdt.leftDriveRPM);
-    	SmartDashboard.putNumber("Right RPM", tdt.rightDriveRPM);
-    		*/
-    	SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
+   	 
+   	/*SmartDashboard.putNumber("Left RPM", tdt.leftDriveRPM);
+    	SmartDashboard.putNumber("Right RPM", tdt.rightDriveRPM); */
+    	
+   		SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
     	SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
     		
        	SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
        	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
        	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
        	SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
-       	/* 
-        	SmartDashboard.putNumber("Left 1", tdt.lDriveTalon1.get());
+       	
+       	/*SmartDashboard.putNumber("Left 1", tdt.lDriveTalon1.get());
         	SmartDashboard.putNumber("Left 2 ", tdt.lDriveTalon2.get());
         	SmartDashboard.putNumber("Right 1 ", tdt.rDriveTalon1.get());
-        	SmartDashboard.putNumber("Right 2 ", tdt.rDriveTalon2.get());
-        	*/
+        	SmartDashboard.putNumber("Right 2 ", tdt.rDriveTalon2.get());*/
+       	
         	SmartDashboard.putNumber("Average Encoder Position", tdt.avgEncPos);
-        	
         	SmartDashboard.putNumber("Left Encoder Position", tdt.lDriveTalon1.getPosition());
         	SmartDashboard.putNumber("Right Encoder Position", tdt.rDriveTalon1.getPosition());
         	
@@ -607,14 +612,12 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber("Shooter Voltage", hal.shooterTalon.getOutputVoltage());
         	SmartDashboard.putNumber("Shooter Current", hal.shooterTalon.getOutputCurrent());
         	
-        	
         	SmartDashboard.putNumber("Target ShooterRPM" ,(((hi.leftStick.getZ() + 1) /2)*5900));
         	
         	SmartDashboard.putNumber("Shooter Error", hal.shooterTalon.getSetpoint());
         	
         	//SmartDashboard.putBoolean("Cam Calibrated", cam.calibrated);
       
-        	
         	//SmartDashboard.putNumber("Index Pulse Value", hal.adjustTalon.getPinStateQuadIdx());
         	
         	SmartDashboard.putNumber("Get Agitator", hal.agitatorSpark.get());
@@ -634,6 +637,9 @@ public class Robot extends IterativeRobot {
     		SmartDashboard.putNumber("Desired Cam Position", cam.desiredPosition);
     		
     		SmartDashboard.putNumber("Distance", turretCam.calcDistance());
+    		SmartDashboard.putNumber("Angle of Theta", turretCam.theta);
+    		SmartDashboard.putNumber("Turn Error", turretCam.turnError);
+    		SmartDashboard.putNumber("Yaw", turretCam.calcTurretYaw());
     }
 		
 	/**
@@ -672,6 +678,7 @@ public class Robot extends IterativeRobot {
 		turnShooterForwardRequest = hi.turnShooterForward();
 		turnShooterRightRequest = hi.turnShooterRight();
 		enableTurretTrackingRequest = hi.enableTurretTracking();
+		enableDistanceCheckingRequest = hi.enableDistanceChecking();
 		zeroCamRequest = hi.zeroCam();
 		setShooterCloseRequest = hi.setShooterClose();
 		setShooterFarRequest = hi.setShooterFar();
@@ -686,6 +693,5 @@ public class Robot extends IterativeRobot {
 		closeGearIntakeRequest = hi.getCloseGearIntake();
 		climberRequest = hi.runClimber();
 		turnCamNearZeroRequest = hi.turnCamNearZero();
-		
 	}
 }

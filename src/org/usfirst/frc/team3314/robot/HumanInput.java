@@ -185,4 +185,7 @@ public class HumanInput {
 	public boolean turnCamNearZero() {
 		return buttonBox.getRawButton(5);
 	}
+	public boolean enableDistanceChecking() {
+		return buttonBox.getRawButton(6);
+	}
 }

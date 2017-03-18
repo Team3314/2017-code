@@ -24,7 +24,6 @@ public class Turret {
 	public void update() {
 		//talon turns motor to target
 		if(Math.abs(robot.hal.turretTalon.getClosedLoopError()) > 1000 ) {
-			
 			robot.hal.turretTalon.setPID(Constants.kTurret_kP,  0,  Constants.kTurret_kD);
 		}
 		else if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 1000) {
@@ -39,11 +38,10 @@ public class Turret {
 		robot.hal.turretTalon.setPosition(0);
 	}
 	
-	public void getEncError(double pxlError) {
+	public double getEncError(double degError) {
 		//converts error in degrees to encoder ticks, then adds it to current position to calculate desired target
-		double degreeError = pxlError * Constants.kPxlToDegConvFactor;
-		double encError = degreeError * Constants.kDegToEncTicksConvFactor;
-		double target = encError + robot.hal.turretTalon.getEncPosition();
-		desiredTarget = target;
+		double encError = degError * Constants.kDegToEncTicksConvFactor;
+		desiredTarget = encError + robot.hal.turretTalon.getEncPosition();
+		return desiredTarget;
 	}
 }
