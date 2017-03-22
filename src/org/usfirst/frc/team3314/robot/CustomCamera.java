@@ -2,6 +2,12 @@ package org.usfirst.frc.team3314.robot;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
+/* 
+* acceptable camera settings:
+* min brightness, max contrast, default saturation, max gain,
+* max white bal, min exposure, defocused at about 80, no auto settings 
+*/
+
 public class CustomCamera {
 	Robot robot;
 	NetworkTable pi = NetworkTable.getTable("CameraPublisher");
