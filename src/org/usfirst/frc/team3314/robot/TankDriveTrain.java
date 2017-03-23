@@ -30,8 +30,8 @@ public class TankDriveTrain {
 	double last_world_linear_accel_y = 0;
 	double avgEncPos = 0;
 	double avgEncError = 0;
-	double rightDrivePosition = 0;
-	double leftDrivePosition = 0;
+	int rightDrivePosition = 0;
+	int leftDrivePosition = 0;
 	double leftDriveError = 0;
 	double rightDriveError = 0;
 	double rightDriveRPM = 0;
@@ -194,7 +194,7 @@ public class TankDriveTrain {
 		desiredAngle = angle;
 	}
 	
-	public double detectCollision() {
+	public double calcJerk() {
 		double curr_world_linear_accel_y = robot.ahrs.getWorldLinearAccelY();
 		double currentJerkY = curr_world_linear_accel_y - last_world_linear_accel_y;
 		last_world_linear_accel_y = curr_world_linear_accel_y;

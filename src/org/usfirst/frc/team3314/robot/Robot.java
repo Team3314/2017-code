@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3314.robot;
 
+import java.io.File;
+
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 import com.kauailabs.navx.frc.AHRS;
@@ -8,6 +10,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Waypoint;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,6 +28,9 @@ public class Robot extends IterativeRobot {
 	HumanInput hi;
 	TankDriveTrain tdt;
 	ShooterStateMachine shooter;
+	MotionProfile profile;
+	
+	File myFile = new File("myfile.csv");
 	
 	//auto classes
 	AutoNothing auto0;
@@ -94,15 +102,25 @@ public class Robot extends IterativeRobot {
 	boolean auto8Request;
 	boolean auto9Request;
 	
+	
+	
 	boolean redRequest = false;
 	boolean blueRequest = false;
 	
 	boolean turnCamNearZeroRequest = false;
 	double absolutePosition;
 	double last_world_linear_accel_y;
-	double time = 0;
+	double time = 0;	
+	
+	Trajectory trajectory = Pathfinder.readFromCSV(myFile);
 	
 	boolean enableDistanceCheckingRequest = false;
+	
+	Waypoint[] points = new Waypoint[] {
+		    new Waypoint(-4, -1, Pathfinder.d2r(-45)),      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
+		    new Waypoint(-2, -2, 0),                        // Waypoint @ x=-2, y=-2, exit angle=0 radians
+		    new Waypoint(0, 0, 0)                           // Waypoint @ x=0, y=0,   exit angle=0 radians
+		};
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -118,6 +136,7 @@ public class Robot extends IterativeRobot {
 		cam = new CamStateMachine(this);
 		turret = new Turret(this);
 		turretCam = new CustomCamera(this);
+		profile = new MotionProfile(this);
 		
 		//auto classes
 		auto0 = new AutoNothing(this);
@@ -130,6 +149,7 @@ public class Robot extends IterativeRobot {
 		auto7 = new AutoShootTenGear(this); 
 		auto8 = new AutoDriveToHopperShoot(this);
 		auto9 = new AutoGearDriveToHopperShoot(this);
+		
 		tdt.resetDriveEncoders();
 		//misc
 	}
@@ -153,6 +173,7 @@ public class Robot extends IterativeRobot {
 		hal.adjustTalon.setPosition(0);
 		hal.adjustTalon.setPulseWidthPosition(0);
 		hal.adjustTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+		tdt.resetDriveEncoders();
 		turret.desiredTarget = 0;
 		hal.turretTalon.setPosition(0);
 	}
@@ -169,6 +190,9 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Relative Cam Positon",absolutePosition);
 		SmartDashboard.putNumber("Absolute Cam Positon", hal.adjustTalon.getPulseWidthPosition());
 		SmartDashboard.putNumber("Desired Cam Position", cam.desiredPosition);
+		SmartDashboard.putNumber("Average Encoder Position", tdt.avgEncPos);
+    	SmartDashboard.putNumber("Left Encoder Position", tdt.lDriveTalon1.getPosition());
+    	SmartDashboard.putNumber("Right Encoder Position", tdt.rDriveTalon1.getPosition());
 		cam.desiredPosition = (hal.adjustTalon.getPulseWidthPosition());
 		absolutePosition = (hal.adjustTalon.getPulseWidthPosition());
 		//lets auto chooser work with human input by setting varsxs
@@ -366,6 +390,24 @@ public class Robot extends IterativeRobot {
 		turret.desiredTarget = turret.turretPosition;
 		ahrs.reset();
 		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
+		/*
+    	for (int i = 0; i < profile.trajectory.length(); i++) {
+    	    Trajectory.Segment seg = profile.trajectory.get(i);
+    	    
+    	    SmartDashboard.putNumber("Delta Time",  seg.dt);
+    	    SmartDashboard.putNumber("X", seg.x);
+    	    SmartDashboard.putNumber("Y", seg.y);
+    	    SmartDashboard.putNumber("Position", seg.position);
+    	    SmartDashboard.putNumber("Velocity", seg.velocity);
+    	    SmartDashboard.putNumber("Acceleration", seg.acceleration);
+    	    SmartDashboard.putNumber("Jerk", seg.jerk);
+    	    SmartDashboard.putNumber("Heading", seg.heading);
+    	    
+    	    
+    	    System.out.printf("%f,%f,%f,%f,%f,%f,%f,%f\n", 
+    	        seg.dt, seg.x, seg.y, seg.position, seg.velocity, 
+    	            seg.acceleration, seg.jerk, seg.heading);
+    	}*/
 	}
 
 	/**
@@ -374,6 +416,9 @@ public class Robot extends IterativeRobot {
 	@Override		
 	public void teleopPeriodic() {
 		//joystick input
+		
+		SmartDashboard.putNumber("Length", trajectory.length());
+		
 		tdt.avgEncPos = (tdt.lDriveTalon1.getPosition() + tdt.rDriveTalon1.getPosition()) / 2;
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
 		/*
@@ -519,13 +564,6 @@ public class Robot extends IterativeRobot {
     	else if (turnCamNearZeroRequest) {
     		cam.desiredPosition = .078125;
     	}
-    	hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
-    	/*if (closeGearIntakeRequest) {
-    		hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
-    	}
-    	else {
-    		hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
-    	}*/
     	
     	if (ringLightRequest) {
     		hal.ringLight.set(true);
@@ -548,12 +586,13 @@ public class Robot extends IterativeRobot {
     		hal.lowerIndexSpark.set(0);
     	}
     	hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
-    	//if (openGearIntakeRequest) {
-    	//	hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
-    	/*}
+    	if (openGearIntakeRequest) {
+    	hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
+    	}
     	else if (closeGearIntakeRequest) {
     		hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
-    	}*/
+    	}
+    	
     	
     		
     	lastGyroLock = gyroLockRequest;
@@ -596,6 +635,7 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber ("Desired Cam Position", cam.desiredPosition);
         	SmartDashboard.putNumber("Target Cam Position", hal.adjustTalon.getSetpoint() * 8192);
         	SmartDashboard.putNumber("Cam Error", hal.adjustTalon.getClosedLoopError());
+        	SmartDashboard.putNumber("Jerk", tdt.calcJerk());
         	
         	SmartDashboard.putNumber("Cam Voltage", hal.adjustTalon.getOutputVoltage());
         	SmartDashboard.putNumber("Cam Curret", hal.adjustTalon.getOutputCurrent());
@@ -649,6 +689,10 @@ public class Robot extends IterativeRobot {
 	
 	public void testInit() {
 		hal.turretTalon.changeControlMode(TalonControlMode.PercentVbus);
+		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 3.0 , 2.0, 60.0);
+		Trajectory trajectory = Pathfinder.generate(points, config);
+
+		Pathfinder.writeToCSV(myFile, trajectory);
 	}
 	
 	public void testPeriodic() {
@@ -656,6 +700,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Turret Position", hal.turretTalon.getEncPosition());
 		SmartDashboard.putNumber("left stick input", hi.leftStick.getY());
 		SmartDashboard.putNumber("right stick input", hi.rightStick.getY());
+		
 		
 	}
 	

@@ -113,7 +113,7 @@ public class AutoGearHopperLeft {
 			}
 			break;
 		case DRIVE4:
-			if ((robot.tdt.detectCollision() > Constants.kCollisionThreshold_DeltaG)){
+			if ((robot.tdt.calcJerk() > Constants.kCollisionThreshold_DeltaG)){
 				//enc pos is placeholder, placeholer distance
 				nextState = autoGHLeftStates.STOP4;
 			}

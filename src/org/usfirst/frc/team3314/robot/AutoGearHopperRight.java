@@ -95,7 +95,7 @@ public class AutoGearHopperRight {
 			}
 			break;
 		case DRIVE4:
-			if ((robot.tdt.detectCollision() > Constants.kCollisionThreshold_DeltaG)){
+			if ((robot.tdt.calcJerk() > Constants.kCollisionThreshold_DeltaG)){
 				//placeholders
 				nextState = autoGHRightStates.STOP4;
 			}
