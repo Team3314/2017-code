@@ -49,6 +49,7 @@ public class Robot extends IterativeRobot {
 	//misc
 	CamStateMachine cam;
 	Turret turret;
+	TrackingStateMachine tracking;
 	AHRS ahrs = new AHRS(SPI.Port.kMXP);
 	UsbCamera drivingCam;
 	CustomCamera turretCam;
@@ -137,6 +138,7 @@ public class Robot extends IterativeRobot {
 		turret = new Turret(this);
 		turretCam = new CustomCamera(this);
 		//profile = new MotionProfile(this);
+		tracking = new TrackingStateMachine(this);
 		
 		//auto classes
 		auto0 = new AutoNothing(this);
@@ -352,6 +354,8 @@ public class Robot extends IterativeRobot {
 		shooter.update();
 		turret.update();
 		cam.update();
+		turretCam.update();
+		tracking.update();
 		//auto1.update();
 		
 		SmartDashboard.putNumber("Distance", tdt.avgEncPos / Constants.kInToRevConvFactor);
@@ -442,10 +446,11 @@ public class Robot extends IterativeRobot {
 		shooter.update();
 		turret.update();
 		turretCam.update();
+		tracking.update();
 		
-		 if (turretTrackRequest) {
+		/* if (turretTrackRequest) {
 				turret.getEncError(turretCam.calcTurretYaw());
-		 }
+			}*/
 		 
 		 if (enableDistanceCheckingRequest) {
 			 turretCam.distanceCheck();
@@ -533,6 +538,10 @@ public class Robot extends IterativeRobot {
     	else if (enableTurretTrackingRequest) {
     		turretTrackRequest = true;
     	}
+    	else {
+    		turretTrackRequest = false;
+    	}
+    	
     	if (zeroCamRequest) {
     		cam.desiredPosition = 0;
     	}
@@ -638,7 +647,7 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber("Jerk", tdt.calcJerk());
         	
         	SmartDashboard.putNumber("Cam Voltage", hal.adjustTalon.getOutputVoltage());
-        	SmartDashboard.putNumber("Cam Curret", hal.adjustTalon.getOutputCurrent());
+        	SmartDashboard.putNumber("Cam Current", hal.adjustTalon.getOutputCurrent());
         	
         	SmartDashboard.putString("Cam control mode", hal.adjustTalon.getControlMode().toString());
         	
@@ -680,6 +689,7 @@ public class Robot extends IterativeRobot {
     		SmartDashboard.putNumber("Angle of Theta", turretCam.theta);
     		SmartDashboard.putNumber("Turn Error", turretCam.turnError);
     		SmartDashboard.putNumber("Yaw", turretCam.calcTurretYaw());
+    		SmartDashboard.putNumber("Target yaw", tracking.targetYaw);
     }
 		
 	/**
