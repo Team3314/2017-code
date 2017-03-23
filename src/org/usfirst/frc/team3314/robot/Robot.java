@@ -28,7 +28,7 @@ public class Robot extends IterativeRobot {
 	HumanInput hi;
 	TankDriveTrain tdt;
 	ShooterStateMachine shooter;
-	MotionProfile profile;
+	//MotionProfile profile;
 	
 	File myFile = new File("myfile.csv");
 	
@@ -42,7 +42,8 @@ public class Robot extends IterativeRobot {
 	AutoShootTen auto6;
 	AutoShootTenGear auto7;
 	AutoDriveToHopperShoot auto8;
-	AutoGearDriveToHopperShoot auto9;
+	//AutoGearDriveToHopperShoot auto9;
+	MotionProfile auto9;
 	
 	
 	//misc
@@ -111,14 +112,13 @@ public class Robot extends IterativeRobot {
 	double absolutePosition;
 	double last_world_linear_accel_y;
 	double time = 0;	
-	
-	Trajectory trajectory = Pathfinder.readFromCSV(myFile);
+	Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 3.0 , 2.0, 60.0);
+	Trajectory trajectory;
 	
 	boolean enableDistanceCheckingRequest = false;
 	
 	Waypoint[] points = new Waypoint[] {
-		    new Waypoint(-4, -1, Pathfinder.d2r(-45)),      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-		    new Waypoint(-2, -2, 0),                        // Waypoint @ x=-2, y=-2, exit angle=0 radians
+		    new Waypoint(-3, 0 , 0),      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees                       // Waypoint @ x=-2, y=0, exit angle=0 radians
 		    new Waypoint(0, 0, 0)                           // Waypoint @ x=0, y=0,   exit angle=0 radians
 		};
 	
@@ -136,7 +136,7 @@ public class Robot extends IterativeRobot {
 		cam = new CamStateMachine(this);
 		turret = new Turret(this);
 		turretCam = new CustomCamera(this);
-		profile = new MotionProfile(this);
+		//profile = new MotionProfile(this);
 		
 		//auto classes
 		auto0 = new AutoNothing(this);
@@ -148,7 +148,7 @@ public class Robot extends IterativeRobot {
 		auto6 = new AutoShootTen(this);
 		auto7 = new AutoShootTenGear(this); 
 		auto8 = new AutoDriveToHopperShoot(this);
-		auto9 = new AutoGearDriveToHopperShoot(this);
+		auto9 = new MotionProfile(this);
 		
 		tdt.resetDriveEncoders();
 		//misc
@@ -417,7 +417,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		//joystick input
 		
-		SmartDashboard.putNumber("Length", trajectory.length());
+		//SmartDashboard.putNumber("Length", trajectory.length());
 		
 		tdt.avgEncPos = (tdt.lDriveTalon1.getPosition() + tdt.rDriveTalon1.getPosition()) / 2;
 		tdt.setStickInputs(hi.leftStick.getY(), hi.rightStick.getY()); 
@@ -604,8 +604,8 @@ public class Robot extends IterativeRobot {
        	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
    		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
    	 
-   	/*SmartDashboard.putNumber("Left RPM", tdt.leftDriveRPM);
-    	SmartDashboard.putNumber("Right RPM", tdt.rightDriveRPM); */
+   		SmartDashboard.putNumber("Left RPM", tdt.leftDriveRPM);
+    	SmartDashboard.putNumber("Right RPM", tdt.rightDriveRPM); 
     	
    		SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
     	SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
@@ -689,8 +689,8 @@ public class Robot extends IterativeRobot {
 	
 	public void testInit() {
 		hal.turretTalon.changeControlMode(TalonControlMode.PercentVbus);
-		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 3.0 , 2.0, 60.0);
-		Trajectory trajectory = Pathfinder.generate(points, config);
+	
+		 trajectory = Pathfinder.generate(points, config);
 
 		Pathfinder.writeToCSV(myFile, trajectory);
 	}

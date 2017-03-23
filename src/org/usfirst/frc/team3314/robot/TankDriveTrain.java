@@ -30,8 +30,8 @@ public class TankDriveTrain {
 	double last_world_linear_accel_y = 0;
 	double avgEncPos = 0;
 	double avgEncError = 0;
-	int rightDrivePosition = 0;
-	int leftDrivePosition = 0;
+	double rightDrivePosition = 0;
+	double leftDrivePosition = 0;
 	double leftDriveError = 0;
 	double rightDriveError = 0;
 	double rightDriveRPM = 0;
@@ -77,13 +77,13 @@ public class TankDriveTrain {
 	
 	public void update() {
 		lDriveTalon1.set(rawLeftSpeed);
-		rDriveTalon1.set(rawRightSpeed);/*
+		rDriveTalon1.set(rawRightSpeed);
 		rightDrivePosition = rDriveTalon1.getPosition();
 		leftDrivePosition = lDriveTalon1.getPosition();
 		rightDriveError = rDriveTalon1.getClosedLoopError();
 		leftDriveError = lDriveTalon1.getClosedLoopError();
 		rightDriveRPM = rDriveTalon1.getSpeed();
-		leftDriveRPM = lDriveTalon1.getSpeed();*/
+		leftDriveRPM = lDriveTalon1.getSpeed();
 		
 
 		

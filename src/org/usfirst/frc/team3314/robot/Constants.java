@@ -46,7 +46,7 @@ public class Constants {
 	public static int kAngleAdjust_IZone = 0;
 	public static double kAngleAdjust_RampRate = 0;
 	public static int kAdjust_Profile = 0;
-	public static double kCamOffset = -.69;; // PRACTICE BOT ###   ####  No Longer Used
+	public static double kCamOffset = -.86999; // PRACTICE BOT ###   ####  No Longer Used
 	
 	
 	
@@ -101,6 +101,6 @@ public class Constants {
 	public static double kShooterFarSpeed = 4500;
 	public static double kTurretFarPosition = 0;
 	
-	public static double kPulleyDiameter = 0;
+	public static double kPulleyDiameter = 0.06985;
 	public static double kMaxVelocity = 0;
 }

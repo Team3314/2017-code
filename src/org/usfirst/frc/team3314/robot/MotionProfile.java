@@ -30,7 +30,8 @@ public class MotionProfile {
 
      Trajectory trajectory = Pathfinder.readFromCSV(myFile);
      // Wheelbase Width = 0.5m
-     TankModifier modifier = new TankModifier(trajectory).modify(0.5);
+     TankModifier modifier = new TankModifier(trajectory).modify(0.6985); // <- inside to inside of tracks ##  0.7493);
+     
 
      // Do something with the new Trajectories...
      Trajectory leftTrajectory = modifier.getLeftTrajectory();
