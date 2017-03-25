@@ -34,14 +34,19 @@ public class Turret {
 	}
 	
 	public void reset() {
-		robot.hal.turretTalon.set(0);
-		robot.hal.turretTalon.setPosition(0);
+		if (robot.blueRequest) {
+			robot.hal.turretTalon.setPosition(0);
+		}
+		if (robot.redRequest) {
+			robot.hal.turretTalon.setPosition(7.55);
+		}
+		robot.hal.turretTalon.set(robot.hal.turretTalon.getPosition());
 	}
 	
 	public double getEncError(double degError) {
 		//converts error in degrees to encoder ticks, then adds it to current position to calculate desired target
 		double encError = degError * Constants.kDegToEncTicksConvFactor;
-		desiredTarget = encError + robot.hal.turretTalon.getEncPosition();
+		desiredTarget = encError + robot.hal.turretTalon.getPosition();
 		return desiredTarget;
 	}
 }

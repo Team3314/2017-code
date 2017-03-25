@@ -104,15 +104,11 @@ public class HumanInput {
 		return result;
 	}
 	public boolean enableTurretTracking() {
-		boolean result = false;
-		if (operator.getPOV() == 180) {
-			result = true;
-		}
-		return result;
+		return operator.getRawButton(9);
 		
 	}
 	public boolean zeroCam() {
-		return operator.getRawButton(3);
+		return buttonBox.getRawButton(3);
 	}
 	
 	public boolean turnNinety() {
@@ -180,12 +176,12 @@ public class HumanInput {
 		return buttonBox.getRawButton(11);
 	}
 	public boolean getRingLight() {
-		return leftStick.getRawButton(4);
+		return operator.getRawButton(3);
 	}
 	public boolean turnCamNearZero() {
 		return buttonBox.getRawButton(5);
 	}
 	public boolean enableDistanceChecking() {
-		return buttonBox.getRawButton(6);
+		return operator.getRawButton(9);
 	}
 }

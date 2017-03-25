@@ -148,10 +148,10 @@ public class AutoGearRight{
 			//robot turns right to angle of peg, 1.5 sec
 			robot.tdt.setDriveAngle(-60);
 			if (robot.blueRequest) {
-				desiredDistance = 18;
+				desiredDistance = 20;
 			}
 			if (robot.redRequest) {
-				desiredDistance = 18;
+				desiredDistance = 20;
 			}
 		}
 
@@ -167,7 +167,7 @@ public class AutoGearRight{
 		
 		if (currentState == autoGearRightStates.DRIVE2 && nextState == autoGearRightStates.STOP3) {
 			//robot stops
-			time = 7;
+			time = 13;
 			robot.tdt.setDriveTrainSpeed(0);
 		}
 		if (currentState == autoGearRightStates.STOP3 && nextState == autoGearRightStates.DROPGEAR) {
@@ -180,7 +180,7 @@ public class AutoGearRight{
 			if (robot.redRequest) {
 				desiredDistance = -30;
 			}
-			time = 50;
+			time = 15;
 		}
 		if (currentState == autoGearRightStates.WAIT && nextState == autoGearRightStates.DRIVEBACK) {
 			robot.tdt.resetDriveEncoders();

@@ -55,7 +55,7 @@ public void calcNext() {
 		case TURNTURRET:
 			SmartDashboard.putNumber("Turret Error", robot.hal.turretTalon.getClosedLoopError());
 			SmartDashboard.putNumber("Turret Position", robot.hal.turretTalon.getPosition());
-			if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 250 && robot.cam.calibrated 
+			if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 250
 			&& robot.hal.adjustTalon.getClosedLoopError() <= 50)  {
 				nextState = autoShootTenGearDriveStates.SHOOT;
 			}
@@ -136,13 +136,13 @@ public void doTransition() {
 			
 		if (robot.blueRequest) {
 			robot.shooter.desiredSpeed = 3370;
-			robot.cam.desiredPosition = .265625;		
+			robot.cam.desiredPosition = 1088;		
 			robot.turret.desiredTarget = .1;
 			desiredDistance = 90;
 		}
 		else if (robot.redRequest) {
 			robot.shooter.desiredSpeed = 4200;
-			robot.cam.desiredPosition = .2578125;		
+			robot.cam.desiredPosition = 1056;		
 			robot.turret.desiredTarget = 7.2;
 
 			desiredDistance = 90;
@@ -170,11 +170,11 @@ public void doTransition() {
 	if (currentState == autoShootTenGearDriveStates.STOP1 && nextState == autoShootTenGearDriveStates.TURN) {
 		//robot turns right to angle of peg, 1.5 sec
 		if (robot.blueRequest) {
-			desiredDistance = 25;
+			desiredDistance = 20;
 			robot.tdt.setDriveAngle(60);
 		}
 		if (robot.redRequest) {
-			desiredDistance = 25;
+			desiredDistance = 20;
 			robot.tdt.setDriveAngle(-60);
 		}
 	}
@@ -199,12 +199,12 @@ public void doTransition() {
 	if (currentState == autoShootTenGearDriveStates.DROPGEAR && nextState == autoShootTenGearDriveStates.WAIT) {
 		robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
 		if (robot.blueRequest) {
-			desiredDistance = -20;
+			desiredDistance = -30;
 		}
 		if (robot.redRequest) {
-			desiredDistance = -20;
+			desiredDistance = -30;
 		}
-		time = 8;
+		time = 15;
 	}
 	if (currentState == autoShootTenGearDriveStates.WAIT && nextState == autoShootTenGearDriveStates.DRIVEBACK) {
 		robot.tdt.resetDriveEncoders();

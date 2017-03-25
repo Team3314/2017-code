@@ -49,8 +49,8 @@ public class CustomCamera {
 	}
 	
 	public double calcDistance() { //goes with shooter throttle
-		double upperTargetTop = upperTargetX + upperTargetWidth;
-		double theta = (Math.toDegrees(Math.atan((upperTargetTop - ((Constants.kXRes/2)-.5))/Constants.kFocalLength))) + 33;
+		double upperTargetTop = upperTargetX - upperTargetWidth ;
+		double theta = -(Math.toDegrees(Math.atan((upperTargetTop - ((Constants.kXRes/2)-.5))/Constants.kFocalLength))) + 46;
 		double distance = 66.5/(Math.tan(Math.toRadians(theta))); //66.5 in = height from camera to reflective tape
 		return distance;	
 	}
@@ -58,60 +58,60 @@ public class CustomCamera {
 	public double calcTurretYaw() { //goes with turret tracking
 		double centerX = upperTargetY + (upperTargetHeight/2);
 		turnError = centerX - Constants.kCenterOfView;
-		double yaw = Math.toDegrees(Math.atan(turnError/Constants.kFocalLength));
+		double yaw = -Math.toDegrees(Math.atan(turnError/Constants.kFocalLength));
 		return yaw;
 	}
 	
 	public void distanceCheck() {
-		if (distance >= 42 && distance < 48) {
+		if (distance >= 36 && distance < 43) {
+			robot.cam.desiredPosition = 2128;
+			robot.shooter.desiredSpeed =  3500;
+		}
+		else if (distance >= 43 && distance < 49) {
+			robot.cam.desiredPosition = 2128;
+			robot.shooter.desiredSpeed =  3500;;
+		}
+		else if (distance >= 49 && distance < 56) {
+			robot.cam.desiredPosition = 2400;
+			robot.shooter.desiredSpeed =  3500;
+		}
+		else if (distance >= 56 && distance < 62) {
+			robot.cam.desiredPosition = 2400;
+			robot.shooter.desiredSpeed =3500;
+		}
+		else if (distance >= 62 && distance < 68) {
+			robot.cam.desiredPosition = 2400;
+			robot.shooter.desiredSpeed =  3500;
+		}
+		else if (distance >= 68 && distance < 75) {
 			robot.cam.desiredPosition = 0;
 			robot.shooter.desiredSpeed = 0;
 		}
-		else if (distance >= 48 && distance < 54) {
+		else if (distance >= 75 && distance < 81) {
 			robot.cam.desiredPosition = 0;
 			robot.shooter.desiredSpeed = 0;
 		}
-		else if (distance >= 54 && distance < 60) {
+		else if (distance >= 81 && distance < 87) {
 			robot.cam.desiredPosition = 0;
 			robot.shooter.desiredSpeed = 0;
 		}
-		else if (distance >= 60 && distance < 66) {
+		else if (distance >= 87 && distance < 92) {
 			robot.cam.desiredPosition = 0;
 			robot.shooter.desiredSpeed = 0;
 		}
-		else if (distance >= 66 && distance < 72) {
+		else if (distance >= 92 && distance < 98) {
 			robot.cam.desiredPosition = 0;
 			robot.shooter.desiredSpeed = 0;
 		}
-		else if (distance >= 72 && distance < 78) {
+		else if (distance >= 98 && distance < 102) {
 			robot.cam.desiredPosition = 0;
 			robot.shooter.desiredSpeed = 0;
 		}
-		else if (distance >= 78 && distance < 84) {
+		else if (distance >= 102 && distance < 106) {
 			robot.cam.desiredPosition = 0;
 			robot.shooter.desiredSpeed = 0;
 		}
-		else if (distance >= 84 && distance < 90) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
-		}
-		else if (distance >= 90 && distance < 96) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
-		}
-		else if (distance >= 96 && distance < 102) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
-		}
-		else if (distance >= 102 && distance < 108) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
-		}
-		else if (distance >= 108 && distance < 114) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
-		}
-		else if (distance >= 114 && distance < 120) {
+		else if (distance >= 106 && distance < 112) {
 			robot.cam.desiredPosition = 0;
 			robot.shooter.desiredSpeed = 0;
 		}

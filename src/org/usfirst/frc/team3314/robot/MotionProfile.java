@@ -1,5 +1,5 @@
 package org.usfirst.frc.team3314.robot;
-
+/*
 import java.io.File;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -72,8 +72,8 @@ public class MotionProfile {
     					break;
     					
     				case RUNPROFILE:
-    					double l = left.calculate(robot.tdt.leftDrivePosition);
-    					double r = right.calculate(robot.tdt.rightDrivePosition);
+    					double l = left.calculate(robot.tdt.leftDrivePositionTicks);
+    					double r = right.calculate((int)robot.tdt.rightDrivePositionTicks);
     					double gyroHeading = robot.ahrs.getAngle();
     					double desiredHeading = Pathfinder.r2d(left.getHeading());
     					
@@ -94,8 +94,8 @@ public class MotionProfile {
     		}
     		public void doTransition() {
     			if (currentState == motionProfileStates.START && nextState == motionProfileStates.RUNPROFILE) {	
-    				left.configureEncoder(robot.tdt.leftDrivePosition, 8192 , Constants.kPulleyDiameter);
-    				right.configureEncoder(robot.tdt.rightDrivePosition, 8192 , Constants.kPulleyDiameter);
+    				left.configureEncoder(robot.tdt.leftDrivePositionTicks, 8192 , Constants.kPulleyDiameter);
+    				right.configureEncoder(robot.tdt.rightDrivePositionTicks, 8192 , Constants.kPulleyDiameter);
     				left.configurePIDVA(1.0, 0.0, 0.0, 1 / Constants.kMaxVelocity, 0);
     			
     				}
@@ -107,3 +107,4 @@ public class MotionProfile {
      }
 
 }
+*/

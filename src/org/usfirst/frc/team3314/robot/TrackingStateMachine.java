@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 enum trackingStates {
 	START,
 	CALCULATE,
+	WAIT,
 	TURN,
 	STOP,
 	RESET,
@@ -51,7 +52,19 @@ public class TrackingStateMachine {
 			if (!robot.turretTrackRequest) {
 				nextState = trackingStates.STOP;
 			}
-			if (targetYaw != 0) {
+			if (robot.turretCam.calcTurretYaw() > 0.25 || robot.turretCam.calcTurretYaw() < -0.25) {
+				nextState = trackingStates.WAIT;
+			}
+			break;
+			
+		case WAIT:
+			if (!robot.turretTrackRequest) {
+				nextState = trackingStates.STOP;
+			}
+			if (robot.turretCam.calcTurretYaw() <= 0.25 && robot.turretCam.calcTurretYaw() >= -0.25) {
+				nextState = trackingStates.CALCULATE;
+			}
+			if (time <= 0) {
 				nextState = trackingStates.TURN;
 			}
 			break;
@@ -87,14 +100,26 @@ public class TrackingStateMachine {
 		if (currentState == trackingStates.START && nextState == trackingStates.CALCULATE) {
 			targetYaw = robot.turretCam.calcTurretYaw();
 		}
+
+		if (currentState == trackingStates.CALCULATE && nextState == trackingStates.WAIT) {
+			time = 25;
+		}
 		
-		if (currentState == trackingStates.CALCULATE && nextState == trackingStates.TURN) {
+		if (currentState == trackingStates.WAIT && nextState == trackingStates.TURN) {
 			robot.turret.getEncError(targetYaw);
-			robot.turret.update();
+			//robot.turret.update();
 			robot.turretCam.calcTurretYaw();
 		}
 		
+		if (currentState == trackingStates.WAIT && nextState == trackingStates.CALCULATE) {
+			targetYaw = robot.turretCam.calcTurretYaw();
+		}
+		
 		if (currentState == trackingStates.CALCULATE && nextState == trackingStates.STOP) {
+			targetYaw = 0;
+		}
+		
+		if (currentState == trackingStates.WAIT && nextState == trackingStates.STOP) {
 			targetYaw = 0;
 		}
 		

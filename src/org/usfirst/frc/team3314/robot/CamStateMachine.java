@@ -23,6 +23,8 @@ public class CamStateMachine {
 		//currentState = camStates.INIT;	
 		robot.hal.adjustTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
 		robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(false, false);
+		robot.hal.adjustTalon.setAllowableClosedLoopErr(0);
+		robot.hal.adjustTalon.setInverted(true);
 		robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
 		robot.hal.adjustTalon.setPID(Constants.kAngleAdjust_kP, Constants.kAngleAdjust_kI, Constants.kAngleAdjust_kD,
 		Constants.kAngleAdjust_kF, Constants.kAngleAdjust_IZone, Constants.kAngleAdjust_RampRate, Constants.kAdjust_Profile);

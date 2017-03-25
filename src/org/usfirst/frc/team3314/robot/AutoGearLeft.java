@@ -149,10 +149,10 @@ public class AutoGearLeft{
 			//robot turns right to angle of peg, 1.5 sec
 			robot.tdt.setDriveAngle(60);
 			if (robot.blueRequest) {
-				desiredDistance = 18;
+				desiredDistance = 20;
 			}
 			if (robot.redRequest) {
-				desiredDistance = 18;
+				desiredDistance = 20;
 			}
 		}
 
@@ -181,7 +181,7 @@ public class AutoGearLeft{
 			if (robot.redRequest) {
 				desiredDistance = -30;
 			}
-			time = 50;
+			time = 15;
 		}
 		if (currentState == autoGearLeftStates.WAIT && nextState == autoGearLeftStates.DRIVEBACK) {
 			robot.tdt.resetDriveEncoders();
