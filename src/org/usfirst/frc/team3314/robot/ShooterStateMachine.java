@@ -101,7 +101,7 @@ public class ShooterStateMachine {
 		
 		if (currentState == shooterStates.AGITATE && nextState == shooterStates.INDEX) {
 			//index shooters started, 1/5 sec
-			robot.hal.agitatorSpark.set(.75);
+			robot.hal.agitatorSpark.set(.9);
 			robot.hal.lowerIndexSpark.set(1);
 			robot.hal.upperIndexSpark.set(1);
 			time = 10;

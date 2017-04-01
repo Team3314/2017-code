@@ -45,7 +45,7 @@ public class AutoGearCenter {
 		
 		switch (currentState) {
 		case START:
-			robot.ahrs.reset();
+			robot.navx.reset();
 			nextState = autoGearCenterStates.DRIVE;
 			break;
 		case DRIVE:

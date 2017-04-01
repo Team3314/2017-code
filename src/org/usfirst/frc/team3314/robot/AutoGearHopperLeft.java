@@ -68,7 +68,7 @@ public class AutoGearHopperLeft {
 		
 		switch (currentState) {
 		case START:
-			robot.ahrs.reset();
+			robot.navx.reset();
 			nextState = autoGHLeftStates.DRIVE1;
 			break;
 		case DRIVE1:
@@ -82,7 +82,7 @@ public class AutoGearHopperLeft {
 			}
 			break;
 		case TURN1:
-			if (Math.abs(Math.abs(robot.ahrs.getYaw()) - 60) <= .25) {
+			if (Math.abs(Math.abs(robot.navx.getYaw()) - 60) <= .25) {
 				nextState = autoGHLeftStates.DRIVE2;
 			}
 			break;
@@ -108,7 +108,7 @@ public class AutoGearHopperLeft {
 			}
 			break;
 		case TURN2:
-			if (Math.abs(Math.abs(robot.ahrs.getYaw()) - 30) <= .25) {
+			if (Math.abs(Math.abs(robot.navx.getYaw()) - 30) <= .25) {
 				nextState = autoGHLeftStates.DRIVE4;
 			}
 			break;
@@ -131,7 +131,7 @@ public class AutoGearHopperLeft {
 	public void doTransition() {
 		if (currentState == autoGHLeftStates.START && nextState == autoGHLeftStates.DRIVE1) {
 			//robot drives straight forward at max speed, 3 sec
-			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
+			robot.tdt.setDriveAngle(robot.navx.getYaw());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 150;
 		}
@@ -144,7 +144,7 @@ public class AutoGearHopperLeft {
 		
 		if (currentState == autoGHLeftStates.STOP1 && nextState == autoGHLeftStates.TURN1) {
 			//robot drives forward again at max speed but at angle of hopper, 1.5 sec
-			robot.ahrs.reset();
+			robot.navx.reset();
 			robot.tdt.setDriveAngle(-60);
 			time = 75;
 		}
@@ -162,7 +162,7 @@ public class AutoGearHopperLeft {
 		
 		if (currentState == autoGHLeftStates.STOP2 && nextState == autoGHLeftStates.DRIVEBACK){
 			//placeholder angle, robot drives forward at fullspeed, 1 sec
-			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
+			robot.tdt.setDriveAngle(robot.navx.getYaw());
 
 				robot.tdt.setDriveTrainSpeed(-.5);
 			time = 50;
@@ -170,7 +170,7 @@ public class AutoGearHopperLeft {
 		
 		if (currentState == autoGHLeftStates.DRIVEBACK && nextState == autoGHLeftStates.STOP3) {
 			//stops robot again, 1 sec
-			robot.ahrs.reset();
+			robot.navx.reset();
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 50;
 		}

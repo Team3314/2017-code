@@ -50,7 +50,7 @@ public void calcNext() {
 			SmartDashboard.putNumber("Turret Error", robot.hal.turretTalon.getClosedLoopError());
 			SmartDashboard.putNumber("Turret Position", robot.hal.turretTalon.getPosition());
 			if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 250
-			&& robot.hal.adjustTalon.getClosedLoopError() <= 50)  {
+			&& robot.hal.camTalon.getClosedLoopError() <= 50)  {
 				nextState = autoShootTenGearStopStates.SHOOT;
 			}
 			break;
@@ -126,7 +126,7 @@ public void doTransition() {
 	}
 	if (currentState == autoShootTenGearStopStates.DRIVE1 && nextState == autoShootTenGearStopStates.STOP1) {
 		//stops robot, 1/2 sec
-		robot.ahrs.reset();
+		robot.navx.reset();
 		robot.tdt.setDriveTrainSpeed(0);
 		time = 20;
 	}

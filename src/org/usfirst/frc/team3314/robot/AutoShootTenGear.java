@@ -134,7 +134,7 @@ public class AutoShootTenGear {
 		}
 		if (currentState == autoShootTenGearStates.DRIVE1 && nextState == autoShootTenGearStates.STOP1) {
 			//stops robot, 1/2 sec
-			robot.ahrs.reset();
+			robot.navx.reset();
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 20;
 		}
@@ -180,7 +180,7 @@ public class AutoShootTenGear {
 		if (currentState == autoShootTenGearStates.WAIT && nextState == autoShootTenGearStates.DRIVEBACK) {
 			robot.tdt.resetDriveEncoders();
 			robot.tdt.setDriveTrainSpeed(-1);
-			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
+			robot.tdt.setDriveAngle(robot.navx.getYaw());
 		}
 		if (currentState == autoShootTenGearStates.DRIVEBACK && nextState == autoShootTenGearStates.DONE) {
 			robot.tdt.setDriveTrainSpeed(0);

@@ -101,6 +101,7 @@ public class Constants {
 	public static double kShooterFarSpeed = 4500;
 	public static double kTurretFarPosition = 0;
 	
-	public static double kPulleyDiameter = 0.06985;
+	public static double kPulleyDiameter = 2.75;
 	public static double kMaxVelocity = 0;
+	public static double kMinTurnInput = 0;
 }

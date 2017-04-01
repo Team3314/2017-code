@@ -79,7 +79,7 @@ public class HumanInput {
 	}
 	public boolean gyroReset() {
 		boolean result = false;
-		result = leftStick.getRawButton(7);
+		result = buttonBox.getRawButton(5);
 		return result;
 	}
 	public boolean turnShooterLeft() {
@@ -176,12 +176,29 @@ public class HumanInput {
 		return buttonBox.getRawButton(11);
 	}
 	public boolean getRingLight() {
+		if (leftStick.getRawButton(4)) {
+			return leftStick.getRawButton(4);
+		}
 		return operator.getRawButton(3);
-	}
-	public boolean turnCamNearZero() {
-		return buttonBox.getRawButton(5);
 	}
 	public boolean enableDistanceChecking() {
 		return operator.getRawButton(9);
+	}
+	public boolean zeroTurret() {
+		return buttonBox.getRawButton(4); 
+	}
+	public boolean getReverseIndex() {
+		return buttonBox.getRawButton(2);
+	}
+	public boolean getReverseAgitator() {
+		return buttonBox.getRawButton(1);
+	}
+	public boolean getHopperShot() {
+		if (operator.getPOV() == 180) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }

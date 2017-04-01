@@ -50,7 +50,7 @@ public class AutoGearHopperRight {
 		
 		switch (currentState) {
 		case START:
-			robot.ahrs.reset();
+			robot.navx.reset();
 			nextState = autoGHRightStates.DRIVE1;
 			break;
 		case DRIVE1:
@@ -64,7 +64,7 @@ public class AutoGearHopperRight {
 			}
 			break;
 		case TURN1:
-			if (Math.abs(Math.abs(robot.ahrs.getYaw()) - 60) <= .25) {
+			if (Math.abs(Math.abs(robot.navx.getYaw()) - 60) <= .25) {
 				nextState = autoGHRightStates.DRIVE2;
 			}
 			break;
@@ -90,7 +90,7 @@ public class AutoGearHopperRight {
 			}
 			break;
 		case TURN2:
-			if (Math.abs(Math.abs(robot.ahrs.getYaw()) - 30) <= .25) {
+			if (Math.abs(Math.abs(robot.navx.getYaw()) - 30) <= .25) {
 				nextState = autoGHRightStates.DRIVE4;
 			}
 			break;
@@ -113,7 +113,7 @@ public class AutoGearHopperRight {
 	public void doTransition() {
 		if (currentState == autoGHRightStates.START && nextState == autoGHRightStates.DRIVE1) {
 			//robot drives straight forward at max speed, 3 sec
-			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
+			robot.tdt.setDriveAngle(robot.navx.getYaw());
 			robot.tdt.setDriveTrainSpeed(1);
 			time = 150;
 		}
@@ -126,7 +126,7 @@ public class AutoGearHopperRight {
 		
 		if (currentState == autoGHRightStates.STOP1 && nextState == autoGHRightStates.TURN1) {
 			//robot turns left to angle of hopper, 1.5 sec
-			robot.ahrs.reset();
+			robot.navx.reset();
 			robot.tdt.setDriveAngle(-60);
 			time = 75;
 		}
@@ -145,14 +145,14 @@ public class AutoGearHopperRight {
 		
 		if (currentState == autoGHRightStates.STOP2 && nextState == autoGHRightStates.DRIVEBACK){
 			//robot drives straight back at max speed, 1 sec
-			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
+			robot.tdt.setDriveAngle(robot.navx.getYaw());
 			robot.tdt.setDriveTrainSpeed(-1);
 			time = 50;
 		}
 		
 		if (currentState == autoGHRightStates.DRIVEBACK && nextState == autoGHRightStates.STOP3) {
 			//stops robot again, 1 sec
-			robot.ahrs.reset();
+			robot.navx.reset();
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 50;
 		}

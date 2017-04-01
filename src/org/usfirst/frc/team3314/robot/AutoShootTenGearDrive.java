@@ -19,6 +19,7 @@ enum autoShootTenGearDriveStates {
 	STOP4,
 	TURN2,
 	DRIVE3,
+	SCURVE,
 	DONE
 }
 
@@ -28,6 +29,7 @@ public class AutoShootTenGearDrive {
 	Robot robot;
 	int time;
 	double desiredDistance;
+	double desiredAngle = 0;
 	
 public AutoShootTenGearDrive(Robot myRobot) {
 	robot = myRobot;
@@ -56,7 +58,7 @@ public void calcNext() {
 			SmartDashboard.putNumber("Turret Error", robot.hal.turretTalon.getClosedLoopError());
 			SmartDashboard.putNumber("Turret Position", robot.hal.turretTalon.getPosition());
 			if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 250
-			&& robot.hal.adjustTalon.getClosedLoopError() <= 50)  {
+			&& robot.hal.camTalon.getClosedLoopError() <= 50)  {
 				nextState = autoShootTenGearDriveStates.SHOOT;
 			}
 			break;
@@ -133,16 +135,16 @@ public void calcNext() {
 public void doTransition() {
 	if (currentState == autoShootTenGearDriveStates.START && nextState == autoShootTenGearDriveStates.TURNTURRET) {
 		robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
-			
+		robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
 		if (robot.blueRequest) {
-			robot.shooter.desiredSpeed = 3370;
-			robot.cam.desiredPosition = 1088;		
+			robot.shooter.desiredSpeed = 3461;
+			robot.cam.desiredPosition = 1312;		
 			robot.turret.desiredTarget = .1;
-			desiredDistance = 90;
+			desiredDistance = 88;
 		}
 		else if (robot.redRequest) {
-			robot.shooter.desiredSpeed = 4200;
-			robot.cam.desiredPosition = 1056;		
+			robot.shooter.desiredSpeed = 3500;
+			robot.cam.desiredPosition = 1320;		
 			robot.turret.desiredTarget = 7.2;
 
 			desiredDistance = 90;
@@ -151,18 +153,18 @@ public void doTransition() {
 	}
 	if (currentState == autoShootTenGearDriveStates.TURNTURRET && nextState == autoShootTenGearDriveStates.SHOOT) {
 		robot.shootRequest = true;
-		time = 225; 
+		time = 175; 
 	}
 	if (currentState == autoShootTenGearDriveStates.SHOOT && nextState == autoShootTenGearDriveStates.DRIVE1) {
 		robot.shootRequest = false;
 		robot.tdt.setDriveMode(driveMode.GYROLOCK);
 		robot.tdt.resetDriveEncoders();
-		robot.tdt.setDriveAngle(0);
-		robot.tdt.setDriveTrainSpeed(1);
+		robot.tdt.setDriveAngle(robot.navx.getYaw());
+		robot.tdt.setDriveTrainSpeed(.8);
 	}
 	if (currentState == autoShootTenGearDriveStates.DRIVE1 && nextState == autoShootTenGearDriveStates.STOP1) {
 		//stops robot, 1/2 sec
-		robot.ahrs.reset();
+		robot.navx.reset();
 		robot.tdt.setDriveTrainSpeed(0);
 		time = 20;
 	}
@@ -170,11 +172,11 @@ public void doTransition() {
 	if (currentState == autoShootTenGearDriveStates.STOP1 && nextState == autoShootTenGearDriveStates.TURN) {
 		//robot turns right to angle of peg, 1.5 sec
 		if (robot.blueRequest) {
-			desiredDistance = 20;
+			desiredDistance = 26;
 			robot.tdt.setDriveAngle(60);
 		}
 		if (robot.redRequest) {
-			desiredDistance = 20;
+			desiredDistance = 26;
 			robot.tdt.setDriveAngle(-60);
 		}
 	}
@@ -185,7 +187,7 @@ public void doTransition() {
 		time = 12;
 	}
 	if (currentState == autoShootTenGearDriveStates.STOP2 && nextState == autoShootTenGearDriveStates.DRIVE2) {
-		robot.tdt.setDriveTrainSpeed(.5);	
+		robot.tdt.setDriveTrainSpeed(.3);	
 	}
 	
 	if (currentState == autoShootTenGearDriveStates.DRIVE2 && nextState == autoShootTenGearDriveStates.STOP3) {
@@ -209,27 +211,31 @@ public void doTransition() {
 	if (currentState == autoShootTenGearDriveStates.WAIT && nextState == autoShootTenGearDriveStates.DRIVEBACK) {
 		robot.tdt.resetDriveEncoders();
 		robot.tdt.setDriveTrainSpeed(-1);
-		robot.tdt.setDriveAngle(robot.ahrs.getYaw());
+		robot.tdt.setDriveAngle(robot.navx.getYaw());
 	}
 	if (currentState == autoShootTenGearDriveStates.DRIVEBACK && nextState == autoShootTenGearDriveStates.STOP4) {
 		robot.tdt.setDriveTrainSpeed(0);
 	}
 	if (currentState == autoShootTenGearDriveStates.STOP4 && nextState == autoShootTenGearDriveStates.TURN2) {
 		if (robot.blueRequest) {
-			desiredDistance = 180;
+			desiredDistance = 216;
+			robot.tdt.setDriveAngle(25);
 		}
 		else if (robot.redRequest) {
-			desiredDistance = 180;
+			desiredDistance = 216;
+			robot.tdt.setDriveAngle(-25);
 		}
-		robot.tdt.setDriveAngle(0);
+		
 	}
 	if (currentState == autoShootTenGearDriveStates.TURN2 && nextState == autoShootTenGearDriveStates.DRIVE3) {
 		robot.tdt.resetDriveEncoders();
 		robot.tdt.setDriveTrainSpeed(1);
 	}
-	if (currentState == autoShootTenGearDriveStates.DRIVE3 && nextState == autoShootTenGearDriveStates.DONE) {
+	
+	if(currentState == autoShootTenGearDriveStates.DRIVE3 && nextState ==autoShootTenGearDriveStates.DONE) {
 		robot.tdt.setDriveTrainSpeed(0);
 	}
+	
 	
 }
 }

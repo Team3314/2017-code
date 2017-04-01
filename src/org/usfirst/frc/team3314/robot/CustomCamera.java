@@ -55,69 +55,71 @@ public class CustomCamera {
 		return distance;	
 	}
 	
+	
+	
 	public double calcTurretYaw() { //goes with turret tracking
 		double centerX = upperTargetY + (upperTargetHeight/2);
 		turnError = centerX - Constants.kCenterOfView;
-		double yaw = -Math.toDegrees(Math.atan(turnError/Constants.kFocalLength));
+		double yaw = -Math.toDegrees(Math.atan(turnError/Constants.kFocalLength)) + 4;
 		return yaw;
 	}
 	
 	public void distanceCheck() {
 		if (distance >= 36 && distance < 43) {
-			robot.cam.desiredPosition = 2128;
-			robot.shooter.desiredSpeed =  3500;
+			robot.cam.desiredPosition = 976;
+			robot.shooter.desiredSpeed =  3400;
 		}
 		else if (distance >= 43 && distance < 49) {
-			robot.cam.desiredPosition = 2128;
-			robot.shooter.desiredSpeed =  3500;;
+			robot.cam.desiredPosition = 896;
+			robot.shooter.desiredSpeed = 3600;
 		}
 		else if (distance >= 49 && distance < 56) {
-			robot.cam.desiredPosition = 2400;
-			robot.shooter.desiredSpeed =  3500;
+			robot.cam.desiredPosition = 1120;
+			robot.shooter.desiredSpeed =  3600;
 		}
 		else if (distance >= 56 && distance < 62) {
-			robot.cam.desiredPosition = 2400;
-			robot.shooter.desiredSpeed =3500;
+			robot.cam.desiredPosition = 1152;
+			robot.shooter.desiredSpeed =3630;
 		}
 		else if (distance >= 62 && distance < 68) {
-			robot.cam.desiredPosition = 2400;
-			robot.shooter.desiredSpeed =  3500;
+			robot.cam.desiredPosition = 1200;
+			robot.shooter.desiredSpeed =  3630;
 		}
 		else if (distance >= 68 && distance < 75) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
+			robot.cam.desiredPosition = 1376;
+			robot.shooter.desiredSpeed = 3630;
 		}
 		else if (distance >= 75 && distance < 81) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
+			robot.cam.desiredPosition = 1392;
+			robot.shooter.desiredSpeed = 3760;
 		}
 		else if (distance >= 81 && distance < 87) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
+			robot.cam.desiredPosition = 1200;
+			robot.shooter.desiredSpeed = 3940;
 		}
 		else if (distance >= 87 && distance < 92) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
+			robot.cam.desiredPosition = 1264;
+			robot.shooter.desiredSpeed = 3940;
 		}
 		else if (distance >= 92 && distance < 98) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
+			robot.cam.desiredPosition = 1264;
+			robot.shooter.desiredSpeed =4070;
 		}
 		else if (distance >= 98 && distance < 102) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
+			robot.cam.desiredPosition = 1376;
+			robot.shooter.desiredSpeed = 4145;
 		}
 		else if (distance >= 102 && distance < 106) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
+			robot.cam.desiredPosition = 1392;
+			robot.shooter.desiredSpeed = 4300;
 		}
 		else if (distance >= 106 && distance < 112) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
+			robot.cam.desiredPosition = 1456;
+			robot.shooter.desiredSpeed = 5400;
 		}
-		else if (distance >= 120 && distance <= 126) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
+		else if (distance >= 112) {
+			robot.cam.desiredPosition = 1456;
+			robot.shooter.desiredSpeed = 5400;
 		}
 		/*else if (distance < 42 || distance > 126) {
 			robot.cam.desiredPosition = 0;

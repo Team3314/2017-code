@@ -30,7 +30,7 @@ public class MotionProfile {
 
      Trajectory trajectory = Pathfinder.readFromCSV(myFile);
      // Wheelbase Width = 0.5m
-     TankModifier modifier = new TankModifier(trajectory).modify(0.6985); // <- inside to inside of tracks ##  0.7493);
+     TankModifier modifier = new TankModifier(trajectory).modify(27.5/12); // <- inside to inside of tracks ##  0.7493);
      
 
      // Do something with the new Trajectories...
@@ -74,7 +74,7 @@ public class MotionProfile {
     				case RUNPROFILE:
     					double l = left.calculate(robot.tdt.leftDrivePositionTicks);
     					double r = right.calculate((int)robot.tdt.rightDrivePositionTicks);
-    					double gyroHeading = robot.ahrs.getAngle();
+    					double gyroHeading = robot.navx.getAngle();
     					double desiredHeading = Pathfinder.r2d(left.getHeading());
     					
     					double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);
@@ -94,8 +94,8 @@ public class MotionProfile {
     		}
     		public void doTransition() {
     			if (currentState == motionProfileStates.START && nextState == motionProfileStates.RUNPROFILE) {	
-    				left.configureEncoder(robot.tdt.leftDrivePositionTicks, 8192 , Constants.kPulleyDiameter);
-    				right.configureEncoder(robot.tdt.rightDrivePositionTicks, 8192 , Constants.kPulleyDiameter);
+    				left.configureEncoder(robot.tdt.leftDrivePositionTicks, 8192 , Constants.kPulleyDiameter / 12);
+    				right.configureEncoder(robot.tdt.rightDrivePositionTicks, 8192 , Constants.kPulleyDiameter / 12);
     				left.configurePIDVA(1.0, 0.0, 0.0, 1 / Constants.kMaxVelocity, 0);
     			
     				}
