@@ -126,7 +126,6 @@ public class AutoGearRight{
 	
 	public void doTransition() {
 		if (currentState == autoGearRightStates.START && nextState == autoGearRightStates.DRIVE1) {
-			robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
 			if (robot.blueRequest) {
 				desiredDistance = 88;
 			}
@@ -162,7 +161,7 @@ public class AutoGearRight{
 			time = 12;
 		}
 		if (currentState == autoGearRightStates.STOP2 && nextState == autoGearRightStates.DRIVE2) {
-			robot.tdt.setDriveTrainSpeed(.4);	
+			robot.tdt.setDriveTrainSpeed(.5);	
 			robot.tdt.setDriveAngle(robot.navx.getYaw());
 		}
 		

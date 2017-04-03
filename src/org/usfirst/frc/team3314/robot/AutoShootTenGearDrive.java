@@ -78,7 +78,7 @@ public void calcNext() {
 			}
 			break;
 		case TURN:
-			if (robot.tdt.gyroControl.onTarget()) {
+			if (robot.tdt.gyroControl.onTarget() && robot.tdt.avgAbsSpeed <= 10) {
 				nextState = autoShootTenGearDriveStates.STOP2;
 			}
 			break;
@@ -135,7 +135,7 @@ public void calcNext() {
 public void doTransition() {
 	if (currentState == autoShootTenGearDriveStates.START && nextState == autoShootTenGearDriveStates.TURNTURRET) {
 		robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
-		robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
+			
 		if (robot.blueRequest) {
 			robot.shooter.desiredSpeed = 3461;
 			robot.cam.desiredPosition = 1312;		
@@ -143,11 +143,11 @@ public void doTransition() {
 			desiredDistance = 88;
 		}
 		else if (robot.redRequest) {
-			robot.shooter.desiredSpeed = 3500;
-			robot.cam.desiredPosition = 1320;		
+			robot.shooter.desiredSpeed = 3600;
+			robot.cam.desiredPosition = 1350;		
 			robot.turret.desiredTarget = 7.2;
 
-			desiredDistance = 90;
+			desiredDistance = 92;
 		}
 		robot.hal.shooterTalon.set(robot.shooter.desiredSpeed);
 	}
@@ -160,7 +160,7 @@ public void doTransition() {
 		robot.tdt.setDriveMode(driveMode.GYROLOCK);
 		robot.tdt.resetDriveEncoders();
 		robot.tdt.setDriveAngle(robot.navx.getYaw());
-		robot.tdt.setDriveTrainSpeed(.8);
+		robot.tdt.setDriveTrainSpeed(1);
 	}
 	if (currentState == autoShootTenGearDriveStates.DRIVE1 && nextState == autoShootTenGearDriveStates.STOP1) {
 		//stops robot, 1/2 sec
@@ -187,7 +187,7 @@ public void doTransition() {
 		time = 12;
 	}
 	if (currentState == autoShootTenGearDriveStates.STOP2 && nextState == autoShootTenGearDriveStates.DRIVE2) {
-		robot.tdt.setDriveTrainSpeed(.3);	
+		robot.tdt.setDriveTrainSpeed(.5);	
 	}
 	
 	if (currentState == autoShootTenGearDriveStates.DRIVE2 && nextState == autoShootTenGearDriveStates.STOP3) {
@@ -228,6 +228,7 @@ public void doTransition() {
 		
 	}
 	if (currentState == autoShootTenGearDriveStates.TURN2 && nextState == autoShootTenGearDriveStates.DRIVE3) {
+		robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
 		robot.tdt.resetDriveEncoders();
 		robot.tdt.setDriveTrainSpeed(1);
 	}

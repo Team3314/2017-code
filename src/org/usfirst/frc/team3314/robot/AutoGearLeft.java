@@ -127,7 +127,6 @@ public class AutoGearLeft{
 	
 	public void doTransition() {
 		if (currentState == autoGearLeftStates.START && nextState == autoGearLeftStates.DRIVE1) {
-			robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
 			if (robot.blueRequest) {
 				desiredDistance = 88;
 			}
@@ -163,7 +162,7 @@ public class AutoGearLeft{
 			time = 12;
 		}
 		if (currentState == autoGearLeftStates.STOP2 && nextState == autoGearLeftStates.DRIVE2) {
-			robot.tdt.setDriveTrainSpeed(.35);	
+			robot.tdt.setDriveTrainSpeed(.5);	
 			robot.tdt.setDriveAngle(robot.navx.getYaw());
 		}
 		
@@ -190,10 +189,10 @@ public class AutoGearLeft{
 			robot.tdt.setDriveAngle(robot.navx.getYaw());
 		}
 		if (currentState == autoGearLeftStates.DRIVEBACK && nextState == autoGearLeftStates.STOP4) {
-			robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
 			robot.tdt.setDriveTrainSpeed(0);
 		}
 		if (currentState == autoGearLeftStates.STOP4 && nextState == autoGearLeftStates.TURN2) {
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
 			if (robot.blueRequest) {
 				desiredDistance = 216;
 				robot.tdt.setDriveAngle(20);

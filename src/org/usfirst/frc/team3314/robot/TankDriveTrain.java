@@ -38,6 +38,9 @@ public class TankDriveTrain {
 	double rightDriveError = 0;
 	double rightDriveRPM = 0;
 	double leftDriveRPM = 0;
+	double absLeftSpeed = 0;
+	double absRightSpeed = 0;
+	double avgAbsSpeed = 0;
 	
 	double avgSpeed;
 	
@@ -59,7 +62,7 @@ public class TankDriveTrain {
 	    gyroControl.setContinuous(); //makes angle correct itself in the shortest distance
 		gyroControl.setInputRange(-180, 180);
 		gyroControl.setOutputRange(-.7, .7);
-		gyroControl.setAbsoluteTolerance(3);
+		gyroControl.setAbsoluteTolerance(1);
 		
 		rDriveTalon1 = new CANTalon(1);
 		rDriveTalon2 = new CANTalon(3);
@@ -103,7 +106,10 @@ public class TankDriveTrain {
 		leftDriveError = lDriveTalon1.getClosedLoopError();
 		rightDriveRPM = rDriveTalon1.getSpeed();
 		leftDriveRPM = lDriveTalon1.getSpeed();
-		avgSpeed = (leftDriveRPM + rightDriveRPM) / 2 ;
+		avgSpeed = (leftDriveRPM + rightDriveRPM) / 2;
+		absLeftSpeed = Math.abs(lDriveTalon1.getSpeed());
+		absRightSpeed = Math.abs(rDriveTalon1.getSpeed());
+		avgAbsSpeed = (absLeftSpeed + absRightSpeed) /2;
 		
 		calcShiftMultiplyer();
 		
