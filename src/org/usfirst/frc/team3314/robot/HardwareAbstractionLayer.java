@@ -4,6 +4,7 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 //import edu.wpi.first.wpilibj.DigitalInput;
@@ -15,7 +16,7 @@ public class HardwareAbstractionLayer {
 	//speed controllers
 	CANTalon turretTalon;
 	CANTalon shooterTalon;
-	CANTalon adjustTalon; //changes angle of shooter
+	CANTalon camTalon; //changes angle of shooter
 	Spark upperIndexSpark;
 	Spark intakeSpark;
 	Spark lowerIndexSpark; //both put balls into shooter
@@ -35,7 +36,7 @@ public class HardwareAbstractionLayer {
 	DoubleSolenoid driveShifter;
 	Solenoid flashlight;
 	Solenoid ringLight;
-	
+	PowerDistributionPanel pdp;
 	//misc
 	AnalogInput indexSensor;
 
@@ -48,7 +49,7 @@ public class HardwareAbstractionLayer {
 		climberSpark = new Spark(2);
 		turretTalon = new CANTalon(4);
 		shooterTalon = new CANTalon(5);
-		adjustTalon = new CANTalon(6);
+		camTalon = new CANTalon(6);
 		intakeSpark = new Spark(7);
 		upperIndexSpark = new Spark(8);
 		agitatorSpark = new Spark(9);
@@ -57,7 +58,7 @@ public class HardwareAbstractionLayer {
 		upperIntakeSpark.setInverted(true);
 		
 		
-		
+		pdp = new PowerDistributionPanel();
 		
 		
 		shooterTalon.configEncoderCodesPerRev(2048);

@@ -79,7 +79,7 @@ public class HumanInput {
 	}
 	public boolean gyroReset() {
 		boolean result = false;
-		result = leftStick.getRawButton(7);
+		result = buttonBox.getRawButton(7);
 		return result;
 	}
 	public boolean turnShooterLeft() {
@@ -104,15 +104,11 @@ public class HumanInput {
 		return result;
 	}
 	public boolean enableTurretTracking() {
-		boolean result = false;
-		if (operator.getPOV() == 180) {
-			result = true;
-		}
-		return result;
+		return operator.getRawButton(9);
 		
 	}
 	public boolean zeroCam() {
-		return operator.getRawButton(3);
+		return buttonBox.getRawButton(9);
 	}
 	
 	public boolean turnNinety() {
@@ -129,10 +125,10 @@ public class HumanInput {
 	}
 	public boolean runClimber() {
 		return operator.getRawButton(1);
-	}/*
+	}
 	public boolean runClimberReverse() {
-		return operator.getRawButton(1);
-	}*/
+		return buttonBox.getRawButton(6);
+	}
 	public boolean setShooterClose(){
 		return operator.getRawButton(7);
 	}
@@ -180,12 +176,48 @@ public class HumanInput {
 		return buttonBox.getRawButton(11);
 	}
 	public boolean getRingLight() {
-		return leftStick.getRawButton(4);
-	}
-	public boolean turnCamNearZero() {
-		return buttonBox.getRawButton(5);
+		if (leftStick.getRawButton(4)) {
+			return leftStick.getRawButton(4);
+		}
+		return operator.getRawButton(3);
 	}
 	public boolean enableDistanceChecking() {
+		return operator.getRawButton(9);
+	}
+	public boolean zeroTurret() {
+		return buttonBox.getRawButton(10); 
+	}
+	public boolean getReverseIndex() {
 		return buttonBox.getRawButton(6);
 	}
+	public boolean getReverseAgitator() {
+		return buttonBox.getRawButton(3);
+	}
+	public boolean getHopperShot() {
+		if (operator.getPOV() == 180) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	public boolean incrementTurretLeft() {
+		return buttonBox.getRawButton(1);
+	}
+	public boolean incrementTurretRight() {
+		return buttonBox.getRawButton(2);
+	}
+	public boolean incrementSpeedUp() {
+		return buttonBox.getRawButton(5);
+	}
+	public boolean incrementSpeedDown() {
+		return buttonBox.getRawButton(8);
+	}
+	public boolean incrementCamPositionUp() {
+		return buttonBox.getRawButton(4);
+	}
+	public boolean incrementCamPositonDown() {
+		return buttonBox.getRawButton(7);
+	}
+	
 }

@@ -16,7 +16,7 @@ public class ShooterStateMachine {
 	shooterStates nextState;
 	Robot robot;
 	double shooterSpeed = 0;
-	double desiredSpeed = 4500;
+	double desiredSpeed = 3500;
 	double time = 0;
 	double sensorTime = 50;
 	double rpm;
@@ -58,7 +58,7 @@ public class ShooterStateMachine {
 			if (!robot.shootRequest) {
 				nextState = shooterStates.STOP;
 			}
-			if (robot.hal.agitatorSpark.get() == 1/*percentvbus placeholder*/  &&
+			if (/*robot.hal.agitatorSpark.get() == 1percentvbus placeholder  &&*/
 			Math.abs(desiredSpeed + robot.hal.shooterTalon.getSpeed()) <= 250) /*rpm placeholder*/ {
 				nextState = shooterStates.INDEX;
 			}
@@ -95,14 +95,13 @@ public class ShooterStateMachine {
 	public void doTransition() {
 		if (currentState == shooterStates.START && nextState == shooterStates.AGITATE) {
 			//agitator + shooter motors started, 1/5 sec
-			robot.hal.agitatorSpark.set(1);
 			robot.hal.shooterTalon.set(desiredSpeed);
 			time = 10;
 		}
 		
 		if (currentState == shooterStates.AGITATE && nextState == shooterStates.INDEX) {
 			//index shooters started, 1/5 sec
-			robot.hal.agitatorSpark.set(1);
+			robot.hal.agitatorSpark.set(.9);
 			robot.hal.lowerIndexSpark.set(1);
 			robot.hal.upperIndexSpark.set(1);
 			time = 10;

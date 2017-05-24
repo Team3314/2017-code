@@ -30,7 +30,7 @@ public class Constants {
 	public static double kGyroLock_kF = 0;
 	
 	//turret pid
-	public static double kTurret_kP = .8;
+	public static double kTurret_kP = 1;
 	public static double kTurret_kI = .000;
 	public static double kTurret_kD = 80;
 	public static double kTurret_kF = 0;
@@ -46,7 +46,7 @@ public class Constants {
 	public static int kAngleAdjust_IZone = 0;
 	public static double kAngleAdjust_RampRate = 0;
 	public static int kAdjust_Profile = 0;
-	//public static double kCamOffset = -.86999; // PRACTICE BOT ###  -.69; ####  No Longer Used
+	public static double kCamOffset = -.86999; // PRACTICE BOT ###   ####  No Longer Used
 	
 	
 	
@@ -89,15 +89,19 @@ public class Constants {
 	public static double kHorizontalViewAngle = 43.3;
 	public static double kFocalLength = 226.7;
 	//public static double kPxlToDegConvFactor = 0.271875;
-	public static double kDegToEncTicksConvFactor = 159.2888888888;
+	public static double kDegToEncTicksConvFactor = .038888888888888;//159.2888888888;
 	
-	public static double kDefaultCamPosition = .3555;
+	public static double kDefaultCamPosition = 1456;
 	
-	public static double kCamClosePosition = .2892;
+	public static double kCamClosePosition = 1184;
 	public static double kShooterCloseSpeed = 3500;
 	public static double kTurretClosePosition = 0;
 	
-	public static double kCamFarPosition = .3555;
+	public static double kCamFarPosition = 1456;
 	public static double kShooterFarSpeed = 4500;
 	public static double kTurretFarPosition = 0;
+	
+	public static double kPulleyDiameter = 2.75;
+	public static double kMaxVelocity = 0;
+	public static double kMinTurnInput = 0;
 }

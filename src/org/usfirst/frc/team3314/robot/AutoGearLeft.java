@@ -128,11 +128,12 @@ public class AutoGearLeft{
 	public void doTransition() {
 		if (currentState == autoGearLeftStates.START && nextState == autoGearLeftStates.DRIVE1) {
 			if (robot.blueRequest) {
-				desiredDistance = 90;
+				desiredDistance = 88;
 			}
 			else if (robot.redRequest) {
-				desiredDistance = 90;
+				desiredDistance = 88;
 			}
+			robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
 			robot.tdt.setDriveMode(driveMode.GYROLOCK);
 			robot.tdt.resetDriveEncoders();
 			robot.tdt.setDriveAngle(0);
@@ -140,7 +141,7 @@ public class AutoGearLeft{
 		}
 		if (currentState == autoGearLeftStates.DRIVE1 && nextState == autoGearLeftStates.STOP1) {
 			//stops robot, 1/2 sec
-			robot.ahrs.reset();
+			robot.navx.reset();
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 20;
 		}
@@ -149,10 +150,10 @@ public class AutoGearLeft{
 			//robot turns right to angle of peg, 1.5 sec
 			robot.tdt.setDriveAngle(60);
 			if (robot.blueRequest) {
-				desiredDistance = 18;
+				desiredDistance = 26;
 			}
 			if (robot.redRequest) {
-				desiredDistance = 18;
+				desiredDistance = 26;
 			}
 		}
 
@@ -163,7 +164,7 @@ public class AutoGearLeft{
 		}
 		if (currentState == autoGearLeftStates.STOP2 && nextState == autoGearLeftStates.DRIVE2) {
 			robot.tdt.setDriveTrainSpeed(.5);	
-			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
+			robot.tdt.setDriveAngle(robot.navx.getYaw());
 		}
 		
 		if (currentState == autoGearLeftStates.DRIVE2 && nextState == autoGearLeftStates.STOP3) {
@@ -176,32 +177,36 @@ public class AutoGearLeft{
 		}
 		if (currentState == autoGearLeftStates.DROPGEAR && nextState == autoGearLeftStates.WAIT) {
 			if (robot.blueRequest) {
-				desiredDistance = -30;
+				desiredDistance = -48;
 			}
 			if (robot.redRequest) {
 				desiredDistance = -30;
 			}
-			time = 50;
+			time = 15;
 		}
 		if (currentState == autoGearLeftStates.WAIT && nextState == autoGearLeftStates.DRIVEBACK) {
 			robot.tdt.resetDriveEncoders();
 			robot.tdt.setDriveTrainSpeed(-1);
-			robot.tdt.setDriveAngle(robot.ahrs.getYaw());
+			robot.tdt.setDriveAngle(robot.navx.getYaw());
 		}
 		if (currentState == autoGearLeftStates.DRIVEBACK && nextState == autoGearLeftStates.STOP4) {
 			robot.tdt.setDriveTrainSpeed(0);
 		}
 		if (currentState == autoGearLeftStates.STOP4 && nextState == autoGearLeftStates.TURN2) {
+			robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
 			if (robot.blueRequest) {
-				desiredDistance = 10; //180;
+				desiredDistance = 216;
+				robot.tdt.setDriveAngle(20);
 			}
 			else if (robot.redRequest) {
-				desiredDistance = 10; //180;
+				desiredDistance = 240;
+				robot.tdt.setDriveAngle(0);
 			}
-			robot.tdt.setDriveAngle(0);
+			
 		}
 		if (currentState == autoGearLeftStates.TURN2 && nextState == autoGearLeftStates.DRIVE3) {
 			robot.tdt.resetDriveEncoders();
+			robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
 			robot.tdt.setDriveTrainSpeed(.5);
 		}
 		if (currentState == autoGearLeftStates.DRIVE3 && nextState == autoGearLeftStates.DONE) {

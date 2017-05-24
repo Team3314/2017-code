@@ -21,10 +21,12 @@ public class CamStateMachine {
 	public CamStateMachine(Robot myRobot) {
 		robot = myRobot;
 		//currentState = camStates.INIT;	
-		robot.hal.adjustTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-		robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(false, false);
-		robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
-		robot.hal.adjustTalon.setPID(Constants.kAngleAdjust_kP, Constants.kAngleAdjust_kI, Constants.kAngleAdjust_kD,
+		robot.hal.camTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+		robot.hal.camTalon.enableZeroSensorPositionOnIndex(false, false);
+		robot.hal.camTalon.setAllowableClosedLoopErr(0);
+		robot.hal.camTalon.setInverted(true);
+		robot.hal.camTalon.changeControlMode(TalonControlMode.Position);
+		robot.hal.camTalon.setPID(Constants.kAngleAdjust_kP, Constants.kAngleAdjust_kI, Constants.kAngleAdjust_kD,
 		Constants.kAngleAdjust_kF, Constants.kAngleAdjust_IZone, Constants.kAngleAdjust_RampRate, Constants.kAdjust_Profile);
 	}
 	
@@ -35,7 +37,7 @@ public class CamStateMachine {
 	
 	
 	public void update() {
-		robot.hal.adjustTalon.set(desiredPosition / 4096);
+		robot.hal.camTalon.set(desiredPosition / 4096);
 	}
 	/*
 	public void calcNext() {
@@ -43,9 +45,9 @@ public class CamStateMachine {
 		
 		switch(currentState) {
 			case INIT:
-				robot.hal.adjustTalon.setPosition(Constants.kCamInitPosition);
-				robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(true, false);
-				robot.hal.adjustTalon.changeControlMode(TalonControlMode.PercentVbus);
+				robot.hal.camTalon.setPosition(Constants.kCamInitPosition);
+				robot.hal.camTalon.enableZeroSensorPositionOnIndex(true, false);
+				robot.hal.camTalon.changeControlMode(TalonControlMode.PercentVbus);
 				nextState = camStates.CALIBRATE;
 			break;
 			
@@ -56,7 +58,7 @@ public class CamStateMachine {
 				calibrate();
 			break;
 			case CALIBRATED:
-				robot.hal.adjustTalon.set(desiredPosition);
+				robot.hal.camTalon.set(desiredPosition);
 				if (!calibrated) {
 					nextState = camStates.INIT;
 				}
@@ -75,15 +77,15 @@ public class CamStateMachine {
 	}
 	
 	public void calibrate() {
-		if (robot.hal.adjustTalon.getPosition() >= 1) {
-			robot.hal.adjustTalon.set(.2);
+		if (robot.hal.camTalon.getPosition() >= 1) {
+			robot.hal.camTalon.set(.2);
 		}
-		else if (robot.hal.adjustTalon.getPosition() <1) {
-			robot.hal.adjustTalon.enableZeroSensorPositionOnIndex(false, false);
-			robot.hal.adjustTalon.changeControlMode(TalonControlMode.Position);
-			robot.hal.adjustTalon.setPosition(0 + Constants.kCamOffset);
-			robot.hal.adjustTalon.set(0 + Constants.kCamOffset);
-			robot.hal.adjustTalon.setAllowableClosedLoopErr(10);
+		else if (robot.hal.camTalon.getPosition() <1) {
+			robot.hal.camTalon.enableZeroSensorPositionOnIndex(false, false);
+			robot.hal.camTalon.changeControlMode(TalonControlMode.Position);
+			robot.hal.camTalon.setPosition(0 + Constants.kCamOffset);
+			robot.hal.camTalon.set(0 + Constants.kCamOffset);
+			robot.hal.camTalon.setAllowableClosedLoopErr(10);
 			calibrated = true;
 		}
 	}*/

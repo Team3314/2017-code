@@ -43,7 +43,7 @@ public class AutoCrossBaseline {
 		
 		switch (currentState) {
 		case START:
-			robot.ahrs.reset();
+			robot.navx.reset();
 			nextState = autoCrossBaselineStates.DRIVE;
 			break;
 		case DRIVE:
