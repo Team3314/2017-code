@@ -174,7 +174,7 @@ public class AutoGearRight{
 			robot.hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
 		}
 		if (currentState == autoGearRightStates.DROPGEAR && nextState == autoGearRightStates.WAIT) {
-			robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
+			//robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
 			if (robot.blueRequest) {
 				desiredDistance = -48;
 			}
@@ -204,7 +204,8 @@ public class AutoGearRight{
 		}
 		if (currentState == autoGearRightStates.TURN2 && nextState == autoGearRightStates.DRIVE3) {
 			robot.tdt.resetDriveEncoders();
-			robot.tdt.setDriveTrainSpeed(.75);
+			robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
+			robot.tdt.setDriveTrainSpeed(.5);
 		}
 		if (currentState == autoGearRightStates.DRIVE3 && nextState == autoGearRightStates.DONE) {
 			robot.tdt.setDriveTrainSpeed(0);

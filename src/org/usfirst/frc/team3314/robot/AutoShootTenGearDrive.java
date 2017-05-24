@@ -57,8 +57,7 @@ public void calcNext() {
 		case TURNTURRET:
 			SmartDashboard.putNumber("Turret Error", robot.hal.turretTalon.getClosedLoopError());
 			SmartDashboard.putNumber("Turret Position", robot.hal.turretTalon.getPosition());
-			if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 250
-			&& robot.hal.camTalon.getClosedLoopError() <= 50)  {
+			if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 100  || time <= 0)  {
 				nextState = autoShootTenGearDriveStates.SHOOT;
 			}
 			break;
@@ -137,17 +136,17 @@ public void doTransition() {
 		robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
 			
 		if (robot.blueRequest) {
-			robot.shooter.desiredSpeed = 3461;
-			robot.cam.desiredPosition = 1312;		
+			robot.shooter.desiredSpeed = 3500;
+			robot.cam.desiredPosition = 1300;		
 			robot.turret.desiredTarget = .1;
-			desiredDistance = 88;
+			desiredDistance = 90;
 		}
 		else if (robot.redRequest) {
 			robot.shooter.desiredSpeed = 3600;
 			robot.cam.desiredPosition = 1350;		
 			robot.turret.desiredTarget = 7.2;
 
-			desiredDistance = 92;
+			desiredDistance = 90;
 		}
 		robot.hal.shooterTalon.set(robot.shooter.desiredSpeed);
 	}
@@ -172,11 +171,11 @@ public void doTransition() {
 	if (currentState == autoShootTenGearDriveStates.STOP1 && nextState == autoShootTenGearDriveStates.TURN) {
 		//robot turns right to angle of peg, 1.5 sec
 		if (robot.blueRequest) {
-			desiredDistance = 26;
+			desiredDistance = 25;
 			robot.tdt.setDriveAngle(60);
 		}
 		if (robot.redRequest) {
-			desiredDistance = 26;
+			desiredDistance = 25;
 			robot.tdt.setDriveAngle(-60);
 		}
 	}
@@ -214,16 +213,17 @@ public void doTransition() {
 		robot.tdt.setDriveAngle(robot.navx.getYaw());
 	}
 	if (currentState == autoShootTenGearDriveStates.DRIVEBACK && nextState == autoShootTenGearDriveStates.STOP4) {
+		robot.tdt.gyroControl.setAbsoluteTolerance(3);
 		robot.tdt.setDriveTrainSpeed(0);
 	}
 	if (currentState == autoShootTenGearDriveStates.STOP4 && nextState == autoShootTenGearDriveStates.TURN2) {
 		if (robot.blueRequest) {
 			desiredDistance = 216;
-			robot.tdt.setDriveAngle(25);
+			robot.tdt.setDriveAngle(30);
 		}
 		else if (robot.redRequest) {
 			desiredDistance = 216;
-			robot.tdt.setDriveAngle(-25);
+			robot.tdt.setDriveAngle(-30);
 		}
 		
 	}

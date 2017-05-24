@@ -133,6 +133,7 @@ public class AutoGearLeft{
 			else if (robot.redRequest) {
 				desiredDistance = 88;
 			}
+			robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
 			robot.tdt.setDriveMode(driveMode.GYROLOCK);
 			robot.tdt.resetDriveEncoders();
 			robot.tdt.setDriveAngle(0);
@@ -198,13 +199,14 @@ public class AutoGearLeft{
 				robot.tdt.setDriveAngle(20);
 			}
 			else if (robot.redRequest) {
-				desiredDistance = 180;
+				desiredDistance = 240;
 				robot.tdt.setDriveAngle(0);
 			}
 			
 		}
 		if (currentState == autoGearLeftStates.TURN2 && nextState == autoGearLeftStates.DRIVE3) {
 			robot.tdt.resetDriveEncoders();
+			robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
 			robot.tdt.setDriveTrainSpeed(.5);
 		}
 		if (currentState == autoGearLeftStates.DRIVE3 && nextState == autoGearLeftStates.DONE) {

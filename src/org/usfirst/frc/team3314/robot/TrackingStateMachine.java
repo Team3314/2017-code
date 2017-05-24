@@ -49,10 +49,11 @@ public class TrackingStateMachine {
 			break;
 			
 		case CALCULATE:
+
 			if (!robot.turretTrackRequest) {
 				nextState = trackingStates.STOP;
 			}
-			if (robot.turretCam.calcTurretYaw() > 0.25 || robot.turretCam.calcTurretYaw() < -0.25) {
+			else {
 				nextState = trackingStates.WAIT;
 			}
 			break;
@@ -61,8 +62,8 @@ public class TrackingStateMachine {
 			if (!robot.turretTrackRequest) {
 				nextState = trackingStates.STOP;
 			}
-			if (robot.turretCam.calcTurretYaw() <= 0.25 && robot.turretCam.calcTurretYaw() >= -0.25) {
-				nextState = trackingStates.CALCULATE;
+			if ( targetYaw >= -.25 && targetYaw <= .25) {
+				nextState = trackingStates.START;
 			}
 			if (time <= 0) {
 				nextState = trackingStates.TURN;
@@ -73,15 +74,15 @@ public class TrackingStateMachine {
 			if (!robot.turretTrackRequest) {
 				nextState = trackingStates.STOP;
 			}
-			if (robot.turretCam.calcTurretYaw() <= 0.25 && robot.turretCam.calcTurretYaw() >= -0.25) {
+			if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) < 125) {
 				nextState = trackingStates.STOP;
 			}
 			break;
 			
 		case STOP:
-			if (targetYaw == 0) {
+			//if (targetYaw == 0) {
 				nextState = trackingStates.RESET;
-			}
+			//}
 			break;
 			
 		case RESET:
@@ -102,7 +103,7 @@ public class TrackingStateMachine {
 		}
 
 		if (currentState == trackingStates.CALCULATE && nextState == trackingStates.WAIT) {
-			time = 25;
+			time = 1;
 		}
 		
 		if (currentState == trackingStates.WAIT && nextState == trackingStates.TURN) {
@@ -116,21 +117,21 @@ public class TrackingStateMachine {
 		}
 		
 		if (currentState == trackingStates.CALCULATE && nextState == trackingStates.STOP) {
-			targetYaw = 0;
+			//targetYaw = 0;
 		}
 		
 		if (currentState == trackingStates.WAIT && nextState == trackingStates.STOP) {
-			targetYaw = 0;
+			//targetYaw = 0;
 		}
 		
 		if (currentState == trackingStates.TURN && nextState == trackingStates.STOP) {
-			targetYaw = 0;
+			//targetYaw = 0;
 		}
 		
 		if (currentState == trackingStates.STOP && nextState == trackingStates.RESET) {
 			robot.turretTrackRequest = false;
-			robot.turret.desiredTarget = robot.turret.turretPosition;
-			time = 10;
+			//robot.turret.desiredTarget = robot.turret.turretPosition;
+			time = 5;
 		}
 	}
 }

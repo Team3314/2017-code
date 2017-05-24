@@ -86,13 +86,13 @@ public class TankDriveTrain {
 		rDriveTalon1.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 20);
 		lDriveTalon1.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 20);
 		lDriveTalon1.EnableCurrentLimit(true);
-		lDriveTalon1.setCurrentLimit(45);
+		lDriveTalon1.setCurrentLimit(50);
 		lDriveTalon2.EnableCurrentLimit(true);
-		lDriveTalon2.setCurrentLimit(45);
+		lDriveTalon2.setCurrentLimit(50);
 		rDriveTalon1.EnableCurrentLimit(true);
-		rDriveTalon1.setCurrentLimit(45);
+		rDriveTalon1.setCurrentLimit(50);
 		rDriveTalon2.EnableCurrentLimit(true);
-		rDriveTalon2.setCurrentLimit(45);
+		rDriveTalon2.setCurrentLimit(50);
 	}
 	
 	public void update() {

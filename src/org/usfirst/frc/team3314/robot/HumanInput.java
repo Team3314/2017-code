@@ -79,7 +79,7 @@ public class HumanInput {
 	}
 	public boolean gyroReset() {
 		boolean result = false;
-		result = buttonBox.getRawButton(5);
+		result = buttonBox.getRawButton(7);
 		return result;
 	}
 	public boolean turnShooterLeft() {
@@ -108,7 +108,7 @@ public class HumanInput {
 		
 	}
 	public boolean zeroCam() {
-		return buttonBox.getRawButton(3);
+		return buttonBox.getRawButton(9);
 	}
 	
 	public boolean turnNinety() {
@@ -125,10 +125,10 @@ public class HumanInput {
 	}
 	public boolean runClimber() {
 		return operator.getRawButton(1);
-	}/*
+	}
 	public boolean runClimberReverse() {
-		return operator.getRawButton(1);
-	}*/
+		return buttonBox.getRawButton(6);
+	}
 	public boolean setShooterClose(){
 		return operator.getRawButton(7);
 	}
@@ -185,13 +185,13 @@ public class HumanInput {
 		return operator.getRawButton(9);
 	}
 	public boolean zeroTurret() {
-		return buttonBox.getRawButton(4); 
+		return buttonBox.getRawButton(10); 
 	}
 	public boolean getReverseIndex() {
-		return buttonBox.getRawButton(2);
+		return buttonBox.getRawButton(6);
 	}
 	public boolean getReverseAgitator() {
-		return buttonBox.getRawButton(1);
+		return buttonBox.getRawButton(3);
 	}
 	public boolean getHopperShot() {
 		if (operator.getPOV() == 180) {
@@ -201,4 +201,23 @@ public class HumanInput {
 			return false;
 		}
 	}
+	public boolean incrementTurretLeft() {
+		return buttonBox.getRawButton(1);
+	}
+	public boolean incrementTurretRight() {
+		return buttonBox.getRawButton(2);
+	}
+	public boolean incrementSpeedUp() {
+		return buttonBox.getRawButton(5);
+	}
+	public boolean incrementSpeedDown() {
+		return buttonBox.getRawButton(8);
+	}
+	public boolean incrementCamPositionUp() {
+		return buttonBox.getRawButton(4);
+	}
+	public boolean incrementCamPositonDown() {
+		return buttonBox.getRawButton(7);
+	}
+	
 }

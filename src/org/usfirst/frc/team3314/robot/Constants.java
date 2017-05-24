@@ -30,7 +30,7 @@ public class Constants {
 	public static double kGyroLock_kF = 0;
 	
 	//turret pid
-	public static double kTurret_kP = .8;
+	public static double kTurret_kP = 1;
 	public static double kTurret_kI = .000;
 	public static double kTurret_kD = 80;
 	public static double kTurret_kF = 0;

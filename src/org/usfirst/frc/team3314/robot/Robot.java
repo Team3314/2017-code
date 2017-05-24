@@ -34,7 +34,7 @@ public class Robot extends IterativeRobot {
 	
 	//auto classes
 	AutoNothing auto0;
-	AutoCrossBaseline auto1;
+	AutoShootCenterGearDriveFeeder auto1;
 	AutoGearCenter auto2;
 	AutoGearLeft auto3;
 	AutoGearRight auto4;
@@ -42,7 +42,7 @@ public class Robot extends IterativeRobot {
 	AutoShootTen auto6;
 	AutoShootTenGear auto7;
 	AutoDriveToHopperShoot auto8;
-	//AutoGearDriveToHopperShoot auto9;
+	AutoShootCenterGear auto9;
 	//MotionProfile auto9;
 	
 	
@@ -82,6 +82,21 @@ public class Robot extends IterativeRobot {
 	boolean setShooterCloseRequest = false;
 	boolean setShooterFarRequest = false;
 	boolean ringLightRequest = false;
+	
+	boolean incrementTurretLeftRequest = false;
+	boolean incrementTurretRightRequest = false;
+	boolean incrementSpeedUpRequest = false;
+	boolean incrementSpeedDownRequest = false;
+	boolean incrementCamPositionDownRequest = false;
+	boolean incrementCamPositionUpRequest = false;
+	public boolean lastShooterIncrement;
+	public boolean lastCamIncrement;
+	public boolean lastTurretLeftIncrement;
+	public boolean lastTurretRightIncrement;
+	public boolean lastCamDownIncrement;
+	public boolean lastCamUpIncrement;
+	public boolean lastShooterUpIncrement;
+	public boolean lastShooterDownIncrement;
 	
 	boolean binaryOne = false;
 	boolean binaryTwo = false;
@@ -126,6 +141,7 @@ public class Robot extends IterativeRobot {
 	 boolean reverseIndexRequest;
 	 boolean reverseAgitatorRequest;
 	 boolean resetGyroRequest;
+	 boolean lastTurretIncrement;
 	
 	
 	/**
@@ -147,7 +163,7 @@ public class Robot extends IterativeRobot {
 		
 		//auto classes
 		auto0 = new AutoNothing(this);
-		auto1 = new AutoCrossBaseline(this);
+		auto1 = new AutoShootCenterGearDriveFeeder(this);
 		auto2 = new AutoGearCenter(this);
 		auto3 = new AutoGearLeft(this);
 		auto4 = new AutoGearRight(this);
@@ -155,7 +171,7 @@ public class Robot extends IterativeRobot {
 		auto6 = new AutoShootTen(this);
 		auto7 = new AutoShootTenGear(this); 
 		auto8 = new AutoDriveToHopperShoot(this);
-		//auto9 = new MotionProfile(this);
+		auto9 = new AutoShootCenterGear(this);
 		
 		tdt.resetDriveEncoders();
 		//misc
@@ -181,6 +197,7 @@ public class Robot extends IterativeRobot {
 		hal.camTalon.setPulseWidthPosition(0);
 		hal.camTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 		tdt.resetDriveEncoders();
+		tdt.gyroControl.setAbsoluteTolerance(1);
 	}
 	
 	public void disabledPeriodic() {
@@ -246,6 +263,9 @@ public class Robot extends IterativeRobot {
 		if (binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
 			autoSelect = 8;
 		}
+		if (binaryEight && !binaryFour && !binaryTwo && binaryOne) {
+			autoSelect = 9;
+		}
 	}
 	
 	@Override
@@ -300,6 +320,9 @@ public class Robot extends IterativeRobot {
 		
 		if (autoSelect == 8) {
 			auto8.reset();
+		}
+		if (autoSelect == 9) {
+			auto9.reset();
 		}
 	}
 
@@ -362,6 +385,11 @@ public class Robot extends IterativeRobot {
 			SmartDashboard.putString("Auto Mode", "Gear Drive to Hopper Shoot");
 			SmartDashboard.putString("Auto State", auto8.currentState.toString());
 			auto8.update();
+		}
+		if (autoSelect == 9) {
+			SmartDashboard.putString("Auto Mode", "Shoot Center Gear");
+			SmartDashboard.putString("Auto State", auto9.currentState.toString());
+			auto9.update();
 		}
 		
 		tdt.update();
@@ -590,11 +618,11 @@ public class Robot extends IterativeRobot {
     		hal.climberSpark.set(-1);
     		//filip isnt cool 
     	}
-    	/*
+    	
     	else if (hi.runClimberReverse()) {
-    		hal.climberSpark.set(-1);
-    	}*/
-    	else {
+    		hal.climberSpark.set(1);
+    	}
+    	else if (!hi.runClimber() && !hi.runClimberReverse()) {
     		hal.climberSpark.set(0);
     	}
     	if (setShooterCloseRequest) {
@@ -610,7 +638,7 @@ public class Robot extends IterativeRobot {
     	}
     	else if (hi.setShooterManual()) {
     		cam.desiredPosition = ((hi.rightStick.getZ() + 1) / 2)*4096;
-   		 	shooter.desiredSpeed = (((hi.leftStick.getZ() + 1) /2)*6500);
+   		 	shooter.desiredSpeed = (((hi.leftStick.getZ() + 1) /2)*6150);
     	}
     	else if (hi.getHopperShot()) {
     		if (redRequest) {
@@ -657,9 +685,42 @@ public class Robot extends IterativeRobot {
     	else if (closeGearIntakeRequest) {
     		hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
     	}
-    	
-    	
-    		
+    	if (incrementCamPositionUpRequest && !lastCamUpIncrement) {
+    		if (cam.desiredPosition <4096) {
+    			cam.desiredPosition = cam.desiredPosition + 32;
+    		}
+    	}
+    	if (incrementCamPositionDownRequest && !lastCamDownIncrement) {
+    		if (cam.desiredPosition > 0) {
+    			cam.desiredPosition = cam.desiredPosition - 32;
+    		}
+    	}
+    	if (incrementSpeedUpRequest && !lastShooterUpIncrement) {
+    		if (shooter.desiredSpeed < 6150) {
+    			shooter.desiredSpeed = shooter.desiredSpeed + 100;
+    		}
+    	}
+    	if (incrementSpeedDownRequest && !lastShooterDownIncrement) {
+    		if (shooter.desiredSpeed > 0) {
+    			shooter.desiredSpeed = shooter.desiredSpeed - 100;
+    		}
+    	}
+    	if (incrementTurretLeftRequest && !lastTurretLeftIncrement) {
+    		if (turret.desiredTarget > 0) {
+    			turret.desiredTarget = turret.desiredTarget - .1;
+    		}
+    	}
+    	if (incrementTurretRightRequest && !lastTurretRightIncrement) {
+    		if (turret.desiredTarget <= 7.5) {
+    			turret.desiredTarget = turret.desiredTarget + .1;
+    		}
+    	}
+    	lastCamUpIncrement = incrementCamPositionUpRequest;
+    	lastCamDownIncrement = incrementCamPositionDownRequest;
+    	lastShooterUpIncrement = incrementSpeedUpRequest;
+    	lastShooterDownIncrement = incrementSpeedDownRequest;
+    	lastTurretLeftIncrement = incrementTurretLeftRequest;
+    	lastTurretRightIncrement = incrementTurretRightRequest;
     	lastGyroLock = gyroLockRequest;
     	lastSpeedControl = speedControlRequest;
     	
@@ -675,7 +736,11 @@ public class Robot extends IterativeRobot {
    		SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
     	SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
   
-       	
+    	
+    		SmartDashboard.putBoolean("Cam Increment Down", incrementCamPositionDownRequest);
+       		SmartDashboard.putBoolean("Cam Increment Up", incrementCamPositionUpRequest);
+       		SmartDashboard.putBoolean("Speed Increment Down", incrementSpeedDownRequest);
+       		SmartDashboard.putBoolean("Speed Increment Up", incrementSpeedUpRequest);
        		SmartDashboard.putNumber("Left 1", tdt.lDriveTalon1.get());
         	SmartDashboard.putNumber("Left 2 ", tdt.lDriveTalon2.get());
         	SmartDashboard.putNumber("Right 1 ", tdt.rDriveTalon1.get());
@@ -721,7 +786,7 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber("Lower Index Get", hal.lowerIndexSpark.get());
         	SmartDashboard.putNumber("Upper Index get", hal.upperIndexSpark.get());
         	SmartDashboard.putBoolean("Shoot Request", shootRequest);
-        	SmartDashboard.putNumber("Desired Speed", shooter.desiredSpeed);
+        	SmartDashboard.putNumber("Desired Shooter Speed", shooter.desiredSpeed);
         	
         	SmartDashboard.putNumber("Acceleration X", navx.getWorldLinearAccelX());
         	SmartDashboard.putNumber("Acceleration Y", navx.getWorldLinearAccelY());
@@ -823,6 +888,13 @@ public class Robot extends IterativeRobot {
 		zeroTurretRequest = hi.zeroTurret();
 		reverseIndexRequest = hi.getReverseIndex();
 		reverseAgitatorRequest = hi.getReverseAgitator();
+		incrementTurretLeftRequest = hi.incrementTurretLeft();
+		incrementTurretRightRequest = hi.incrementTurretRight();
+		incrementSpeedUpRequest = hi.incrementSpeedUp();
+		incrementSpeedDownRequest = hi.incrementSpeedDown();
+		incrementCamPositionUpRequest = hi.incrementCamPositionUp();
+		incrementCamPositionDownRequest = hi.incrementCamPositonDown();
+				
 	}
 	
 	

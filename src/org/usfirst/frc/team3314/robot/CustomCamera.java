@@ -35,23 +35,35 @@ public class CustomCamera {
 	}
 	
 	public void update() {
-		upperTargetX = pi.getNumber("Upper Target X", 160);
-		upperTargetY = pi.getNumber("Upper Target Y", 0);
-		upperTargetWidth = pi.getNumber("Upper Target Width", 0);
-		upperTargetHeight = pi.getNumber("Upper Target Height", 0);
-		
-		lowerTargetX = pi.getNumber("Lower Target X", 0);
-		lowerTargetY = pi.getNumber("Lower Target Y", 0);
-		lowerTargetWidth = pi.getNumber("Lower Target Width", 0);
-		lowerTargetHeight = pi.getNumber("Lower Target Height", 0);
-		
+		if (pi.getNumber("UpperTarget X", 160) > pi.getNumber("Lower Target X", 160)) {
+			lowerTargetX = pi.getNumber("Upper Target X", 160);
+			lowerTargetY = pi.getNumber("Upper Target Y", 0);
+			lowerTargetWidth = pi.getNumber("Upper Target Width", 0);
+			lowerTargetHeight = pi.getNumber("Upper Target Height", 0);
+			
+			upperTargetX = pi.getNumber("Lower Target X", 0);
+			upperTargetY = pi.getNumber("Lower Target Y", 0);
+			upperTargetWidth = pi.getNumber("Lower Target Width", 0);
+			upperTargetHeight = pi.getNumber("Lower Target Height", 0);
+		}
+		else {
+			upperTargetX = pi.getNumber("Upper Target X", 160);
+			upperTargetY = pi.getNumber("Upper Target Y", 0);
+			upperTargetWidth = pi.getNumber("Upper Target Width", 0);
+			upperTargetHeight = pi.getNumber("Upper Target Height", 0);
+			
+			lowerTargetX = pi.getNumber("Lower Target X", 0);
+			lowerTargetY = pi.getNumber("Lower Target Y", 0);
+			lowerTargetWidth = pi.getNumber("Lower Target Width", 0);
+			lowerTargetHeight = pi.getNumber("Lower Target Height", 0);
+		}
 		theta = (Math.toDegrees(Math.atan(((upperTargetX+upperTargetWidth) - ((Constants.kXRes/2)-.5)) / Constants.kFocalLength))) + 33;
 	}
 	
 	public double calcDistance() { //goes with shooter throttle
 		double upperTargetTop = upperTargetX - upperTargetWidth ;
 		double theta = -(Math.toDegrees(Math.atan((upperTargetTop - ((Constants.kXRes/2)-.5))/Constants.kFocalLength))) + 46;
-		double distance = 66.5/(Math.tan(Math.toRadians(theta))); //66.5 in = height from camera to reflective tape
+		distance = 66.5/(Math.tan(Math.toRadians(theta))); //66.5 in = height from camera to reflective tape
 		return distance;	
 	}
 	
@@ -94,8 +106,8 @@ public class CustomCamera {
 			robot.shooter.desiredSpeed = 3760;
 		}
 		else if (distance >= 81 && distance < 87) {
-			robot.cam.desiredPosition = 1200;
-			robot.shooter.desiredSpeed = 3940;
+			robot.cam.desiredPosition = 1400;
+			robot.shooter.desiredSpeed = 3860;
 		}
 		else if (distance >= 87 && distance < 92) {
 			robot.cam.desiredPosition = 1264;
