@@ -23,16 +23,19 @@ import jaci.pathfinder.Waypoint;
  */
 
 public class Robot extends IterativeRobot {
-	//some classes
+	//Creating objects
 	HardwareAbstractionLayer hal;
 	HumanInput hi;
 	TankDriveTrain tdt;
 	ShooterStateMachine shooter;
-	//MotionProfile profile;
+	CamStateMachine cam;
+	Turret turret;
+	TrackingStateMachine tracking;
+	AHRS navx = new AHRS(SPI.Port.kMXP);
+	UsbCamera drivingCam;
+	CustomCamera turretCam;
 	
-	//File myFile = new File("myfile.csv");
-	
-	//auto classes
+	//Auto classes - used for auto selection
 	AutoNothing auto0;
 	AutoShootCenterGearDriveFeeder auto1;
 	AutoGearCenter auto2;
@@ -43,18 +46,18 @@ public class Robot extends IterativeRobot {
 	AutoShootTenGear auto7;
 	AutoDriveToHopperShoot auto8;
 	AutoShootCenterGear auto9;
-	//MotionProfile auto9;
+	boolean auto0Request;
+	boolean auto1Request;
+	boolean auto2Request;
+	boolean auto3Request;
+	boolean auto4Request;
+	boolean auto5Request;
+	boolean auto6Request;
+	boolean auto7Request;
+	boolean auto8Request;
+	boolean auto9Request;
 	
-	
-	//misc
-	CamStateMachine cam;
-	Turret turret;
-	TrackingStateMachine tracking;
-	AHRS navx = new AHRS(SPI.Port.kMXP);
-	UsbCamera drivingCam;
-	CustomCamera turretCam;
-	
-	//button input
+	//Creating button variables
 	boolean raiseGearIntakeRequest;
 	boolean dropGearIntakeRequest;
 	boolean fuelIntakeRequest;
@@ -65,15 +68,11 @@ public class Robot extends IterativeRobot {
 	boolean spinShooterRequest;
 	boolean shootRequest = false;
 	boolean flashlightRequest;
-	
 	boolean turretTrackRequest = false;
 	boolean lastGyroLock = false;
 	boolean lastSpeedControl = false;
-	
 	boolean feedShooterRequest = false; 
-	
 	boolean climberRequest = false;
-	
 	boolean turnShooterLeftRequest = false;
 	boolean turnShooterForwardRequest = false;
 	boolean turnShooterRightRequest = false;
@@ -82,7 +81,6 @@ public class Robot extends IterativeRobot {
 	boolean setShooterCloseRequest = false;
 	boolean setShooterFarRequest = false;
 	boolean ringLightRequest = false;
-	
 	boolean incrementTurretLeftRequest = false;
 	boolean incrementTurretRightRequest = false;
 	boolean incrementSpeedUpRequest = false;
@@ -97,52 +95,28 @@ public class Robot extends IterativeRobot {
 	public boolean lastCamUpIncrement;
 	public boolean lastShooterUpIncrement;
 	public boolean lastShooterDownIncrement;
+	boolean openGearIntakeRequest = false;
+	boolean closeGearIntakeRequest = false;
+	boolean zeroTurretRequest = false;
+	boolean turnCamNearZeroRequest = false;
+	boolean redRequest = false;
+	boolean blueRequest = false;
+	boolean enableDistanceCheckingRequest = false;
+	boolean reverseIndexRequest;
+	boolean reverseAgitatorRequest;
+	boolean resetGyroRequest;
+	boolean lastTurretIncrement;
 	
+	//Auto switch inputs
 	boolean binaryOne = false;
 	boolean binaryTwo = false;
 	boolean binaryFour = false;
 	boolean binaryEight = false;
-	
 	int autoSelect = 0;
 	
-	boolean openGearIntakeRequest = false;
-	boolean closeGearIntakeRequest = false;
-	
-	boolean auto0Request;
-	boolean auto1Request;
-	boolean auto2Request;
-	boolean auto3Request;
-	boolean auto4Request;
-	boolean auto5Request;
-	boolean auto6Request;
-	boolean auto7Request;
-	boolean auto8Request;
-	boolean auto9Request;
-	
-	boolean zeroTurretRequest = false;
-	
-	boolean redRequest = false;
-	boolean blueRequest = false;
-	
-	boolean turnCamNearZeroRequest = false;
 	double absolutePosition;
 	double last_world_linear_accel_y;
 	double time = 0;	
-	
-	Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 3.0 , 2.0, 60.0);
-	Trajectory trajectory;
-	
-	boolean enableDistanceCheckingRequest = false;
-	
-	Waypoint[] points = new Waypoint[] {
-		    new Waypoint(-3, 0 , 0),      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees                       // Waypoint @ x=-2, y=0, exit angle=0 radians
-		    new Waypoint(0, 0, 0)                           // Waypoint @ x=0, y=0,   exit angle=0 radians
-		};
-	 boolean reverseIndexRequest;
-	 boolean reverseAgitatorRequest;
-	 boolean resetGyroRequest;
-	 boolean lastTurretIncrement;
-	
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -150,7 +124,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		//some classes
+		//Instantiating objects
 		hal = new HardwareAbstractionLayer(this);
 		hi = new HumanInput();
 		tdt = new TankDriveTrain(this);
@@ -158,10 +132,9 @@ public class Robot extends IterativeRobot {
 		cam = new CamStateMachine(this);
 		turret = new Turret(this);
 		turretCam = new CustomCamera(this);
-		//profile = new MotionProfile(this);
 		tracking = new TrackingStateMachine(this);
 		
-		//auto classes
+		//Instantiating auto objects
 		auto0 = new AutoNothing(this);
 		auto1 = new AutoShootCenterGearDriveFeeder(this);
 		auto2 = new AutoGearCenter(this);
@@ -173,26 +146,13 @@ public class Robot extends IterativeRobot {
 		auto8 = new AutoDriveToHopperShoot(this);
 		auto9 = new AutoShootCenterGear(this);
 		
+		//Resets drive encoders to zero
 		tdt.resetDriveEncoders();
-		//misc
+		
 	}
-
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional comparisons to the
-	 * switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
-	 */
 	
 	public void disabledInit() {
-		//resets navx
-		//navx.reset();
-		//hal.camTalon.setPosition(0); //Turns cam after disable -- Unnecessary/ Detrimental?
+		//Resets cam and drive encoders to zero, sets gyro tolerance 
 		hal.camTalon.setPosition(0);
 		hal.camTalon.setPulseWidthPosition(0);
 		hal.camTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
@@ -200,18 +160,21 @@ public class Robot extends IterativeRobot {
 		tdt.gyroControl.setAbsoluteTolerance(1);
 	}
 	
+	//Runs every 20 ms while the robot is disabled
 	public void disabledPeriodic() {
+		//Allows for button inputs
 		updateButtonStatus();
+		//Resets turret positon to zero, allows for change of turret postion while disabled
 		if (zeroTurretRequest) {
 			hal.turretTalon.setPosition(0);
 			turret.desiredTarget = 0;
 		}
+		//Resets gyro on request
 		if (resetGyroRequest) {
 			navx.reset();
 		}
+		//Prints variables to smart dashboard for diagnosing issues 
 		SmartDashboard.putNumber("Auto Selection", autoSelect);
-		//SmartDashboard.putBoolean("Red", redRequest);
-		//SmartDashboard.putBoolean("Blue", blueRequest);
 		SmartDashboard.putNumber("Gyro Angle", navx.getYaw());
 		SmartDashboard.putNumber("DPad", hi.operator.getPOV());
 		SmartDashboard.putNumber("Turret Error", hal.turretTalon.getClosedLoopError());
@@ -220,14 +183,16 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Absolute Cam Positon", hal.camTalon.getPulseWidthPosition());
 		SmartDashboard.putNumber("Desired Cam Position", cam.desiredPosition);
 		SmartDashboard.putNumber("Average Encoder Position", tdt.avgEncPos);
-    	SmartDashboard.putNumber("Left Encoder Position", tdt.lDriveTalon1.getPosition());
-    	SmartDashboard.putNumber("Right Encoder Position", tdt.rDriveTalon1.getPosition());
-    	SmartDashboard.putNumber("PDP Temperature", hal.pdp.getTemperature());
+		SmartDashboard.putNumber("Left Encoder Position", tdt.lDriveTalon1.getPosition());
+		SmartDashboard.putNumber("Right Encoder Position", tdt.rDriveTalon1.getPosition());
+		SmartDashboard.putNumber("PDP Temperature", hal.pdp.getTemperature());
+		
+		//Takes absolute positon of the encoder and subtracts 944 so that zero is when the shot is vertical
+		//Sets the target positon to the current positon so that the desired positon cannot change while the robot is disabled
 		cam.desiredPosition = (hal.camTalon.getPulseWidthPosition() - 944);
 		hal.camTalon.setPosition(cam.desiredPosition);
-		//lets auto chooser work with human input by setting varsxs
 		
-		
+		//Looks at four binary outputs of auto selector and converts them to a base ten number, which is used to select auto
 		if (!binaryEight && !binaryFour && !binaryTwo && !binaryOne) {
 			autoSelect = 0;
 		}
@@ -270,22 +235,19 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void autonomousInit() {
-		//sets to gyrolock + low gear
+		//Sets drivetrain mode to tank and low gear, starts PID loop for gyro lock
 		tdt.setDriveMode(driveMode.TANK);
-		SmartDashboard.putBoolean("Red", redRequest);
-		SmartDashboard.putBoolean("Blue", blueRequest);
 		tdt.gyroControl.setPID(Constants.kGyroLock_kP, Constants.kGyroLock_kI , Constants.kGyroLock_kD);
+		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear)); //Allows for greater control and better stopping distance
+		//Makes sure encoder position of cam is the same as the desired position so cam does not move when enabled, resets turret
 		hal.camTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
 		hal.camTalon.setEncPosition((int) cam.desiredPosition);
-		//cam.calibrated = false; Not used
-		//cam.reset(); Not Used
 		turret.reset();
-		//resets drive + navx vals
+		//Resets drive encoders and gyro to zero, sets drive motor speeds to zero
 		navx.reset();
 		tdt.resetDriveEncoders();
 		tdt.setDriveTrainSpeed(0);
-		//auto chooser
+		//Resets the currently selected auto to the starting state
 		if (autoSelect == 0) {
 			auto0.reset();
 		}
@@ -331,8 +293,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		//auto chooser
 		tdt.avgEncPos = (tdt.lDriveTalon1.getPosition() + tdt.rDriveTalon1.getPosition()) / 2;
+		//Displays selected auto, current auto state, and runs auto
 		if (autoSelect == 0) {
 			SmartDashboard.putString("Auto Mode", "Nothing");
 			SmartDashboard.putString("Auto State", auto0.currentState.toString());
@@ -391,7 +353,7 @@ public class Robot extends IterativeRobot {
 			SmartDashboard.putString("Auto State", auto9.currentState.toString());
 			auto9.update();
 		}
-		
+		//Updates status of various objects
 		tdt.update();
 		shooter.update();
 		turret.update();
@@ -399,32 +361,31 @@ public class Robot extends IterativeRobot {
 		turretCam.update();
 		tracking.update();
 		
+		//Removes I constant of gyro PID while difference between current angle and target angle is greater than 20 degrees.
+		//Prevents overaccumulation of I in PID output, which results in overshoot
 		if(Math.abs(tdt.desiredAngle - navx.getYaw()) > 20 ) {
 			tdt.gyroControl.setPID(Constants.kGyroLock_kP, 0, Constants.kGyroLock_kD);
 		}
 		else if (Math.abs(tdt.desiredAngle - navx.getYaw()) <= 20 ) {
 			tdt.gyroControl.setPID(Constants.kGyroLock_kP, Constants.kGyroLock_kI , Constants.kGyroLock_kD);
 		}
-		
-		//auto1.update();
-		
-		//SmartDashboard.putBoolean("Red", redRequest);
-		//SmartDashboard.putBoolean("Blue", blueRequest);
+	
+		//Prints variables to smartdashboard, helps in diagnosis of issues
 		SmartDashboard.putNumber("Distance", tdt.avgEncPos / Constants.kInToRevConvFactor);
 		SmartDashboard.putNumber("Left 1 Voltage", tdt.lDriveTalon1.getOutputVoltage());
-       	SmartDashboard.putNumber("Left 2 Voltage", tdt.lDriveTalon2.getOutputVoltage());
-       	SmartDashboard.putNumber("Right 1 Voltage", tdt.rDriveTalon1.getOutputVoltage());
-       	SmartDashboard.putNumber("Right 2 Voltage", tdt.rDriveTalon2.getOutputVoltage());
+		SmartDashboard.putNumber("Left 2 Voltage", tdt.lDriveTalon2.getOutputVoltage());
+		SmartDashboard.putNumber("Right 1 Voltage", tdt.rDriveTalon1.getOutputVoltage());
+		SmartDashboard.putNumber("Right 2 Voltage", tdt.rDriveTalon2.getOutputVoltage());
 		SmartDashboard.putNumber("Left 1 current", tdt.lDriveTalon1.getOutputCurrent());
-       	SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
-       	SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
-       	SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
+		SmartDashboard.putNumber("Left 2 current", tdt.lDriveTalon2.getOutputCurrent());
+		SmartDashboard.putNumber("Right 1 current", tdt.rDriveTalon1.getOutputCurrent());
+		SmartDashboard.putNumber("Right 2 current", tdt.rDriveTalon2.getOutputCurrent());
 		SmartDashboard.putString("Shooter state", shooter.currentState.toString());
 		SmartDashboard.putNumber("Gyro Angle", navx.getYaw());
 		SmartDashboard.putNumber("Desired Angle", tdt.desiredAngle);
 		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
 		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    
-    	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
+		SmartDashboard.putString("Drive state", tdt.currentMode.toString());
 		SmartDashboard.putNumber("Average Encoder Position", tdt.avgEncPos);
 		SmartDashboard.putNumber("Turret Error", hal.turretTalon.getClosedLoopError());
 		SmartDashboard.putNumber("Target Turret Position", hal.turretTalon.getSetpoint());
@@ -438,38 +399,22 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("D", tdt.gyroControl.getD());
 		
 		}
-		
+	
+	//Runs when robot is enabled into teleop
 	public void teleopInit() {
-		//sets to tank, resets navx, ensures robot is in low gear
+		//Sets cam to relative mode and sets current position to desired position to prevent movement of cam upon enable
 		hal.camTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 		hal.camTalon.setEncPosition((int) cam.desiredPosition);
+		//Prevents robot from shooting when entering teleop
 		shootRequest = false;
-		//cam.reset(); not used
 		turret.update();
-		tdt.lDriveTalon1.setPosition(0);
-		tdt.rDriveTalon1.setPosition(0);
+		tdt.resetDriveEncoders();
 		tdt.setDriveMode(driveMode.TANK);
+		//Prevents turret from moving when enabled
 		turret.desiredTarget = turret.turretPosition;
 		navx.reset();
 		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
-		/*
-    	for (int i = 0; i < profile.trajectory.length(); i++) {
-    	    Trajectory.Segment seg = profile.trajectory.get(i);
-    	    
-    	    SmartDashboard.putNumber("Delta Time",  seg.dt);
-    	    SmartDashboard.putNumber("X", seg.x);
-    	    SmartDashboard.putNumber("Y", seg.y);
-    	    SmartDashboard.putNumber("Position", seg.position);
-    	    SmartDashboard.putNumber("Velocity", seg.velocity);
-    	    SmartDashboard.putNumber("Acceleration", seg.acceleration);
-    	    SmartDashboard.putNumber("Jerk", seg.jerk);
-    	    SmartDashboard.putNumber("Heading", seg.heading);
-    	    
-    	    
-    	    System.out.printf("%f,%f,%f,%f,%f,%f,%f,%f\n", 
-    	        seg.dt, seg.x, seg.y, seg.position, seg.velocity, 
-    	            seg.acceleration, seg.jerk, seg.heading);
-    	}*/
+		//Removes D term in teleop gyro PID to prevent oscillations
 		tdt.gyroControl.setPID(Constants.kGyroLock_kP, Constants.kGyroLock_kI , 0);
 	}
 
@@ -478,27 +423,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override		
 	public void teleopPeriodic() {
-		//joystick input
-		
-		//SmartDashboard.putNumber("Length", trajectory.length());
-		
-		//tdt.avgEncPos = (tdt.lDriveTalon1.getPosition() + tdt.rDriveTalon1.getPosition()) / 2;
+		//Joystick input to drivetrain (Multiplyer slows robot down when shifting to help robot shift)
 		tdt.setStickInputs(hi.leftStick.getY()  * tdt.multiplyer, hi.rightStick.getY() *tdt.multiplyer); 
-		
-		 if (hi.turnTen()) {
-			 tdt.desiredAngle = navx.getYaw() + 10;
-		 }
-		 if (hi.turnNegativeTen()) {
-			 tdt.desiredAngle = navx.getYaw() - 10;
-		 }
-		 
-		 SmartDashboard.putNumber("D", tdt.gyroControl.getD());
-		 if (hi.turnNinety()) {
-			 tdt.desiredAngle = navx.getYaw() + 90;
-		 }
-		 if (hi.turnNegativeNinety()) {
-			 tdt.desiredAngle = navx.getYaw() - 90;
-		 }
 
 		tdt.update();
 		cam.update();
@@ -506,235 +432,228 @@ public class Robot extends IterativeRobot {
 		turret.update();
 		turretCam.update();
 		tracking.update();
+		updateButtonStatus();
 		
-		/* if (turretTrackRequest) {
-				turret.getEncError(turretCam.calcTurretYaw());
-			}*/
-		 
-		 if (enableDistanceCheckingRequest) {
+		//Executes commands upon button presses
+		//Runs vision program and turns turret
+		if (enableDistanceCheckingRequest) {
 			 turretCam.calcDistance();
 			 turretCam.distanceCheck();
-		 }
-    	
-		//what each button does
-    	updateButtonStatus();
-    	if (resetGyroRequest) {
-    		navx.reset();
-    	}
-    	if(fuelIntakeRequest) {
-    		hal.upperIntakeSpark.set(1);
-    	} else if (!fuelIntakeRequest) {
-    		hal.upperIntakeSpark.set(0); 
-    	}
-    	
-    	if (gyroLockRequest) {
-    		if (!lastGyroLock) {
-    			tdt.setDriveMode(driveMode.GYROLOCK);
-    			tdt.setDriveAngle(navx.getYaw()); //makes sure robot will move straight
-    		}
-    		tdt.setDriveTrainSpeed(tdt.rightStickInput); //moving speed dependent on right stick
-    	}
-    	else if (speedControlRequest && !gyroLockRequest) {
-    		if (!lastSpeedControl) {
-    			tdt.setDriveMode(driveMode.SPEEDCONTROL);
-    		}	
-    	}
-    	else {
-    		tdt.setDriveMode(driveMode.TANK);
-    		tdt.gyroControl.disable();
-    	}
-    	
-    	if (highGearRequest) {
-    		hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
-    	}
-    	
-    	 if (lowGearRequest && hal.driveShifter.get().toString() == Constants.kShiftHighGear) {
-    		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
-    		
-    		if (Math.abs(tdt.avgSpeed) < 20) {
-    			tdt.multiplyer = -.2;
-    			tdt.shiftIteration = -2;
-    		}
-    		
-    		else if (Math.abs(tdt.avgSpeed ) < 500) {
-    			tdt.multiplyer = 0;
-    			tdt.shiftIteration = 0;
-    		}
-    		else {
-    			tdt.multiplyer = .5;
-    			tdt.shiftIteration = 5;
-    		}
-    	}
-    	
-    	if (lowGearRequest) {
-    		hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
-    	}
-    	
-    	if (spinShooterRequest) {
-    		hal.shooterTalon.set(shooter.desiredSpeed);
-    	}
-    	else if (!spinShooterRequest && !shootRequest) {
-    		hal.shooterTalon.set(0);
-    	}
-		
-    	if(flashlightRequest) {
-    		hal.flashlight.set(Constants.kFlashlightOn);
-    	} else  {
-    		hal.flashlight.set(Constants.kFlashlightOff);
-    	}
-    	if (feedShooterRequest) {
-    		hal.upperIndexSpark.set(1);
-    		hal.lowerIndexSpark.set(1);
-    		hal.agitatorSpark.set(1);
-    	}
-    	else if(!feedShooterRequest && !shootRequest && !hi.buttonBox.getRawButton(1) && !hi.buttonBox.getRawButton(2)){
-    		hal.upperIndexSpark.set(0);
-    		hal.lowerIndexSpark.set(0);
-    		hal.agitatorSpark.set(0);
-    	}
-    	if (turnShooterLeftRequest) {
-    		turret.desiredTarget = 0;
-    		turretTrackRequest = false;
-    	}
-    	else if (turnShooterForwardRequest) {
-    		turret.desiredTarget = 3.6;
-    		turretTrackRequest = false;
-    	}
-    	else if (turnShooterRightRequest) {
-    		turret.desiredTarget = 7;
-    		turretTrackRequest = false;
-    	}
-    	else if (enableTurretTrackingRequest) {
-    		turretTrackRequest = true;
-    	}
-    	else {
-    		turretTrackRequest = false;
-    	}
-    	
-    	if (zeroCamRequest) {
-    		cam.desiredPosition = 0;
-    	}
-    	if (climberRequest) {
-    		hal.climberSpark.set(-1);
-    		//filip isnt cool 
-    	}
-    	
-    	else if (hi.runClimberReverse()) {
-    		hal.climberSpark.set(1);
-    	}
-    	else if (!hi.runClimber() && !hi.runClimberReverse()) {
-    		hal.climberSpark.set(0);
-    	}
-    	if (setShooterCloseRequest) {
-    		cam.desiredPosition = Constants.kCamClosePosition;
-    		shooter.desiredSpeed = Constants.kShooterCloseSpeed;
-    		//hal.turretTalon.set(Constants.kTurretClosePosition);
-    	}
-    	
-    	else if (setShooterFarRequest) {
-    		cam.desiredPosition = Constants.kCamFarPosition;
-    		shooter.desiredSpeed = Constants.kShooterFarSpeed;
-    		//hal.turretTalon.set(Constants.kTurretFarPosition);
-    	}
-    	else if (hi.setShooterManual()) {
-    		cam.desiredPosition = ((hi.rightStick.getZ() + 1) / 2)*4096;
-   		 	shooter.desiredSpeed = (((hi.leftStick.getZ() + 1) /2)*6150);
-    	}
-    	else if (hi.getHopperShot()) {
-    		if (redRequest) {
-    			turret.desiredTarget = .1;
-    			cam.desiredPosition = 1376;
-    			shooter.desiredSpeed = 5150;
-    		}
-    		else if (blueRequest) {
-    			turret.desiredTarget = 7.2;
-    			cam.desiredPosition = 1376;
-    			shooter.desiredSpeed = 5450;
-    		}
-    	}
-    	/*
-    	else if (turnCamNearZeroRequest) {
-    		cam.desiredPosition = .078125;
-    	}*/
-    	
-    	if (ringLightRequest || turretTrackRequest) {
-    		hal.ringLight.set(true);
-    	}
-    	else {
-    		
-    		hal.ringLight.set(false);
-    	}
-    	if (reverseAgitatorRequest) {
-    		hal.agitatorSpark.set(-1);   
-    	}
-    	else if(!reverseAgitatorRequest && !feedShooterRequest && !shootRequest) {
-    		hal.agitatorSpark.set(0);
-    	}
-    	
-    	if (reverseIndexRequest) {
-    		hal.shooterTalon.set(-shooter.desiredSpeed);
-    		hal.upperIndexSpark.set(-1);
-    		hal.lowerIndexSpark.set(-1);
-    	}
-    	else if(!reverseIndexRequest && !feedShooterRequest && !shootRequest) {
-    		hal.lowerIndexSpark.set(0);
-    	}
-    	if (openGearIntakeRequest) {
-    	hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
-    	}
-    	else if (closeGearIntakeRequest) {
-    		hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
-    	}
-    	if (incrementCamPositionUpRequest && !lastCamUpIncrement) {
-    		if (cam.desiredPosition <4096) {
-    			cam.desiredPosition = cam.desiredPosition + 32;
-    		}
-    	}
-    	if (incrementCamPositionDownRequest && !lastCamDownIncrement) {
-    		if (cam.desiredPosition > 0) {
-    			cam.desiredPosition = cam.desiredPosition - 32;
-    		}
-    	}
-    	if (incrementSpeedUpRequest && !lastShooterUpIncrement) {
-    		if (shooter.desiredSpeed < 6150) {
-    			shooter.desiredSpeed = shooter.desiredSpeed + 100;
-    		}
-    	}
-    	if (incrementSpeedDownRequest && !lastShooterDownIncrement) {
-    		if (shooter.desiredSpeed > 0) {
-    			shooter.desiredSpeed = shooter.desiredSpeed - 100;
-    		}
-    	}
-    	if (incrementTurretLeftRequest && !lastTurretLeftIncrement) {
-    		if (turret.desiredTarget > 0) {
-    			turret.desiredTarget = turret.desiredTarget - .1;
-    		}
-    	}
-    	if (incrementTurretRightRequest && !lastTurretRightIncrement) {
-    		if (turret.desiredTarget <= 7.5) {
-    			turret.desiredTarget = turret.desiredTarget + .1;
-    		}
-    	}
-    	lastCamUpIncrement = incrementCamPositionUpRequest;
-    	lastCamDownIncrement = incrementCamPositionDownRequest;
-    	lastShooterUpIncrement = incrementSpeedUpRequest;
-    	lastShooterDownIncrement = incrementSpeedDownRequest;
-    	lastTurretLeftIncrement = incrementTurretLeftRequest;
-    	lastTurretRightIncrement = incrementTurretRightRequest;
-    	lastGyroLock = gyroLockRequest;
-    	lastSpeedControl = speedControlRequest;
+		}
+		if (resetGyroRequest) {
+			navx.reset();
+		}
+		//Runs ball intake
+		if(fuelIntakeRequest) {
+			hal.upperIntakeSpark.set(1);
+		} else if (!fuelIntakeRequest) {
+			hal.upperIntakeSpark.set(0); 
+		}
+
+		if (gyroLockRequest) {
+			if (!lastGyroLock) {
+				tdt.setDriveMode(driveMode.GYROLOCK);
+				tdt.setDriveAngle(navx.getYaw()); //makes sure robot will move straight - Sets desired angle to current angle
+			}
+			tdt.setDriveTrainSpeed(tdt.rightStickInput); //Sets both sides of drive train to output of right stick - Helps robotd drive straight
+		}
+		else if (speedControlRequest && !gyroLockRequest) {
+			if (!lastSpeedControl) {
+				tdt.setDriveMode(driveMode.SPEEDCONTROL);
+			}	
+		}
+		else {
+			tdt.setDriveMode(driveMode.TANK);
+			tdt.gyroControl.disable(); // Disables gyro PID when gyrolock is disabled
+		}
+
+		if (highGearRequest) {
+			hal.driveShifter.set(Value.valueOf(Constants.kShiftHighGear));
+		}
+		//Slows robot down when shifting into low gear
+		 if (lowGearRequest && hal.driveShifter.get().toString() == Constants.kShiftHighGear) {
+			hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
+			//Reverses robot slightly when travelling at very low speed to take pressure off gearbox in pushing match
+			if (Math.abs(tdt.avgSpeed) < 20) {
+				tdt.multiplyer = -.2;
+				tdt.shiftIteration = -2;
+			}
+			//Stops robot if travelling at moderate speed
+			else if (Math.abs(tdt.avgSpeed ) < 500) {
+				tdt.multiplyer = 0;
+				tdt.shiftIteration = 0;
+			}
+			 //Only slows robot to half speeed if travelling at speed to prevent harsh stops
+			else {
+				tdt.multiplyer = .5;
+				tdt.shiftIteration = 5;
+			}
+		}
+
+		if (lowGearRequest) {
+			hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
+		}
+
+		if (spinShooterRequest) {
+			hal.shooterTalon.set(shooter.desiredSpeed);
+		}
+		else if (!spinShooterRequest && !shootRequest) {
+			hal.shooterTalon.set(0);
+		}
+
+		if(flashlightRequest) {
+			hal.flashlight.set(Constants.kFlashlightOn);
+		} else  {
+			hal.flashlight.set(Constants.kFlashlightOff);
+		}
+		if (feedShooterRequest) {
+			hal.upperIndexSpark.set(1);
+			hal.lowerIndexSpark.set(1);
+			hal.agitatorSpark.set(1);
+		}
+		else if(!feedShooterRequest && !shootRequest && !hi.buttonBox.getRawButton(1) && !hi.buttonBox.getRawButton(2)){
+			hal.upperIndexSpark.set(0);
+			hal.lowerIndexSpark.set(0);
+			hal.agitatorSpark.set(0);
+		}
+		if (turnShooterLeftRequest) {
+			turret.desiredTarget = 0;
+			turretTrackRequest = false;
+		}
+		else if (turnShooterForwardRequest) {
+			turret.desiredTarget = 3.6;
+			turretTrackRequest = false;
+		}
+		else if (turnShooterRightRequest) {
+			turret.desiredTarget = 7;
+			turretTrackRequest = false;
+		}
+		else if (enableTurretTrackingRequest) {
+			turretTrackRequest = true;
+		}
+		else {
+			turretTrackRequest = false;
+		}
+
+		if (zeroCamRequest) {
+			cam.desiredPosition = 0;
+		}
+		if (climberRequest) {
+			hal.climberSpark.set(-1);
+			//filip isnt cool 
+		}
+
+		else if (hi.runClimberReverse()) {
+			hal.climberSpark.set(1);
+		}
+		else if (!hi.runClimber() && !hi.runClimberReverse()) {
+			hal.climberSpark.set(0);
+		}
+		//Set different values for shooter speed and cam position
+		if (setShooterCloseRequest) {
+			cam.desiredPosition = Constants.kCamClosePosition;
+			shooter.desiredSpeed = Constants.kShooterCloseSpeed;
+		}
+
+		else if (setShooterFarRequest) {
+			cam.desiredPosition = Constants.kCamFarPosition;
+			shooter.desiredSpeed = Constants.kShooterFarSpeed;
+		}
+		else if (hi.setShooterManual()) {
+			cam.desiredPosition = ((hi.rightStick.getZ() + 1) / 2)*4096;
+			shooter.desiredSpeed = (((hi.leftStick.getZ() + 1) /2)*6150);
+		}
+		else if (hi.getHopperShot()) {
+			if (redRequest) {
+				turret.desiredTarget = .1;
+				cam.desiredPosition = 1376;
+				shooter.desiredSpeed = 5150;
+			}
+			else if (blueRequest) {
+				turret.desiredTarget = 7.2;
+				cam.desiredPosition = 1376;
+				shooter.desiredSpeed = 5450;
+			}
+		}
+		if (ringLightRequest || turretTrackRequest) {
+			hal.ringLight.set(true);
+		}
+		else {
+			hal.ringLight.set(false);
+		}
+		if (reverseAgitatorRequest) {
+			hal.agitatorSpark.set(-1);   
+		}
+		else if(!reverseAgitatorRequest && !feedShooterRequest && !shootRequest) {
+			hal.agitatorSpark.set(0);
+		}
+		//
+		if (reverseIndexRequest) {
+			hal.shooterTalon.set(-shooter.desiredSpeed);
+			hal.upperIndexSpark.set(-1);
+			hal.lowerIndexSpark.set(-1);
+		}
+		else if(!reverseIndexRequest && !feedShooterRequest && !shootRequest) {
+			hal.lowerIndexSpark.set(0);
+		}
+		if (openGearIntakeRequest) {
+		hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
+		}
+		else if (closeGearIntakeRequest) {
+			hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
+		}
+		//Allows manual fine adjustment of turret position, shooter speed and cam position
+		if (incrementCamPositionUpRequest && !lastCamUpIncrement) {
+			if (cam.desiredPosition <4096) {
+				cam.desiredPosition = cam.desiredPosition + 32;
+			}
+		}
+		if (incrementCamPositionDownRequest && !lastCamDownIncrement) {
+			if (cam.desiredPosition > 0) {
+				cam.desiredPosition = cam.desiredPosition - 32;
+			}
+		}
+		if (incrementSpeedUpRequest && !lastShooterUpIncrement) {
+			if (shooter.desiredSpeed < 6150) {
+				shooter.desiredSpeed = shooter.desiredSpeed + 100;
+			}
+		}
+		if (incrementSpeedDownRequest && !lastShooterDownIncrement) {
+			if (shooter.desiredSpeed > 0) {
+				shooter.desiredSpeed = shooter.desiredSpeed - 100;
+			}
+		}
+		if (incrementTurretLeftRequest && !lastTurretLeftIncrement) {
+			if (turret.desiredTarget > 0) {
+				turret.desiredTarget = turret.desiredTarget - .1;
+			}
+		}
+		if (incrementTurretRightRequest && !lastTurretRightIncrement) {
+			if (turret.desiredTarget <= 7.5) {
+				turret.desiredTarget = turret.desiredTarget + .1;
+			}
+		}
+		//Updates variables that store previous button state
+		lastCamUpIncrement = incrementCamPositionUpRequest;
+		lastCamDownIncrement = incrementCamPositionDownRequest;
+		lastShooterUpIncrement = incrementSpeedUpRequest;
+		lastShooterDownIncrement = incrementSpeedDownRequest;
+		lastTurretLeftIncrement = incrementTurretLeftRequest;
+		lastTurretRightIncrement = incrementTurretRightRequest;
+		lastGyroLock = gyroLockRequest;
+		lastSpeedControl = speedControlRequest;
     	
    		SmartDashboard.putNumber("Gyro Angle", navx.getYaw());
    		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
    		SmartDashboard.putNumber("Right stick speed", tdt.rawRightSpeed);    	
-       	SmartDashboard.putString("Drive state", tdt.currentMode.toString());
+       		SmartDashboard.putString("Drive state", tdt.currentMode.toString());
    		SmartDashboard.putNumber("PID setpoint", tdt.gyroControl.getSetpoint());
    	 
    		SmartDashboard.putNumber("Left RPM", tdt.leftDriveRPM);
-    	SmartDashboard.putNumber("Right RPM", tdt.rightDriveRPM); 
+    		SmartDashboard.putNumber("Right RPM", tdt.rightDriveRPM); 
     	
    		SmartDashboard.putString("LeftDriveMode", tdt.lDriveTalon1.getControlMode().toString());
-    	SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
+    		SmartDashboard.putString("RightDriveMode", tdt.rDriveTalon1.getControlMode().toString());
   
     	
     		SmartDashboard.putBoolean("Cam Increment Down", incrementCamPositionDownRequest);
@@ -830,23 +749,17 @@ public class Robot extends IterativeRobot {
            	
     }
 		
-	/**
-	 * This function is called periodically during test mode
-	 */
+	
 	@Override
 	
 	public void testInit() {
-		/*
-		hal.turretTalon.changeControlMode(TalonControlMode.PercentVbus);
-	
-		 trajectory = Pathfinder.generate(points, config);
-
-		Pathfinder.writeToCSV(myFile, trajectory);
 		
-	*/
 	}
-	
+	/**
+	 * This function is called periodically during test mode
+	 */
 	public void testPeriodic() {
+		//Allows for button input when the robot is in test mode
 		updateButtonStatus();
 		SmartDashboard.putNumber("Turret Position", hal.turretTalon.getEncPosition());
 		SmartDashboard.putNumber("left stick input", hi.leftStick.getY());
@@ -856,10 +769,9 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void updateButtonStatus() {
-		//checks if button is pressed
+		//Checks outputs of buttons and checks if they have been pressed
 		fuelIntakeRequest = hi.getFuelIntake();
 		gyroLockRequest = hi.getGyroLock();
-		//speedControlRequest = hi.getSpeedControl();
 		feedShooterRequest = hi.feedShooter();
 		highGearRequest = hi.getHighGear();
 		lowGearRequest = hi.getLowGear();
