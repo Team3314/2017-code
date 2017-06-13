@@ -1,16 +1,18 @@
 package org.usfirst.frc.team3314.robot;
 
+
+/* 
+This class creates variables with constant values, like PID constants. This allows these numbers to be referenced by name from this 
+central file, making it easier to understand what the values actually mean
+*/
 public class Constants {
 	Robot robot = new Robot();
 	
 	//tankdrivetrain
-	public static double kInToRevConvFactor = 0.1197; //conversion from inches to drivetrain revolutions --- ** 17.15 in per rev **
-	public static double kRevToInConvFactor = 8.351288;
-	public static double kHighGearRPM = 500; //rpm for high gear
-	public static double kLowGearRPM = 200;//rpm for low gear
-	public static double kCollisionThreshold_DeltaG = .5; //acceleration limit for collision detection
+	public static double kInToRevConvFactor = 0.1197; //Converts inches to revolutions of drive train --- ** 17.15 in per rev **
+	public static double kRevToInConvFactor = 8.351288; //Converts revolutions of drive train to inches
 	
-	//Solenoid States
+	//Solenoid States - Used to extend and retracts pistons
 	public static String kCloseGearIntake = "kReverse";
 	public static String kOpenGearIntake = "kForward";
 	
@@ -23,42 +25,32 @@ public class Constants {
 	public static boolean kRingLightOn = true;
 	public static boolean kRingLightOff = false;
 	
-	//gyrolock pidcontroller
+	//PID values for gyro
 	public static double kGyroLock_kP = .04;
 	public static double kGyroLock_kI = .002;
 	public static double kGyroLock_kD = .1;
 	public static double kGyroLock_kF = 0;
 	
-	//turret pid
+	//PID values for turret
 	public static double kTurret_kP = 1;
 	public static double kTurret_kI = .000;
 	public static double kTurret_kD = 80;
 	public static double kTurret_kF = 0;
 	public static int kTurret_IZone = 0;
-	public static double kTurret_RampRate = 0;
+	public static double kTurret_RampRate = 0; 
 	public static int kTurret_Profile = 0;
 	
 	//adjust pid
-	public static double kAngleAdjust_kP = 3.2; //.8;
-	public static double kAngleAdjust_kI = .00; //.002;
+	public static double kAngleAdjust_kP = 3.2;
+	public static double kAngleAdjust_kI = 0;
 	public static double kAngleAdjust_kD = 0;
-	public static double kAngleAdjust_kF = .0;
+	public static double kAngleAdjust_kF = 0;
 	public static int kAngleAdjust_IZone = 0;
 	public static double kAngleAdjust_RampRate = 0;
 	public static int kAdjust_Profile = 0;
 	public static double kCamOffset = -.86999; // PRACTICE BOT ###   ####  No Longer Used
 	
-	
-	
-	
-	public static double kCamInitPosition = 2;
-	
-	
-	
-	
-	public static double kAdjust_EncConvFactor = 0; //conversion from degrees to enc ticks
-	
-	//shooter (pid + other values)
+	//PID values for shooter
 	public static double kShooter_kP = .04;
 	public static double kShooter_kI = 0;
 	public static double kShooter_kD = 0;
@@ -67,41 +59,20 @@ public class Constants {
 	public static double kShooter_RampRate = 0;
 	public static int kShooter_Profile = 0;
 	
-	public static double kShooter_TargetRPM = 5000;
-	public static double kShooter_TargetHopperRPM = 5000;
-	public static double kShooter_IndexSensorThreshold = 2;
 	
-	//speedcontrol pid
-	public static double kSpeedControl_kP = .01;
-	public static double kSpeedControl_kI = 0.0;
-	public static double kSpeedControl_kD = 0;
-	public static double kSpeedControl_kF = 0;
-	public static int kSpeedControl_IZone = 0;
-	public static double kSpeedControl_RampRate = 0;
-	public static int kSpeedControl_Profile = 0;
-	
-	//camera
-	public static double kCenterOfView = 89.5;
-	//public static double kTargetHeight = (10/12);
-	public static double kXRes = 320;
-	public static double kYRes = 180;
-	public static double kVerticalViewAngle = 70.42;
+	public static double kCenterOfView = 89.5; //Center point of the camera's view (in pixels)
+	public static double kXRes = 320; // Vertical resolution of camera
+	public static double kYRes = 180; // Horizontal resolution of camera
+	public static double kVerticalViewAngle = 70.42; 
 	public static double kHorizontalViewAngle = 43.3;
 	public static double kFocalLength = 226.7;
-	//public static double kPxlToDegConvFactor = 0.271875;
-	public static double kDegToEncTicksConvFactor = .038888888888888;//159.2888888888;
+	public static double kDegToEncTicksConvFactor = .038888888888888; // Converts degrees of camera vision to turret encoder ticks to transate the camera image to turret rotation
 	
-	public static double kDefaultCamPosition = 1456;
-	
+	//Emperically testerd values for close and far shot
 	public static double kCamClosePosition = 1184;
 	public static double kShooterCloseSpeed = 3500;
-	public static double kTurretClosePosition = 0;
 	
 	public static double kCamFarPosition = 1456;
 	public static double kShooterFarSpeed = 4500;
-	public static double kTurretFarPosition = 0;
-	
-	public static double kPulleyDiameter = 2.75;
-	public static double kMaxVelocity = 0;
-	public static double kMinTurnInput = 0;
+
 }
