@@ -28,7 +28,7 @@ public class Robot extends IterativeRobot {
 	HumanInput hi;
 	TankDriveTrain tdt;
 	ShooterStateMachine shooter;
-	CamStateMachine cam;
+	Cam cam;
 	Turret turret;
 	TrackingStateMachine tracking;
 	AHRS navx = new AHRS(SPI.Port.kMXP);
@@ -129,7 +129,7 @@ public class Robot extends IterativeRobot {
 		hi = new HumanInput();
 		tdt = new TankDriveTrain(this);
 		shooter = new ShooterStateMachine(this);
-		cam = new CamStateMachine(this);
+		cam = new Cam(this);
 		turret = new Turret(this);
 		turretCam = new CustomCamera(this);
 		tracking = new TrackingStateMachine(this);
