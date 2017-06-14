@@ -35,6 +35,9 @@ public class CustomCamera {
 	}
 	
 	public void update() {
+		//Gets every 20 ms numbers about target from raspberry pi and creates variables for them
+		//Makes sure that "upperTarget" variables always refer to the upper target by making the upper target the one 
+		//higher in the image (Lower x value) and hte lower target the one lower in the image (higher x value)
 		if (pi.getNumber("UpperTarget X", 160) > pi.getNumber("Lower Target X", 160)) {
 			lowerTargetX = pi.getNumber("Upper Target X", 160);
 			lowerTargetY = pi.getNumber("Upper Target Y", 0);
@@ -57,6 +60,7 @@ public class CustomCamera {
 			lowerTargetWidth = pi.getNumber("Lower Target Width", 0);
 			lowerTargetHeight = pi.getNumber("Lower Target Height", 0);
 		}
+		//Calculates the angle between a horizontal line out from the camera and the line from the camera to the upper target
 		theta = (Math.toDegrees(Math.atan(((upperTargetX+upperTargetWidth) - ((Constants.kXRes/2)-.5)) / Constants.kFocalLength))) + 33;
 	}
 	
@@ -133,9 +137,6 @@ public class CustomCamera {
 			robot.cam.desiredPosition = 1456;
 			robot.shooter.desiredSpeed = 5400;
 		}
-		/*else if (distance < 42 || distance > 126) {
-			robot.cam.desiredPosition = 0;
-			robot.shooter.desiredSpeed = 0;
-		}*/
+	
 	}
 }
