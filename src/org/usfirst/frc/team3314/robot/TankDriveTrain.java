@@ -8,8 +8,6 @@ enum driveMode {
 	IDLE,
 	TANK,
 	GYROLOCK,
-	SPEEDCONTROL,
-	GYROLOCK_SPEEDCONTROL
 }
 
 public class TankDriveTrain {
@@ -55,21 +53,24 @@ public class TankDriveTrain {
 
 	public TankDriveTrain(Robot myRobot) {
 		robot = myRobot;
-		
+		//Sets up gyro PID controller
 		gyroPIDOutput = new GyroPIDOutput();
-	    gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
+	    	gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
 	    		Constants.kGyroLock_kF, robot.navx, gyroPIDOutput);
-	    gyroControl.setContinuous(); //makes angle correct itself in the shortest distance
+		//Sets the PID controller to treat 180 and -180 to be the same point, 
+		//so that when turning the robot takes the shortest path instead of going the long way around
+		//Effectively changes PID input from a line to a circle
+	    	gyroControl.setContinuous(); 
 		gyroControl.setInputRange(-180, 180);
-		gyroControl.setOutputRange(-.7, .7);
-		gyroControl.setAbsoluteTolerance(1);
+		gyroControl.setOutputRange(-.7, .7);		// Limits speed of turn to prevent overshoot
+		gyroControl.setAbsoluteTolerance(1); //Stop robot from oscilating by target by cutting output once within 1 degree
 		
 		rDriveTalon1 = new CANTalon(1);
 		rDriveTalon2 = new CANTalon(3);
 		lDriveTalon1 = new CANTalon(0);
 		lDriveTalon2 = new CANTalon(2);
 		
-		//sets forward talons to default mode and rear talons as following them
+		//Makes sure the motors on each side of the drive train are set to the same speed by setting one talon to follow the other
 		lDriveTalon2.changeControlMode(TalonControlMode.Follower);
 		lDriveTalon2.set(lDriveTalon1.getDeviceID());
 		rDriveTalon2.changeControlMode(TalonControlMode.Follower);
@@ -77,6 +78,7 @@ public class TankDriveTrain {
 		
 		lDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
 		rDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
+		//Sets up drive encoders
 		lDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		rDriveTalon1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		lDriveTalon1.configEncoderCodesPerRev(2048);
@@ -85,6 +87,7 @@ public class TankDriveTrain {
 		lDriveTalon1.reverseSensor(true);
 		rDriveTalon1.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 20);
 		lDriveTalon1.setStatusFrameRateMs(CANTalon.StatusFrameRate.QuadEncoder, 20);
+		//Prevents breaker trips by restricting the talons to drawing 50 amps
 		lDriveTalon1.EnableCurrentLimit(true);
 		lDriveTalon1.setCurrentLimit(50);
 		lDriveTalon2.EnableCurrentLimit(true);
@@ -95,11 +98,15 @@ public class TankDriveTrain {
 		rDriveTalon2.setCurrentLimit(50);
 	}
 	
+	/*Runs every 20ms while robot is enabled, updating the mode of and input to the drivetrain, as well as 
+	updating variables providing information about the drivetrain*/
 	public void update() {
 		lDriveTalon1.set(rawLeftSpeed);
 		rDriveTalon1.set(rawRightSpeed);
+		//Drive train position in rotiations
 		rightDrivePosition = rDriveTalon1.getPosition();
 		leftDrivePosition = lDriveTalon1.getPosition();
+		//Drive train position in encoder ticks
 		rightDrivePositionTicks = (int)(leftDrivePosition * 8192);
 		leftDrivePositionTicks = (int)(rightDrivePosition * 8192);
 		rightDriveError = rDriveTalon1.getClosedLoopError();
@@ -113,107 +120,43 @@ public class TankDriveTrain {
 		
 		calcShiftMultiplyer();
 		
-		//talon changes mode based on tank drive state
-		/*
-		if (currentMode == driveMode.SPEEDCONTROL){
-			lDriveTalon1.changeControlMode(TalonControlMode.Speed);
-			rDriveTalon1.changeControlMode(TalonControlMode.Speed);
-		} else {
-			lDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
-			rDriveTalon1.changeControlMode(TalonControlMode.PercentVbus);
-		}*/
 		
 		switch(currentMode){
 		case IDLE:
-			//motor stopped
+			//Drivetrain stopped, does not accept joystick input
 			rawLeftSpeed = 0;
 			rawRightSpeed = 0;
 			break;
 		case TANK:
-			//motor speed determined by joystick input
+			//Left and right drivetrain speed set by left and right joysticks
 			rawLeftSpeed = leftStickInput;
 			rawRightSpeed = rightStickInput;
 			break;
 		case GYROLOCK:
- 			//motor speed determined by angle of robot relative to desired angle
+ 			//Left and right speed set by right joystick, with gyro keeping the robot pointed straight
 			if (!gyroControl.isEnabled()){
 				gyroControl.enable();
 			}
-		//	if (turn) {
-			/*
-			if (Math.abs(gyroPIDOutput.turnSpeed) < Constants.kMinTurnInput && gyroPIDOutput.turnSpeed > 0) {
-				gyroPIDOutput.turnSpeed = -Constants.kMinTurnInput;
-			}
-			if (Math.abs(gyroPIDOutput.turnSpeed) < Constants.kMinTurnInput && gyroPIDOutput.turnSpeed < 0) {
-				gyroPIDOutput.turnSpeed = Constants.kMinTurnInput;
-			}*/
 			
 			rawLeftSpeed = desiredSpeed + gyroPIDOutput.turnSpeed;
 			rawRightSpeed = desiredSpeed - gyroPIDOutput.turnSpeed;
 			gyroControl.setSetpoint(desiredAngle);	
 			break;
-		case SPEEDCONTROL:
-			//motor speed is equivalent to desired rpm
-			lDriveTalon1.setPID(Constants.kSpeedControl_kP,Constants.kSpeedControl_kI,Constants.kSpeedControl_kD,
-			Constants.kSpeedControl_kF,Constants.kSpeedControl_IZone,Constants.kSpeedControl_RampRate,
-			Constants.kSpeedControl_Profile);
-			
-			rDriveTalon1.setPID(Constants.kSpeedControl_kP,Constants.kSpeedControl_kI,Constants.kSpeedControl_kD,
-			Constants.kSpeedControl_kF,Constants.kSpeedControl_IZone,Constants.kSpeedControl_RampRate,
-			Constants.kSpeedControl_Profile);
-			
-			rawLeftSpeed = leftStickInput;
-			rawRightSpeed = rightStickInput;
-			
-			if (robot.hal.driveShifter.get().toString() == Constants.kShiftHighGear){
-				rawLeftSpeed *= Constants.kHighGearRPM;
-				rawRightSpeed *= Constants.kLowGearRPM;
-			}
-				
-			if (robot.hal.driveShifter.get().toString() == Constants.kShiftLowGear){
-				rawLeftSpeed *= Constants.kLowGearRPM;
-				rawRightSpeed *= Constants.kLowGearRPM;
-			}
-			break;
-		case GYROLOCK_SPEEDCONTROL:
-			lDriveTalon1.setPID(Constants.kSpeedControl_kP,Constants.kSpeedControl_kI,Constants.kSpeedControl_kD,
-			Constants.kSpeedControl_kF,Constants.kSpeedControl_IZone,Constants.kSpeedControl_RampRate,
-			Constants.kSpeedControl_Profile);
-					
-			rDriveTalon1.setPID(Constants.kSpeedControl_kP,Constants.kSpeedControl_kI,Constants.kSpeedControl_kD,
-			Constants.kSpeedControl_kF,Constants.kSpeedControl_IZone,Constants.kSpeedControl_RampRate,
-			Constants.kSpeedControl_Profile);
-			
-			rawLeftSpeed = leftStickInput;
-			rawRightSpeed = rightStickInput;
-			rawLeftSpeed += gyroPIDOutput.turnSpeed;
-			rawRightSpeed += gyroPIDOutput.turnSpeed;
-			
-			if (robot.hal.driveShifter.get().toString() == Constants.kShiftHighGear){
-				rawLeftSpeed *= Constants.kHighGearRPM;
-				rawRightSpeed *= Constants.kLowGearRPM;
-			}
-				
-			if (robot.hal.driveShifter.get().toString() == Constants.kShiftLowGear){
-				rawLeftSpeed *= Constants.kLowGearRPM;
-				rawRightSpeed *= Constants.kLowGearRPM;
-			}
-			
-			gyroControl.setSetpoint(desiredAngle);
-			break;
 		}
 	}
 	
 	public void setStickInputs(double leftInput, double rightInput) {
-		//sets what joystick input to get
+		//Method that maps joystick inputs to variables to be used in setting drivetrain speed
+		/*Inputs are made negative because forward on the joysticks used was negative and backwards was negative
+		 forward positive and backward negative makes more sense*/
 		leftStickInput = -leftInput;
 		rightStickInput = -rightInput;
 	}
-		
+	//Method used to switch between drive modes (Tank, gyrolock, etc.)
 	public void setDriveMode(driveMode mode) {
 		currentMode = mode;
 	}
-	
+	//Used in gyrolock to give both sides the same input
 	public void setDriveTrainSpeed(double speed) {	
 		desiredSpeed = speed;
 	}
@@ -221,20 +164,15 @@ public class TankDriveTrain {
 	public void setDriveAngle(double angle) {
 		desiredAngle = angle;
 	}
-	
-	public double calcJerk() {
-		double curr_world_linear_accel_y = robot.navx.getWorldLinearAccelY();
-		double currentJerkY = curr_world_linear_accel_y - last_world_linear_accel_y;
-		last_world_linear_accel_y = curr_world_linear_accel_y;
-		return currentJerkY;
-	}
-
+	//Sets position of drive encoders to zero, usually used in auto between drive states so the robot always starts at zero
 	public void resetDriveEncoders() {
 		lDriveTalon1.setPosition(0);
 		rDriveTalon1.setPosition(0);
 		lDriveTalon1.setEncPosition(0);
 		rDriveTalon1.setEncPosition(0);
 	}
+	/* Runs every 20ms in update, and when multiplyer (used to slow robot when shifting) is set to a number below 1
+	via a button press, it is incremented back up to 1, gradually accelerating the robot back up to speed*/
 	public void calcShiftMultiplyer() {
 		if (multiplyer < 1) {
 			shiftIteration++;
