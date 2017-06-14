@@ -25,10 +25,10 @@ public class TrackingStateMachine {
 	}
 	
 	public void reset() {
-		//sets horizontal angle tracking back to beginning
+		
 		currentState = trackingStates.START;
 	}
-	
+	// Calculates whether to transition to the next state
 	public void update() {
 		calcNext();
 		doTransition();
@@ -37,11 +37,12 @@ public class TrackingStateMachine {
 		SmartDashboard.putString("Turret tracking state", currentState.toString());
 		SmartDashboard.putNumber("Time", time);
 	}
-	
+	/*This method performs different checks in each state to determine when to transition between states*/
 	public void calcNext() {
 		nextState = currentState;
 		
 		switch (currentState) {
+		// Waits for button press
 		case START:
 			if (robot.turretTrackRequest) {
 				nextState = trackingStates.CALCULATE;
@@ -49,7 +50,7 @@ public class TrackingStateMachine {
 			break;
 			
 		case CALCULATE:
-
+			//Stops state machine if button is released
 			if (!robot.turretTrackRequest) {
 				nextState = trackingStates.STOP;
 			}
@@ -62,9 +63,11 @@ public class TrackingStateMachine {
 			if (!robot.turretTrackRequest) {
 				nextState = trackingStates.STOP;
 			}
+			//Does not turn if turret is within a quarter of a degree to target
 			if ( targetYaw >= -.25 && targetYaw <= .25) {
 				nextState = trackingStates.START;
 			}
+			//Waits slightly before turning to make sure turret is stopped
 			if (time <= 0) {
 				nextState = trackingStates.TURN;
 			}
@@ -74,15 +77,14 @@ public class TrackingStateMachine {
 			if (!robot.turretTrackRequest) {
 				nextState = trackingStates.STOP;
 			}
+			//Stops turret once it is within an acceptable range of the target, preventing oscillation
 			if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) < 125) {
 				nextState = trackingStates.STOP;
 			}
 			break;
 			
 		case STOP:
-			//if (targetYaw == 0) {
 				nextState = trackingStates.RESET;
-			//}
 			break;
 			
 		case RESET:
@@ -96,41 +98,23 @@ public class TrackingStateMachine {
 			break;
 		}
 	}
-	
+	/*Executes commands when going from one state to another */
 	public void doTransition() {
+		//Calculates degrees to turn from camera image
 		if (currentState == trackingStates.START && nextState == trackingStates.CALCULATE) {
 			targetYaw = robot.turretCam.calcTurretYaw();
 		}
-
+		//Puts a timer of 20ms in the wait state
 		if (currentState == trackingStates.CALCULATE && nextState == trackingStates.WAIT) {
 			time = 1;
 		}
-		
+		//Tells the turret to turn the calculated degree error 
 		if (currentState == trackingStates.WAIT && nextState == trackingStates.TURN) {
 			robot.turret.getEncError(targetYaw);
-			//robot.turret.update();
-			robot.turretCam.calcTurretYaw();
 		}
-		
-		if (currentState == trackingStates.WAIT && nextState == trackingStates.CALCULATE) {
-			targetYaw = robot.turretCam.calcTurretYaw();
-		}
-		
-		if (currentState == trackingStates.CALCULATE && nextState == trackingStates.STOP) {
-			//targetYaw = 0;
-		}
-		
-		if (currentState == trackingStates.WAIT && nextState == trackingStates.STOP) {
-			//targetYaw = 0;
-		}
-		
-		if (currentState == trackingStates.TURN && nextState == trackingStates.STOP) {
-			//targetYaw = 0;
-		}
-		
+		//Puts a 100 ms timer before resetting the state machine and allowing it to recalculate and turn again
 		if (currentState == trackingStates.STOP && nextState == trackingStates.RESET) {
 			robot.turretTrackRequest = false;
-			//robot.turret.desiredTarget = robot.turret.turretPosition;
 			time = 5;
 		}
 	}
