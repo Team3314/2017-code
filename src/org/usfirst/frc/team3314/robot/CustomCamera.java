@@ -60,12 +60,12 @@ public class CustomCamera {
 			lowerTargetWidth = pi.getNumber("Lower Target Width", 0);
 			lowerTargetHeight = pi.getNumber("Lower Target Height", 0);
 		}
-		//Calculates the angle between a horizontal line out from the camera and the line from the camera to the upper target
-		theta = (Math.toDegrees(Math.atan(((upperTargetX+upperTargetWidth) - ((Constants.kXRes/2)-.5)) / Constants.kFocalLength))) + 33;
+		
 	}
 	
 	public double calcDistance() { //goes with shooter throttle
 		double upperTargetTop = upperTargetX - upperTargetWidth ;
+		//Calculates the angle between a horizontal line out from the camera and the line from the camera to the upper target
 		double theta = -(Math.toDegrees(Math.atan((upperTargetTop - ((Constants.kXRes/2)-.5))/Constants.kFocalLength))) + 46;
 		distance = 66.5/(Math.tan(Math.toRadians(theta))); //66.5 in = height from camera to reflective tape
 		return distance;	
@@ -81,6 +81,7 @@ public class CustomCamera {
 	}
 	
 	public void distanceCheck() {
+		//
 		if (distance >= 36 && distance < 43) {
 			robot.cam.desiredPosition = 976;
 			robot.shooter.desiredSpeed =  3400;
