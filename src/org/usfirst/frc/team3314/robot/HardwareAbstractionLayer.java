@@ -7,9 +7,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
-//import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
+
+/*This class creates objects referring to parts on the robot that can be used throughout the code. This central reference makes it 
+easier to keep track of objects*/
 public class HardwareAbstractionLayer {
 	Robot robot;
 	
@@ -24,12 +26,6 @@ public class HardwareAbstractionLayer {
 	Spark upperIntakeSpark;
 	Spark climberSpark;
 	
-	//digital io
-	//DigitalInput autoSelect; //choose autos with physical binary switches
-	//	DigitalInput autoSelect2;
-	//DigitalInput autoSelect3;
-	//DigitalInput autoSelect4;
-	
 	//pneumatics
 	Compressor pcm1;
 	DoubleSolenoid gearIntake;
@@ -37,8 +33,6 @@ public class HardwareAbstractionLayer {
 	Solenoid flashlight;
 	Solenoid ringLight;
 	PowerDistributionPanel pdp;
-	//misc
-	AnalogInput indexSensor;
 
 	public HardwareAbstractionLayer(Robot r){
 		robot = r;
@@ -68,11 +62,6 @@ public class HardwareAbstractionLayer {
 		shooterTalon.setPID(Constants.kShooter_kP, Constants.kShooter_kI, Constants.kShooter_kD,
 		Constants.kShooter_kF, Constants.kShooter_IZone, Constants.kShooter_RampRate, Constants.kShooter_Profile);
 		
-		//digital io
-		//autoSelect = new DigitalInput(0);
-		//autoSelect2 = new DigitalInput(1);
-		//autoSelect3 = new DigitalInput(2);
-		//autoSelect4 = new DigitalInput(3);
 		
 		//pneumatics
 		pcm1 = new Compressor(0);
@@ -83,8 +72,5 @@ public class HardwareAbstractionLayer {
 		ringLight = new Solenoid(6);
 		
 		pcm1.setClosedLoopControl(true);
-		
-		//misc
-		indexSensor = new AnalogInput(0);
 	}
 }
