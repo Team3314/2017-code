@@ -30,6 +30,8 @@ public AutoShootTenGearStop(Robot myRobot) {
 }
 
 public void update() {
+	//Checks whether requirements to go to next state are fulfilled and switches states if so,
+	//executes code assigned to each state every 20ms
 	calcNext();
 	doTransition();
 	currentState = nextState;
@@ -46,15 +48,13 @@ public void calcNext() {
 		case START:
 			nextState = autoShootTenGearStopStates.TURNTURRET;
 			break;
-		case TURNTURRET:
-			SmartDashboard.putNumber("Turret Error", robot.hal.turretTalon.getClosedLoopError());
-			SmartDashboard.putNumber("Turret Position", robot.hal.turretTalon.getPosition());
+		case TURNTURRET: //Makes sure turret and cam are in target position
 			if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 250
 			&& robot.hal.camTalon.getClosedLoopError() <= 50)  {
 				nextState = autoShootTenGearStopStates.SHOOT;
 			}
 			break;
-		case SHOOT:
+		case SHOOT: //Shoots on a timer
 			if (time <= 0) {
 				nextState = autoShootTenGearStopStates.DRIVE1;
 			}
