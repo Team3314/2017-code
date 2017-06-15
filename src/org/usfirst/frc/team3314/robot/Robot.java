@@ -58,11 +58,8 @@ public class Robot extends IterativeRobot {
 	boolean auto9Request;
 	
 	//Creating button variables
-	boolean raiseGearIntakeRequest;
-	boolean dropGearIntakeRequest;
 	boolean fuelIntakeRequest;
 	boolean gyroLockRequest;
-	boolean speedControlRequest;
 	boolean highGearRequest;
 	boolean lowGearRequest;
 	boolean spinShooterRequest;
@@ -70,7 +67,6 @@ public class Robot extends IterativeRobot {
 	boolean flashlightRequest;
 	boolean turretTrackRequest = false;
 	boolean lastGyroLock = false;
-	boolean lastSpeedControl = false;
 	boolean feedShooterRequest = false; 
 	boolean climberRequest = false;
 	boolean turnShooterLeftRequest = false;
@@ -456,11 +452,7 @@ public class Robot extends IterativeRobot {
 				tdt.setDriveAngle(navx.getYaw()); //makes sure robot will move straight - Sets desired angle to current angle
 			}
 			tdt.setDriveTrainSpeed(tdt.rightStickInput); //Sets both sides of drive train to output of right stick - Helps robotd drive straight
-		}
-		else if (speedControlRequest && !gyroLockRequest) {
-			if (!lastSpeedControl) {
-				tdt.setDriveMode(driveMode.SPEEDCONTROL);
-			}	
+			}
 		}
 		else {
 			tdt.setDriveMode(driveMode.TANK);
@@ -540,7 +532,6 @@ public class Robot extends IterativeRobot {
 		}
 		if (climberRequest) {
 			hal.climberSpark.set(-1);
-			//filip isnt cool 
 		}
 
 		else if (hi.runClimberReverse()) {
@@ -641,7 +632,6 @@ public class Robot extends IterativeRobot {
 		lastTurretLeftIncrement = incrementTurretLeftRequest;
 		lastTurretRightIncrement = incrementTurretRightRequest;
 		lastGyroLock = gyroLockRequest;
-		lastSpeedControl = speedControlRequest;
     	
    		SmartDashboard.putNumber("Gyro Angle", navx.getYaw());
    		SmartDashboard.putNumber("Left stick speed", tdt.rawLeftSpeed);
