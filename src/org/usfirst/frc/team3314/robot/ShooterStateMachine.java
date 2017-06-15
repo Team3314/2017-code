@@ -27,17 +27,17 @@ public class ShooterStateMachine {
 	}
 	
 	public void reset() {
-		//sets shooter back to beginning
+		//Puts state machine back to beginning
 		currentState = shooterStates.START;
 	}
 	
 	public void update() {
-		//sees whether requirements to go to next state are fulfilled and switches states if necessary,
-		//executes code assigned to each state, counts down time every 20ms
+		//Checks whether requirements to go to next state are fulfilled and switches states if so,
+		//executes code assigned to each state every 20ms
 		shooterSpeed = robot.hal.shooterTalon.getSpeed();
 		calcNext();
 		doTransition();
-		currentState = nextState;
+		currentState = nextState; //Moves state machine to next state
 		time --;
 		SmartDashboard.putString("Shooter state", currentState.toString());
 		SmartDashboard.putNumber("Time", time);
@@ -47,7 +47,7 @@ public class ShooterStateMachine {
 		nextState = currentState;
 		
 		switch (currentState) {
-		case START:
+		case START: // Waits for button press 
 			if (robot.shootRequest) {
 				nextState = shooterStates.AGITATE;
 			}
@@ -55,11 +55,12 @@ public class ShooterStateMachine {
 			break;
 			
 		case AGITATE:
+			//Stops executing state machine if button is released
 			if (!robot.shootRequest) {
 				nextState = shooterStates.STOP;
 			}
-			if (/*robot.hal.agitatorSpark.get() == 1percentvbus placeholder  &&*/
-			Math.abs(desiredSpeed + robot.hal.shooterTalon.getSpeed()) <= 250) /*rpm placeholder*/ {
+			//Waits for shooter to get up to speed before feeding balls in
+			if (Math.abs(desiredSpeed + robot.hal.shooterTalon.getSpeed()) <= 250){
 				nextState = shooterStates.INDEX;
 			}
 			break;
@@ -68,20 +69,23 @@ public class ShooterStateMachine {
 			if (!robot.shootRequest) {
 				nextState = shooterStates.STOP;
 			}
-			
-			if (robot.hal.lowerIndexSpark.get() == 1 && robot.hal.upperIndexSpark.get() == 1 /*percentvbus placeholder*/) {
+			//Makes sure indexing motors are on
+			if (robot.hal.lowerIndexSpark.get() == 1 && robot.hal.upperIndexSpark.get() == 1) {
 				nextState = shooterStates.SHOOT;
 			}
 			break;
 			
 		case SHOOT:
+			//Stops shooting when shoot button is released
 			if (!robot.shootRequest) {
 				nextState = shooterStates.STOP;
 			}
 			break;
 			
 		case STOP:
-			if (robot.hal.agitatorSpark.get() == 0 && robot.hal.lowerIndexSpark.get() == 0 && robot.hal.shooterTalon.get() == 0) {
+			//Checks if motors for shooting are stopped before going back to start and accepting a button press
+			if (robot.hal.agitatorSpark.get() == 0 && robot.hal.lowerIndexSpark.get() == 0 && 
+			    robot.hal.shooterTalon.get() == 0) {
 				nextState = shooterStates.DONE;
 			}
 			break;
@@ -94,27 +98,23 @@ public class ShooterStateMachine {
 	
 	public void doTransition() {
 		if (currentState == shooterStates.START && nextState == shooterStates.AGITATE) {
-			//agitator + shooter motors started, 1/5 sec
+			//Sets shooter to desired speed
 			robot.hal.shooterTalon.set(desiredSpeed);
-			time = 10;
 		}
 		
 		if (currentState == shooterStates.AGITATE && nextState == shooterStates.INDEX) {
-			//index shooters started, 1/5 sec
+			//Starts feeding balls into shooter 
 			robot.hal.agitatorSpark.set(.9);
 			robot.hal.lowerIndexSpark.set(1);
 			robot.hal.upperIndexSpark.set(1);
-			time = 10;
 		}
 		
 		if (currentState == shooterStates.INDEX && nextState == shooterStates.SHOOT) {
 			//prior code allows robot to shoot w/o code needed here
-			//if button is let go, robot stop shooting after 1/5 sec
-			time = 10;
 		}
 		
 		if (currentState == shooterStates.AGITATE && nextState == shooterStates.STOP) {
-			//all motors off
+			//Turns all motors off
 			robot.hal.agitatorSpark.set(0);
 			robot.hal.shooterTalon.set(0);
 			robot.hal.lowerIndexSpark.set(0);
@@ -127,7 +127,7 @@ public class ShooterStateMachine {
 				robot.hal.lowerIndexSpark.set(0);
 				robot.hal.upperIndexSpark.set(0);
 			}
-		if (currentState == shooterStates.SHOOT 	&& nextState == shooterStates.STOP) {
+		if (currentState == shooterStates.SHOOT && nextState == shooterStates.STOP) {
 				//all motors off
 				robot.hal.agitatorSpark.set(0);
 				robot.hal.shooterTalon.set(0);
