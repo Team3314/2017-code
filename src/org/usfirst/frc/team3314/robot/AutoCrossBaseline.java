@@ -28,11 +28,11 @@ public class AutoCrossBaseline {
 	}
 	
 	public void update() {
-		//sees whether requirements to go to next state are fulfilled and switches states if necessary,
-		//executes code assigned to each state, counts down time every 20ms
+		//Checks whether requirements to go to next state are fulfilled and switches states if so,
+		//executes code assigned to each state every 20ms
 		calcNext();
 		doTransition();
-		currentState = nextState;
+		currentState = nextState; //Moves state machine to next state
 		time --;
 
 		SmartDashboard.putNumber("Time", time);
@@ -42,11 +42,13 @@ public class AutoCrossBaseline {
 		nextState = currentState;
 		
 		switch (currentState) {
+		//Resets gyro before driving
 		case START:
 			robot.navx.reset();
 			nextState = autoCrossBaselineStates.DRIVE;
 			break;
 		case DRIVE:
+			//Stops robot when it has driven the desired distance
 			if (robot.tdt.avgEncPos > (desiredDistance*Constants.kInToRevConvFactor)){
 				nextState = autoCrossBaselineStates.STOP;
 			}
@@ -63,7 +65,7 @@ public class AutoCrossBaseline {
 	
 	public void doTransition() {
 		if (currentState == autoCrossBaselineStates.START && nextState == autoCrossBaselineStates.DRIVE) {
-			//robot drives straight forward at max speed, 4 sec
+			//Resets drive encoders and robot drives straight forward at max speed
 			robot.tdt.resetDriveEncoders();
 			robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
 			robot.tdt.setDriveAngle(0);
@@ -72,7 +74,7 @@ public class AutoCrossBaseline {
 		}
 		
 		if (currentState == autoCrossBaselineStates.DRIVE && nextState == autoCrossBaselineStates.STOP) {
-			//stops robot, 1 sec
+			//Stops robot
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 50;
 		}
