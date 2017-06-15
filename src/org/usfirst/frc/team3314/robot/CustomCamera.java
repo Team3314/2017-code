@@ -67,21 +67,21 @@ public class CustomCamera {
 		double upperTargetTop = upperTargetX - upperTargetWidth ;
 		//Calculates the angle between a horizontal line out from the camera and the line from the camera to the upper target
 		double theta = -(Math.toDegrees(Math.atan((upperTargetTop - ((Constants.kXRes/2)-.5))/Constants.kFocalLength))) + 46;
+		//Divides known height by the tangent of the angle to the target to the the distance
 		distance = 66.5/(Math.tan(Math.toRadians(theta))); //66.5 in = height from camera to reflective tape
 		return distance;	
 	}
 	
 	
-	
+	//Calculates the angle the turret has to turn to make balls into the boiler
 	public double calcTurretYaw() { //goes with turret tracking
-		double centerX = upperTargetY + (upperTargetHeight/2);
-		turnError = centerX - Constants.kCenterOfView;
-		double yaw = -Math.toDegrees(Math.atan(turnError/Constants.kFocalLength)) + 4;
+		double centerX = upperTargetY + (upperTargetHeight/2); // Calculates the center pixel of the target
+		turnError = centerX - Constants.kCenterOfView; // Calculates the distance in pixels between the center of the target and the center of the camera
+		double yaw = -Math.toDegrees(Math.atan(turnError/Constants.kFocalLength)) + 4; //Calculates distance in degrees between center of view and center of target 
 		return yaw;
 	}
-	
+	//Sets cam and shooter speed to emperically tested values depending on calculated distance
 	public void distanceCheck() {
-		//
 		if (distance >= 36 && distance < 43) {
 			robot.cam.desiredPosition = 976;
 			robot.shooter.desiredSpeed =  3400;
