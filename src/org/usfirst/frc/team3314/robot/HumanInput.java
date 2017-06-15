@@ -7,23 +7,18 @@ public class HumanInput {
 	Joystick rightStick;
 	Joystick operator;
 	Joystick buttonBox;
-	Joystick lmao;
 
 	public HumanInput() {
 		leftStick = new Joystick(0); //left attack3 stick
 		rightStick = new Joystick(1); //right attack3 stick
 		operator = new Joystick(2); //xbox controller
 		buttonBox = new Joystick(3);
-		lmao = new Joystick(4); //extreme 3d stick
 	}
 		
-	//following methods return whether driver/operator press button to do something specific
+	//Following methods return true/false values depending on whether or not the driver or operator 
+	//press certain buttons on their controllers. These values are used in the robot class to determine when to perform certain actions
 	public boolean getGyroLock() {
 		return rightStick.getRawButton(1);
-	}
-	
-	public boolean getSpeedControl() {
-		return leftStick.getRawButton(9);
 	}
 		
 	public boolean getHighGear() {
@@ -32,14 +27,6 @@ public class HumanInput {
 	
 	public boolean getLowGear() {
 		return leftStick.getRawButton(2);
-	}
-	
-	public boolean getRaiseGearIntake() {
-		return rightStick.getRawButton(3);
-	}
-	
-	public boolean getDropGearIntake() {
-		return rightStick.getRawButton(2);
 	}
 	
 	public boolean getFuelIntake() {
@@ -109,19 +96,6 @@ public class HumanInput {
 	}
 	public boolean zeroCam() {
 		return buttonBox.getRawButton(9);
-	}
-	
-	public boolean turnNinety() {
-		return leftStick.getRawButton(9);
-	}
-	public boolean turnNegativeNinety() {
-		return leftStick.getRawButton(8);
-	}
-	public boolean turnTen() {
-		return rightStick.getRawButton(9);
-	}
-	public boolean turnNegativeTen() {
-		return rightStick.getRawButton(8);
 	}
 	public boolean runClimber() {
 		return operator.getRawButton(1);
