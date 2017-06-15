@@ -6,7 +6,7 @@ enum autoNothingStates {
 	START,
 	DONE
 }
-
+//This auto does nothing - it goes from start to done
 public class AutoNothing {
 	autoNothingStates currentState;
 	autoNothingStates nextState;
@@ -19,13 +19,10 @@ public class AutoNothing {
 	}
 	
 	public void reset() {
-		//sets auto back to beginning
 		currentState = autoNothingStates.START;
 	}
 	
 	public void update() {
-		//sees whether requirements to go to next state are fulfilled and switches states if necessary,
-		//executes code assigned to each state, counts down time every 20ms
 		calcNext();
 		doTransition();
 		currentState = nextState;
