@@ -42,11 +42,11 @@ public class AutoGearLeft{
 	}
 	
 	public void update() {
-		//sees whether requirements to go to next state are fulfilled and switches states if necessary,
-		//executes code assigned to each state, counts down time every 20ms
+		//Checks whether requirements to go to next state are fulfilled and switches states if so,
+		//executes code assigned to each state every 20ms
 		calcNext();
 		doTransition();
-		currentState = nextState;
+		currentState = nextState;//Moves state machine to next state
 		time --;
 		SmartDashboard.putString("Auto state", currentState.toString());
 		SmartDashboard.putNumber("Time", time);
@@ -60,62 +60,74 @@ public class AutoGearLeft{
 			nextState = autoGearLeftStates.DRIVE1;
 			break;
 		case DRIVE1:
+			//Stops robot when it has driven the desired distance
 			if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)){
 				nextState = autoGearLeftStates.STOP1;
 			}
 			break;
 		case STOP1:
+			//Robot waits to make sure it has stopped completely before turning
 			if (time <= 0 ){
 				nextState = autoGearLeftStates.TURN;
 			}
 			break;
 		case TURN:
+			//Stops robot's turn when the angle is within the tolerance
 			if (robot.tdt.gyroControl.onTarget()){
 				nextState = autoGearLeftStates.STOP2;
 			}
 			break;
 		case STOP2:
+			//Waits so robot has stopped turning before it drives forward
 			robot.tdt.resetDriveEncoders();
 			if (time <= 0 ) {
 				nextState = autoGearLeftStates.DRIVE2;
 			}
 			break;
 		case DRIVE2:
+			//Stops robot once it drives desired distance
 			if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)){
 				nextState = autoGearLeftStates.STOP3;
 			}
 			break;
 		case STOP3:
+			//Robot waits to make sure it has stopped completely before dropping gear
 			if (time <=0){
 				nextState = autoGearLeftStates.DROPGEAR;
 			}
 			break;
 		case DROPGEAR:
+			//Makes sure gear intake is open beore moving back
 			if (robot.hal.gearIntake.get().toString() == Constants.kOpenGearIntake) {
 				nextState = autoGearLeftStates.WAIT;
 			}
 			break;
 		case WAIT:
+			//Makes sure geat has finished falling from robot beofre moving backards.
 			if (time <= 0) {
 				nextState = autoGearLeftStates.DRIVEBACK;
 			}
 			break;
 		case DRIVEBACK:
+			//Stops robot when it drives desired distance backwards
 			if (robot.tdt.avgEncPos <= (desiredDistance*Constants.kInToRevConvFactor)) {
 				nextState = autoGearLeftStates.STOP4;
 			}
 			break;
 		case STOP4:
+			//Waits to make sure robot is stopped before turning
 			if (time<= 0) {
 				nextState = autoGearLeftStates.TURN2;
 			}
 			break;
 		case TURN2:
+			//Stops robot's turn once it is inside the tolerance
 			if (robot.tdt.gyroControl.onTarget()) {
 				nextState = autoGearLeftStates.DRIVE3;
 			}
 			break;
 		case DRIVE3:
+			//Drives the robot the desired distance across the field
 			if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)) {
 				nextState = autoGearLeftStates.DONE;
 			}
@@ -127,6 +139,7 @@ public class AutoGearLeft{
 	
 	public void doTransition() {
 		if (currentState == autoGearLeftStates.START && nextState == autoGearLeftStates.DRIVE1) {
+			//Drives robot straight forward at full speed
 			if (robot.blueRequest) {
 				desiredDistance = 88;
 			}
@@ -140,15 +153,16 @@ public class AutoGearLeft{
 			robot.tdt.setDriveTrainSpeed(1);
 		}
 		if (currentState == autoGearLeftStates.DRIVE1 && nextState == autoGearLeftStates.STOP1) {
-			//stops robot, 1/2 sec
+			//Stops robot, waits 2/5 of a second
 			robot.navx.reset();
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 20;
 		}
 		
 		if (currentState == autoGearLeftStates.STOP1 && nextState == autoGearLeftStates.TURN) {
-			//robot turns right to angle of peg, 1.5 sec
+			//robot turns right to angle of peg
 			robot.tdt.setDriveAngle(60);
+			//desired distance for next drive state is set
 			if (robot.blueRequest) {
 				desiredDistance = 26;
 			}
@@ -168,7 +182,6 @@ public class AutoGearLeft{
 		}
 		
 		if (currentState == autoGearLeftStates.DRIVE2 && nextState == autoGearLeftStates.STOP3) {
-			//robot stops
 			time = 7;
 			robot.tdt.setDriveTrainSpeed(0);
 		}
@@ -193,6 +206,10 @@ public class AutoGearLeft{
 			robot.tdt.setDriveTrainSpeed(0);
 		}
 		if (currentState == autoGearLeftStates.STOP4 && nextState == autoGearLeftStates.TURN2) {
+			//Follows different path depending on which side of the field robot starts on to account for 
+			//differences between red and blue side of field: Left side of airship is boiler side on blue while
+			//It is the loading station side on red. In both cases the robot drives towards the loading station on the 
+			//other side of the field
 			robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
 			if (robot.blueRequest) {
 				desiredDistance = 216;
