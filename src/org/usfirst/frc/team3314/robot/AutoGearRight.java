@@ -96,7 +96,6 @@ public class AutoGearRight{
 			}
 			break;
 		case DROPGEAR:
-			ROPGEAR:
 			//Makes sure gear intake is open beore moving back
 			if (robot.hal.gearIntake.get().toString() == Constants.kOpenGearIntake) {
 				nextState = autoGearRightStates.WAIT;
