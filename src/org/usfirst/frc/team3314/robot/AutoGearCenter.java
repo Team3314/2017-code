@@ -31,11 +31,11 @@ public class AutoGearCenter {
 	}
 	
 	public void update() {
-		//sees whether requirements to go to next state are fulfilled and switches states if necessary,
-		//executes code assigned to each state, counts down time every 20ms
+		//Checks whether requirements to go to next state are fulfilled and switches states if so,
+		//executes code assigned to each state every 20ms
 		calcNext();
 		doTransition();
-		currentState = nextState;
+		currentState = nextState;//Moves state machine to next state
 		time --;
 		SmartDashboard.putNumber("Time", time);
 	}
@@ -45,30 +45,36 @@ public class AutoGearCenter {
 		
 		switch (currentState) {
 		case START:
+			//Resets gyro before driving
 			robot.navx.reset();
 			nextState = autoGearCenterStates.DRIVE;
 			break;
 		case DRIVE:
+			//Stops robot when it has driven the desired distance
 			if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)){
 				nextState = autoGearCenterStates.STOP1;
 			}
 			break;
 		case STOP1:
+			//Robot waits to make sure it has stopped completely before dropping gear
 			if (time <= 0){
 				nextState = autoGearCenterStates.DROPGEAR;
 			}
 			break;
 		case DROPGEAR:
+			//Makes sure gear intake is open beore moving back
 			if (robot.hal.gearIntake.get().toString() == Constants.kOpenGearIntake) {
 				nextState = autoGearCenterStates.WAIT;
 			}
 			break;
 		case WAIT:
+			//Makes sure geat has finished falling from robot beofre moving backards.
 			if (time <= 0) {
 				nextState = autoGearCenterStates.DRIVEBACK;
 			}
 			break;
 		case DRIVEBACK: 
+			//Drives backwards until robot drives desired distance
 			if (robot.tdt.avgEncPos <= (desiredDistance * Constants.kInToRevConvFactor)) {
 				nextState = autoGearCenterStates.DONE;
 			}
@@ -80,7 +86,7 @@ public class AutoGearCenter {
 	
 	public void doTransition() {
 		if (currentState == autoGearCenterStates.START && nextState == autoGearCenterStates.DRIVE) {
-			//robot drives straight forward at max speed, 4 sec
+			//robot drives straight forward at half speed 
 			robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
 			robot.tdt.resetDriveEncoders();
 			robot.tdt.setDriveAngle(0);
@@ -89,7 +95,7 @@ public class AutoGearCenter {
 		}
 		
 		if (currentState == autoGearCenterStates.DRIVE && nextState == autoGearCenterStates.STOP1) {
-			//stops robot, 1 sec
+			//Stops robot for a 1/4 second before dropping gear to make sure robot has sett;ed
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 13;
 		}
@@ -97,9 +103,11 @@ public class AutoGearCenter {
 			robot.hal.gearIntake.set(Value.valueOf(Constants.kOpenGearIntake));
 		}
 		if (currentState == autoGearCenterStates.DROPGEAR && nextState == autoGearCenterStates.WAIT) {
+			//Waits 1/2 second before driving back after dropping gear to make sure it is completely out of robot
 			time = 25;
 		}
 		if (currentState == autoGearCenterStates.WAIT && nextState == autoGearCenterStates.DRIVEBACK) {
+			//Resets encoders and then drives back at half speed for 25 inches
 			robot.tdt.resetDriveEncoders();
 			desiredDistance = -25;
 			robot.tdt.setDriveTrainSpeed(-.5);
