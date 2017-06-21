@@ -43,9 +43,8 @@ public class Robot extends IterativeRobot {
 	AutoGearRight auto4;
 	AutoShootTenGearDrive auto5;
 	AutoShootTen auto6;
-	AutoShootTenGear auto7;
-	AutoDriveToHopperShoot auto8;
-	AutoShootCenterGear auto9;
+	AutoDriveToHopperShoot auto7;
+	AutoShootCenterGear auto8;
 	boolean auto0Request;
 	boolean auto1Request;
 	boolean auto2Request;
@@ -54,7 +53,6 @@ public class Robot extends IterativeRobot {
 	boolean auto5Request;
 	boolean auto6Request;
 	boolean auto7Request;
-	boolean auto8Request;
 	boolean auto9Request;
 	
 	//Creating button variables
@@ -138,9 +136,8 @@ public class Robot extends IterativeRobot {
 		auto4 = new AutoGearRight(this);
 		auto5 = new AutoShootTenGearDrive(this); 
 		auto6 = new AutoShootTen(this);
-		auto7 = new AutoShootTenGear(this); 
-		auto8 = new AutoDriveToHopperShoot(this);
-		auto9 = new AutoShootCenterGear(this);
+		auto7 = new AutoDriveToHopperShoot(this);
+		auto8 = new AutoShootCenterGear(this);
 		
 		//Resets drive encoders to zero
 		tdt.resetDriveEncoders();
@@ -279,9 +276,6 @@ public class Robot extends IterativeRobot {
 		if (autoSelect == 8) {
 			auto8.reset();
 		}
-		if (autoSelect == 9) {
-			auto9.reset();
-		}
 	}
 
 	/**
@@ -334,17 +328,12 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if (autoSelect == 7) {
-			SmartDashboard.putString("Auto Mode", "Drive to Hopper Shoot");
-			SmartDashboard.putString("Auto State", auto7.currentState.toString());
-			auto7.update();
-		}
-		
-		if (autoSelect == 8) {
 			SmartDashboard.putString("Auto Mode", "Gear Drive to Hopper Shoot");
 			SmartDashboard.putString("Auto State", auto8.currentState.toString());
 			auto8.update();
 		}
-		if (autoSelect == 9) {
+		
+		if (autoSelect == 8) {
 			SmartDashboard.putString("Auto Mode", "Shoot Center Gear");
 			SmartDashboard.putString("Auto State", auto9.currentState.toString());
 			auto9.update();
