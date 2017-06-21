@@ -36,13 +36,16 @@ public class AutoShootCenterGearDriveFeeder {
 		}
 		
 		public void update() {
+			//Checks whether requirements to go to next state are fulfilled and switches states if so,
+			//executes code assigned to each state every 20ms
 			calcNext();
 			doTransition();
-			currentState = nextState;
+			currentState = nextState;//Moves state machine to next state
 			time--;
 		}
 		
 		public void reset() {
+			//sets auto back to beginning
 			currentState = autoShootCenterGearDriveFeederState.START;
 		}
 		
@@ -57,6 +60,8 @@ public class AutoShootCenterGearDriveFeeder {
 					break;
 					
 				case TURNTURRET:
+					//Makes sure turret is turned to target position before advancing
+					//Also contains timeout so state machine can advance if turret does not reach target
 					if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 110 || time <= 0)  {
 						nextState = autoShootCenterGearDriveFeederState.SHOOT;
 					}
@@ -67,21 +72,25 @@ public class AutoShootCenterGearDriveFeeder {
 					}
 					break;
 				case DRIVE:
+					//Stops robot when it has driven the desired distance
 					if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)) {
 						nextState = autoShootCenterGearDriveFeederState.DROPGEAR;
 					}
 					break;
 				case DROPGEAR:
+					//Makes sure gear intake is open beore moving back
 					if (robot.hal.gearIntake.get().toString() == Constants.kOpenGearIntake) {
 						nextState = autoShootCenterGearDriveFeederState.WAIT;
 					}
 					break;
 				case WAIT:
+					//Makes sure geat has finished falling from robot beofre moving backwards.
 					if (time <= 0) {
 						nextState = autoShootCenterGearDriveFeederState.DRIVEBACK;
 					}
 					break;
 				case DRIVEBACK:
+					//Drives backwards until robot drives desired distance
 					if (robot.tdt.avgEncPos <= (desiredDistance*Constants.kInToRevConvFactor)) {
 						nextState = autoShootCenterGearDriveFeederState.STOP;
 					}
@@ -92,21 +101,25 @@ public class AutoShootCenterGearDriveFeeder {
 					}
 					break;
 				case TURN:
+					//Waits for robot to turn to target angle 
 					if (robot.tdt.gyroControl.onTarget()) {
 						nextState = autoShootCenterGearDriveFeederState.DRIVE2;
 					}
 					break;
 				case DRIVE2:
+					//Stops robot when it has driven the desired distance
 					if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)) {
 						nextState = autoShootCenterGearDriveFeederState.TURN2;
 					}
 					break;
 				case TURN2:
+					//Waits for robot to turn to target angle 
 					if (robot.tdt.gyroControl.onTarget()) {
 						nextState = autoShootCenterGearDriveFeederState.DRIVE3;
 					}
 					break;
 				case DRIVE3:
+					//Stops robot when it has driven the desired distance
 					if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)) {
 						nextState = autoShootCenterGearDriveFeederState.DONE;
 					}
@@ -119,6 +132,8 @@ public class AutoShootCenterGearDriveFeeder {
 		}
 		public void doTransition() {
 			if (currentState == autoShootCenterGearDriveFeederState.START && nextState == autoShootCenterGearDriveFeederState.TURNTURRET) {	
+				//Sets different values for turret, shooter and cam based on which side of the field robot is starting on
+			//Shooter is different distances from boiler on different sides of field
 				if (robot.blueRequest) {
 					robot.shooter.desiredSpeed = 4350;
 					robot.cam.desiredPosition = 1500;		
@@ -132,10 +147,12 @@ public class AutoShootCenterGearDriveFeeder {
 				time = 50;
 			}
 			if (currentState == autoShootCenterGearDriveFeederState.TURNTURRET && nextState == autoShootCenterGearDriveFeederState.SHOOT) {
+				//Shoots for 5 seconds
 				robot.shootRequest = true;
 				time = 250; 
 			}
 			if (currentState == autoShootCenterGearDriveFeederState.SHOOT && nextState == autoShootCenterGearDriveFeederState.DRIVE) {
+				//Stops shooting and drives straight forward
 				robot.shootRequest = false;
 				if (robot.blueRequest) {
 					desiredDistance = 80;
@@ -165,6 +182,7 @@ public class AutoShootCenterGearDriveFeeder {
 				robot.tdt.setDriveTrainSpeed(0);
 			}
 			if (currentState == autoShootCenterGearDriveFeederState.STOP && nextState == autoShootCenterGearDriveFeederState.TURN) {
+				//Turns 90 degrees and drives across field to get around airship
 				if (robot.blueRequest) {
 					desiredDistance = 102;
 					robot.tdt.setDriveAngle(90);
@@ -178,11 +196,12 @@ public class AutoShootCenterGearDriveFeeder {
 			}
 			
 			if (currentState == autoShootCenterGearDriveFeederState.TURN && nextState == autoShootCenterGearDriveFeederState.DRIVE2) {
-				robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));
+				robot.hal.gearIntake.set(Value.valueOf(Constants.kCloseGearIntake));//Closes gear intake to protect it
 				robot.tdt.resetDriveEncoders();
 				robot.tdt.setDriveTrainSpeed(1);
 			}
 			if (currentState == autoShootCenterGearDriveFeederState.DRIVE2 && nextState == autoShootCenterGearDriveFeederState.TURN2) {
+				//Robot turns forward again and drives to far side of field towards loading station
 				if (robot.blueRequest) {
 					desiredDistance = 288;
 					robot.tdt.setDriveAngle(0);
