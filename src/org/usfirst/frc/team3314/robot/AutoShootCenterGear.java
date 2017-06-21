@@ -30,13 +30,16 @@ public class AutoShootCenterGear {
 		}
 		
 		public void update() {
+			//Checks whether requirements to go to next state are fulfilled and switches states if so,
+			//executes code assigned to each state every 20ms
 			calcNext();
 			doTransition();
-			currentState = nextState;
+			currentState = nextState;//Moves state machine to next state
 			time--;
 		}
 		
 		public void reset() {
+			//sets auto back to beginning
 			currentState = autoShootCenterGearState.START;
 		}
 		
@@ -50,6 +53,8 @@ public class AutoShootCenterGear {
 					break;
 					
 				case TURNTURRET:
+					//Makes sure turret is turned to target position before advancing
+					//Also contains timeout so state machine can advance if turret does not reach target
 					if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 100 || time <= 0)  {
 						nextState = autoShootCenterGearState.SHOOT;
 					}
@@ -60,21 +65,25 @@ public class AutoShootCenterGear {
 					}
 					break;
 				case DRIVE:
+					//Stops robot when it has driven the desired distance
 					if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)) {
 						nextState = autoShootCenterGearState.DROPGEAR;
 					}
 					break;
 				case DROPGEAR:
+					//Makes sure gear intake is open beore moving back
 					if (robot.hal.gearIntake.get().toString() == Constants.kOpenGearIntake) {
 						nextState = autoShootCenterGearState.WAIT;
 					}
 					break;
 				case WAIT:
+					//Makes sure geat has finished falling from robot beofre moving backwards.
 					if (time <= 0) {
 						nextState = autoShootCenterGearState.DRIVEBACK;
 					}
 					break;
 				case DRIVEBACK:
+					//Drives backwards until robot drives desired distance
 					if (robot.tdt.avgEncPos <= (desiredDistance*Constants.kInToRevConvFactor)) {
 						nextState = autoShootCenterGearState.DONE;
 					}
@@ -86,7 +95,9 @@ public class AutoShootCenterGear {
 			
 		}
 		public void doTransition() {
-			if (currentState == autoShootCenterGearState.START && nextState == autoShootCenterGearState.TURNTURRET) {	
+			if (currentState == autoShootCenterGearState.START && nextState == autoShootCenterGearState.TURNTURRET) {
+			//Sets different values for turret, shooter and cam based on which side of the field robot is starting on
+			//Shooter is different distances from boiler on different sides of field
 				if (robot.blueRequest) {
 					robot.shooter.desiredSpeed = 4350;
 					robot.cam.desiredPosition = 1500;		
@@ -100,10 +111,12 @@ public class AutoShootCenterGear {
 				time = 50;
 			}
 			if (currentState == autoShootCenterGearState.TURNTURRET && nextState == autoShootCenterGearState.SHOOT) {
+				//Shoots for 5 seconds
 				robot.shootRequest = true;
 				time = 250; 
 			}
 			if (currentState == autoShootCenterGearState.SHOOT && nextState == autoShootCenterGearState.DRIVE) {
+				//Stops shooting and drives straight forward
 				robot.shootRequest = false;
 				if (robot.blueRequest) {
 					desiredDistance = 80;
@@ -111,7 +124,7 @@ public class AutoShootCenterGear {
 				else if (robot.redRequest) {
 					desiredDistance = 80;
 				}
-				robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear));
+				robot.hal.driveShifter.set(Value.valueOf(Constants.kShiftLowGear)); // Makes sure robot is in low gear
 				robot.tdt.setDriveMode(driveMode.GYROLOCK);
 				robot.tdt.setDriveAngle(robot.navx.getYaw());
 				robot.tdt.setDriveTrainSpeed(.5);
