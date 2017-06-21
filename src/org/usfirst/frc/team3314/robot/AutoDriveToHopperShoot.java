@@ -30,14 +30,17 @@ public class AutoDriveToHopperShoot {
 	}
 	
 	public void update() {
+		//Sets different values for turret, shooter and cam based on which side of the field robot is starting on
+		//Shooter is different distances from boiler on different sides of field
 		calcNext();
 		doTransition();
-		currentState = nextState;
+		currentState = nextState;//Moves state machine to next state
 		time--;
 		
 	}
 	
 	public void reset() {
+		//sets auto back to beginning
 		currentState = autoDriveToHopperShootStates.START;
 		
 	}
@@ -48,36 +51,38 @@ public class AutoDriveToHopperShoot {
 				nextState = autoDriveToHopperShootStates.DRIVE1;
 				break;
 			case DRIVE1:
+				//Stops robot when it has driven the desired distance
 				if (robot.tdt.avgEncPos >= (desiredDistance*Constants.kInToRevConvFactor)) {
 					nextState = autoDriveToHopperShootStates.STOP1;
 				}
 				break;
 			case STOP1:
+				//Robot waits to make sure it has stopped completely before turning
 				if (time <= 0) {
 					nextState = autoDriveToHopperShootStates.TURN;
 				}
 				break;
 			case TURN:
+				//Stops robot's turn when the angle is within the tolerance
 				if (robot.tdt.gyroControl.onTarget()) {
 					nextState = autoDriveToHopperShootStates.STOP2;
 				}
 				break;
 			case STOP2:
+				//Waits so robot stops turning before driving 
 				if (time <= 0) {
 					nextState = autoDriveToHopperShootStates.DRIVE2;
 				}
 				break;
 			case DRIVE2:
-			
-				SmartDashboard.putNumber("Encoder Position", robot.tdt.avgEncPos);
-				SmartDashboard.putNumber("Desired Encoder Ticks", desiredDistance*Constants.kInToRevConvFactor);
+				//Waits for robot to reach desired distance before moving to next state
 				if (robot.tdt.avgEncPos <= (desiredDistance*Constants.kInToRevConvFactor)) {
 					nextState = autoDriveToHopperShootStates.DRIVE3;
 				}
 				break;
 			case DRIVE3:
-				SmartDashboard.putNumber("Time", time);
-				if (time <= 0 /*robot.tdt.calcJerk() <= -.1*/) {
+				//Drives the robot on a timer so it hits the hopper and is fully against the wall
+				if (time <= 0) {
 					nextState = autoDriveToHopperShootStates.SHOOT;
 				}
 				break;
@@ -93,6 +98,8 @@ public class AutoDriveToHopperShoot {
 	
 	public void doTransition() {
 		if (currentState == autoDriveToHopperShootStates.START && nextState == autoDriveToHopperShootStates.DRIVE1 ) {
+			//Sets different values for turret, shooter and cam based on which side of the field robot is starting on
+			//Shooter is different distances from boiler on different sides of field
 			if (robot.blueRequest) {
 				robot.turret.desiredTarget = 7.2;
 				desiredDistance = 70;
@@ -114,11 +121,13 @@ public class AutoDriveToHopperShoot {
 			
 		}
 		if (currentState == autoDriveToHopperShootStates.DRIVE1 && nextState == autoDriveToHopperShootStates.STOP1 ) {
+			//Robot stops and waits 1/5 of a second before turning
 			robot.tdt.setDriveTrainSpeed(0);
 			time = 10;
 		}
 		if (currentState == autoDriveToHopperShootStates.STOP1 && nextState == autoDriveToHopperShootStates.TURN ) {
-		
+			//Robot turns different directions because hopper is on different side of the robot on different
+			//Sides of the field
 			if (robot.blueRequest) {
 				robot.tdt.setDriveAngle(90);
 				desiredDistance = -30;
@@ -134,16 +143,19 @@ public class AutoDriveToHopperShoot {
 			time = 20;
 		}
 		if (currentState == autoDriveToHopperShootStates.STOP2 && nextState == autoDriveToHopperShootStates.DRIVE2) {
+			//Spins up shooter to decrease  time it takes to start shooting
 			robot.tdt.setDriveTrainSpeed(-.5);	
 			robot.hal.shooterTalon.set(robot.shooter.desiredSpeed);
 		}
 		if (currentState == autoDriveToHopperShootStates.DRIVE2 && nextState == autoDriveToHopperShootStates.DRIVE3) {
+			//Switches to tank drive mode so that robot will not try to mantain angle when hitting the hopper, which 
+			//Changes the angle of the robot. This assumed angle is used for the shooter values
 			time = 50;
 			robot.tdt.setDriveMode(driveMode.TANK);
 			robot.tdt.setStickInputs(.5, .5);
 		}
 		if (currentState == autoDriveToHopperShootStates.DRIVE3 && nextState == autoDriveToHopperShootStates.SHOOT ) {
-			time = 1000;
+			time = 1000; // Shoots for remainder of auto period
 			robot.tdt.setStickInputs(0, 0);
 			robot.shootRequest = true;
 		}
