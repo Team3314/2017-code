@@ -24,6 +24,8 @@ public class AutoShootTen {
 	}
 	
 	public void update() {
+		//Checks whether requirements to go to next state are fulfilled and switches states if so,
+		//executes code assigned to each state every 20ms
 		calcNext();
 		doTransition();
 		currentState = nextState;
@@ -31,6 +33,7 @@ public class AutoShootTen {
 	}
 	
 	public void reset() {
+		//sets auto back to beginning
 		currentState = autoShootTenState.START;
 	}
 	
@@ -44,7 +47,9 @@ public class AutoShootTen {
 				break;
 				
 			case TURNTURRET:
-				if (Math.abs(robot.hal.turretTalon.getClosedLoopError()*8192) <= 100)  {
+				//Makes sure turret is turned to target positon before advancing
+				//Also contains a timeout to advance if turret does not reach position
+				if (Math.abs(robot.hal.turretTalon.getClosedLoopError()) <= 100)  {
 					nextState = autoShootTenState.SHOOT;
 				}
 				break;
@@ -61,20 +66,21 @@ public class AutoShootTen {
 	}
 	public void doTransition() {
 		if (currentState == autoShootTenState.START && nextState == autoShootTenState.TURNTURRET) {	
-			SmartDashboard.putBoolean("Red", robot.redRequest);
-			SmartDashboard.putBoolean("Blue", robot.blueRequest);
+			//Sets different values for turret, shooter and cam based on which side of the field robot is starting on
+			//Shooter is different distances from boiler on different sides of field
 			if (robot.blueRequest) {
 				robot.shooter.desiredSpeed = 3370;
-				robot.cam.desiredPosition = .265625;		
+				robot.cam.desiredPosition = 1088;		
 				robot.turret.desiredTarget = 0;
 			}
 			else if (robot.redRequest) {
 				robot.shooter.desiredSpeed = 4000;
-				robot.cam.desiredPosition = .2578125;		
+				robot.cam.desiredPosition = 1056;		
 				robot.turret.desiredTarget = 7.25;
 			}
 		}
 		if (currentState == autoShootTenState.TURNTURRET && nextState == autoShootTenState.SHOOT) {
+			//Shoots for entire auto period
 			robot.shootRequest = true;
 			time = 750; 
 		}
