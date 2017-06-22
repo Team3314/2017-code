@@ -1,7 +1,5 @@
 package org.usfirst.frc.team3314.robot;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 enum autoShootTenState{
 	START,
 	TURNTURRET,

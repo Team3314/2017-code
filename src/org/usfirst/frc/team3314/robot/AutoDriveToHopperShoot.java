@@ -1,7 +1,6 @@
 package org.usfirst.frc.team3314.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 enum autoDriveToHopperShootStates {
 	START,
