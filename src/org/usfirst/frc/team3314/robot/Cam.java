@@ -5,11 +5,11 @@ import com.ctre.CANTalon.TalonControlMode;
 
 //This class sets up the cam when initializing the robot, setting up the encoder and it's PID constants
 
-public class CamStateMachine {
+public class Cam {
 	Robot robot;
 	double desiredPosition;
 	
-	public CamStateMachine(Robot myRobot) {
+	public Cam(Robot myRobot) {
 		robot = myRobot;
 		robot.hal.camTalon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute); // Sets can to absolute mode to start
 		robot.hal.camTalon.setAllowableClosedLoopErr(0); //Sets the cam's error tolerance to zero, so the motor will keep trying to turn until it reaches the exact target position assinged

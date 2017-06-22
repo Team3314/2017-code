@@ -1,9 +1,7 @@
 package org.usfirst.frc.team3314.robot;
 
 import java.io.File;
-
 import com.ctre.CANTalon.FeedbackDevice;
-import com.ctre.CANTalon.TalonControlMode;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DoubleSolenoid.*;
@@ -329,14 +327,14 @@ public class Robot extends IterativeRobot {
 		
 		if (autoSelect == 7) {
 			SmartDashboard.putString("Auto Mode", "Gear Drive to Hopper Shoot");
-			SmartDashboard.putString("Auto State", auto8.currentState.toString());
-			auto8.update();
+			SmartDashboard.putString("Auto State", auto7.currentState.toString());
+			auto7.update();
 		}
 		
 		if (autoSelect == 8) {
 			SmartDashboard.putString("Auto Mode", "Shoot Center Gear");
-			SmartDashboard.putString("Auto State", auto9.currentState.toString());
-			auto9.update();
+			SmartDashboard.putString("Auto State", auto8.currentState.toString());
+			auto8.update();
 		}
 		//Updates status of various objects
 		tdt.update();
@@ -379,7 +377,6 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Cam Position",hal.camTalon.getEncPosition());
 		SmartDashboard.putNumber("Cam Setpoint", hal.camTalon.getSetpoint());
 		SmartDashboard.putNumber("Cam Target Position" , cam.desiredPosition);
-		SmartDashboard.putBoolean("Calibrated", cam.calibrated);
 		SmartDashboard.putNumber("PDP Temperature", hal.pdp.getTemperature());
 		SmartDashboard.putNumber("D", tdt.gyroControl.getD());
 		
@@ -440,9 +437,8 @@ public class Robot extends IterativeRobot {
 				tdt.setDriveMode(driveMode.GYROLOCK);
 				tdt.setDriveAngle(navx.getYaw()); //makes sure robot will move straight - Sets desired angle to current angle
 			}
-			tdt.setDriveTrainSpeed(tdt.rightStickInput); //Sets both sides of drive train to output of right stick - Helps robotd drive straight
+			tdt.setDriveTrainSpeed(tdt.rightStickInput); //Sets both sides of drive train to output of right stick - Helps robot drive straight
 			}
-		}
 		else {
 			tdt.setDriveMode(driveMode.TANK);
 			tdt.gyroControl.disable(); // Disables gyro PID when gyrolock is disabled
@@ -659,7 +655,6 @@ public class Robot extends IterativeRobot {
         	SmartDashboard.putNumber ("Desired Cam Position", cam.desiredPosition);
         	SmartDashboard.putNumber("Target Cam Position", hal.camTalon.getSetpoint() * 8192);
         	SmartDashboard.putNumber("Cam Error", hal.camTalon.getClosedLoopError());
-        	SmartDashboard.putNumber("Jerk", tdt.calcJerk());
         	
         	SmartDashboard.putNumber("Cam Voltage", hal.camTalon.getOutputVoltage());
         	SmartDashboard.putNumber("Cam Current", hal.camTalon.getOutputCurrent());
