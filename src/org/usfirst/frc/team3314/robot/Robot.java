@@ -13,6 +13,8 @@ import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
 
 /**
+RIP Again
+
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
  * documentation. If you change the name of this class or the package after
