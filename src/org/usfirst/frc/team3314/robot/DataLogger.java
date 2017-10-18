@@ -1,54 +1,66 @@
 package org.usfirst.frc.team3314.robot;
 
-
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
+import edu.wpi.first.wpilibj.Timer;
 
 public class DataLogger {
-	File file;
+	
+	Robot robot;
+	File data;
+	PrintWriter pw;
 	StringBuilder sb;
-	PrintWriter writer;
-	boolean firstRun = true;
-	String print = "";
+    boolean run = false;
+    
 	
-	public DataLogger() {
-		firstRun = true;
+	public DataLogger(Robot r) {
+		robot = r;		
 	}
 	
-	
-	public void logData (String[] fields, double[] data) {
-		if (firstRun) {
-			try {
-				Calendar date = Calendar.getInstance();
-				file  = new File("log.csv" + date.getTimeInMillis());
-				if(!file.exists()) {
-					file.createNewFile();
-				}
-				sb = new StringBuilder(print);
-				writer = new PrintWriter(file);
+	public void createNewFile() {
+		run = false;
+		data = new File("test"+ System.currentTimeMillis() + ".csv");
+		try {
+			if(!data.exists()) {
+				data.createNewFile();
 			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-			sb.append("Time,");
-			for (int i = 0; i < fields.length; i ++) {
-				sb.append(fields[i] + ",");
-			}
-			sb.append("\n");
-			firstRun = false;
 		}
-		Calendar date = Calendar.getInstance();
-		sb.append(date.getTimeInMillis()+ ",");
-		for (int i = 0; i < data.length; i++) {
-			sb.append(data[i] + ",");
+		catch(IOException e) {
+			e.printStackTrace();
 		}
-		sb.append("\n");
-		writer.write(sb.toString());
-		writer.flush();
-		sb.setLength(0);
 	}
 	
+	public void logData(String[] names, String[] values) {
+	     if (!run) {
+	    	 try {
+	 			pw = new PrintWriter(data);
+	 			sb = new StringBuilder();
+	 		}
+	 		catch (IOException e) {
+	 			e.printStackTrace();
+	 		}
+	    	 sb.append("Time");
+		     sb.append(',');
+		     for(int i = 0; i < names.length; i++) {
+			     sb.append(names[i].toString());
+			     sb.append(',');
+		     }
+		     sb.append('\n');
+		     run = true;
+	     }
+	     sb.append(System.currentTimeMillis());
+	     sb.append(',');
+	     for(int i = 0; i < values.length; i++) {
+	    	 sb.append(values[i].toString());
+	    	 sb.append(',');
+	     }
+	     sb.append('\n');
+	     pw.print(sb.toString());
+	     pw.flush(); //Forces Printwriter to write to file every loop instead of waiting for buffer to fill up
+	     sb.setLength(0);
+	     
+	}
+
 }
